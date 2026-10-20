@@ -367,7 +367,15 @@ if(t.onHitCardIds.includes("weapon-traits/weapon-traits-11"))addFx("weapon-trait
 if(fx.length===1){s+=fx[0].apply()||0}
 else if(fx.length>1){let rem=fx.slice();while(rem.length>0){let pick=0;if(n.decisions&&typeof n.decisions.onHitOrder==="function")pick=n.decisions.onHitOrder(n,rem.map((f2)=>({id:f2.id,label:f2.label})),e);let idx=typeof pick==="number"&&pick>=0&&pick<rem.length?Math.floor(pick):0;let[f2]=rem.splice(idx,1);p(e,`P${t.attacker} on-hit order: resolves ${f2.label}`);s+=f2.apply()||0}}
 return s}
-function U(e,t,a=9){let n=Math.abs(e-t);return Math.min(n,a-n)}function q(e,t,a){return U(e.players[t].champion.position,e.players[a].champion.position,9)}function R(e,t){if(t===0)return 0;return Math.max(0,Math.min(t-1,e))}function Oe(e,t,a,n){let i=e.players[t].champion,s=e.players[t],l=0,u=0;for(let o of i.passives){if(o.flags.includes("aimDmg")){let c=s.decisions.orChoice(s,["ACC","PER"],"AIM damage",e);l+=f(e,t,c===0?"ACC":"PER")}if(o.flags.includes("sniperMark")&&n)l+=f(e,t,"ACC");if(o.flags.includes("rangedDmgMod")&&n){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b18",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"CUN")}if(o.flags.includes("meleeDmgMod")&&a){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b19",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"ACC")}if(o.flags.includes("traitDmgPlus1"))u+=1;if(o.flags.includes("traitDmgPlus2"))u+=2;if(o.flags.includes("traitDmgPlus3"))u+=3}return{vitBonus:l,traitBonus:u}}function z(e,t,a){return{attacker:e,defender:t,vitalityDamage:0,traitDamage:[],kinds:[],isMelee:!1,isRanged:!1,isSpell:!1,weaponId:null,onHitCardIds:[],necroticCounters:0,forceDiscard:0,psychicMill:0,defConZero:!1,noCon:!1,fromActionCard:!1,isPhysical:!0,label:a}}function ie(e,t,a,n){let i=e.players[t],s=f(e,t,"STR"),l=f(e,t,"DEX");if(s<=0&&l<=0)return p(e,`P${t} cannot attack unarmed (STR and DEX are 0)`),rj(e,"STR and DEX are both 0 — this champion is too weak to attack."),null;let u=i.decisions.unarmedStat(i,e);if(u==="STR"&&s<=0)u="DEX";if(u==="DEX"&&l<=0)u="STR";let o=q(e,t,a);if(!n&&o>1)return rj(e,`Unarmed melee attacks must be adjacent — the foe is ${o} spaces away.`),null;let c=z(t,a,`unarmed (${u})`);c.vitalityDamage=2+f(e,t,u),c.kinds.push("vitality"),c.isMelee=!n,c.isRanged=n;let d=Oe(e,t,c.isMelee,c.isRanged);if(c.vitalityDamage+=d.vitBonus,!xe(e,t,c))return null;return c}function xe(e,t,a){let n=e.players[t],i=n.champion;if(a.isMelee&&P(e,t,"race/race-01")){if(a.vitalityDamage+=1,!a.kinds.includes("fire"))a.kinds.push("fire");a.forceDiscard+=1,p(e,`P${t} ASHENBORN: +1 fire damage`)}if(P(e,t,"race/race-23")){let s=Math.min(10,Math.max(0,i.traits.VIT)),l=Math.max(0,Math.min(s,n.decisions.chooseAmount(n,s,"INFESTED",e)));if(l>0){if(i.traits.VIT-=l,i.traits.VIT<=0)return e.phase="done",e.drawReason="INFESTED self-conversion to 0 VIT",p(e,`P${t} INFESTED: VIT reduced to 0 — DRAW, attack does not resolve`),!1;a.vitalityDamage+=l,p(e,`P${t} INFESTED: -${l} VIT, +${l} damage`)}}if(P(e,t,"race/race-38")){if(a.necroticCounters+=1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} VAMPIRE: +1 necrotic counter`)}if(C(e,t,"accessories/a14")){if(a.necroticCounters+=1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} accessory: +1 necrotic counter`)}return!0}function nt(e,t,a){if(!a.isSpell)return;let n=e.players[t];if(C(e,t,"body/body-b02")||C(e,t,"body/body-b10")){if(a.necroticCounters+=2,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} body: +2 necrotic (spell attack)`)}if(C(e,t,"body/body-b08")||C(e,t,"body/body-b15")){let i=n.decisions.chooseElement(n,[...Te],"body elemental rider",e);if(a.vitalityDamage+=2,!a.kinds.includes(i))a.kinds.push(i);p(e,`P${t} body: +2 ${i} (spell attack)`)}if(C(e,t,"body/body-b20")){if(a.traitDamage.push({trait:"CON",amount:1},{trait:"RES",amount:1}),!a.kinds.includes("radiant"))a.kinds.push("radiant");p(e,`P${t} body: target CON-1 RES-1 (radiant spell attack)`)}}function it(e,t,a,n,i){let s=e.players[t],l=s.champion,u=e.players[a],o=Be();for(let d of i){let r=_(l).find((y)=>y.uid===d);if(!r)continue;if(Fe(r.data.id,o))n.onHitCardIds.push(r.data.id);else p(e,`weapon trait ${r.data.id} UNIMPLEMENTED, skipped`)}let c=0;if(o.flags.includes("bleed")&&u.champion.traits.TP>0)o.vitalityBonus+=5,p(e,"BLEED +5 (opponent has TP)");if(o.flags.includes("heavyHitter")&&s.decisions.heavyHitter(s,e))o.vitalityBonus+=10,c+=1,p(e,`P${t} HEAVY HITTER +10 (extra action)`);n.vitalityDamage+=o.vitalityBonus;for(let d of o.traitDamageOr){let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r],m;if(d.fixed!==void 0)m=d.fixed;else{let v=R(s.decisions.orChoice(s,d.atk,"trait damage amount",e),d.atk.length);m=f(e,t,d.atk[v])}n.traitDamage.push({trait:y,amount:m})}for(let d of o.traitDamageFlat)n.traitDamage.push({...d});if(o.kinds.length)p(e,`P${t} weapon trait kinds: ${[...new Set(o.kinds)].join(", ")}`);return n.kinds.push(...o.kinds),n.necroticCounters+=o.necroticCounters,n.forceDiscard+=o.defenderDiscard,n.psychicMill+=o.psychicMill,c}function rj(e,r){e.lastReject={reason:r,seq:(e.rejectSeq=(e.rejectSeq||0)+1)}}function st(e,t,a,n,i,igR=!1){let s=e.players[t],l=s.champion,u=K(l).find((T)=>T.uid===n)??j(l).find((T)=>T.uid===n)??null;if(!u)return rj(e,"That weapon is no longer equipped."),null;let o=X(u.data.id);if(!o)return p(e,`P${t} weapon ${u.data.id} has no encoded profile`),rj(e,`${E(u)} cannot be used to attack — it has no attack profile.`),null;let c=q(e,t,a);if(!igR&&(c>o.reach||c<1))return rj(e,c<1?`${E(u)} cannot hit a foe standing on your own space.`:`${E(u)} reaches ${o.reach} space${o.reach===1?"":"s"} — the foe is ${c} spaces away. Move closer first.`),null;if(igR&&c<1)return rj(e,`${E(u)} cannot hit a foe standing on your own space.`),null;if(f(e,t,"STR")<=0&&f(e,t,"DEX")<=0)return p(e,`P${t} cannot make weapon attack (STR and DEX are 0)`),rj(e,"STR and DEX are both 0 — this champion is too weak to attack with a weapon."),null;let d=z(t,a,`${E(u)}`);d.weaponId=u.data.id,d.isSpell=o.isSpell,d.isPhysical=!o.isSpell,d.isMelee=o.reach<=1,d.isRanged=o.reach>1;let r=o.options.map((T)=>T.join("+")),y=R(s.decisions.orChoice(s,r,"weapon damage:"+u.uid,e),r.length),m=o.options[y];if(d.vitalityDamage=o.base+m.reduce((T,G)=>T+f(e,t,G),0),d.kinds.push("vitality"),m.includes("INS"))d.insUsed=!0;if(m.includes("ARC"))d.arcUsed=!0;let v=it(e,t,a,d,i);if(u.data.id==="weapon/weapon-02"){let T=s.decisions.blunderbussDiscard(s,e);if(T!==null&&T>=0&&T<s.hand.length){let[G]=s.hand.splice(T,1);s.discard.push(G),d.vitalityDamage+=f(e,t,"STR"),p(e,`P${t} BLUNDERBUSS discards ${E(G)}: +${f(e,t,"STR")} damage`)}}if(w(l,"lightAura")&&d.kinds.includes("radiant")){for(let T of d.traitDamage)T.amount+=2;p(e,"LIGHT: radiant +2")}if(w(l,"elemDmg2")&&d.kinds.some((T)=>T==="fire"||T==="cold"||T==="lightning"||T==="poison")){for(let T of d.traitDamage)T.amount+=2;p(e,"SUMMON ELEMENTAL: elemental +2")}if(w(l,"spiderPoison")){let T=R(s.decisions.orChoice(s,["DEX","STR"],"spider poison",e),2);d.traitDamage.push({trait:T===0?"DEX":"STR",amount:2}),d.kinds.push("poison")}let k=Oe(e,t,d.isMelee,d.isRanged);if(d.vitalityDamage+=k.vitBonus,k.traitBonus>0)for(let T of d.traitDamage)T.amount+=k.traitBonus;if(d.isMelee&&!u.data.id.startsWith("natural/")&&P(e,t,"race/race-15"))d.vitalityDamage+=5,p(e,`P${t} FORGEBORN: +5 melee weapon damage`);if(!xe(e,t,d))return null;nt(e,t,d);for(let T of l.passives){if(T.flags.includes("blindOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-01");if(T.flags.includes("radiantStrikeOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-09");if(T.flags.includes("larvaHeal"))d.onHitCardIds.push("summoning-actions/summoning-07")}for(let T of[l.equipment.gloves]){if(T&&T.data.id==="gloves/gloves-05")d.onHitCardIds.push(T.data.id);if(T&&T.data.id==="gloves/gloves-11")d.onHitCardIds.push(T.data.id)}for(let T of l.copiedPassives??[])if((T==="gloves/gloves-05"||T==="gloves/gloves-11")&&!d.onHitCardIds.includes(T))d.onHitCardIds.push(T);return{ev:d,extraActions:v}}function tt(e){let t=e.data.actionType??"";return t==="Physical Action"||t==="Ranged Action"}function ge(e){return/-actions?$/.test(e.data.deck)}function re(e,t,a,n=0){let i=e.players[t],s=i.hand.find((r)=>r.uid===a);if(!s)return!1;if(cfRequiresRangedWeapon(s.data.id)&&!cfHasRangedWeapon(i.champion))return rj(e,"Needs a ranged weapon"),p(e,`P${t} ${E(s)} cannot be played — needs a ranged weapon`),!1;let l=s.data.id,u=1-t,o=e.players[u];if(e.roundCount===0&&cfAffectsOpponent(l))return cfR1Reject(e),p(e,`P${t} ${E(s)} barred in Round 1 (no contact)`),!1;if(e.cardExtraActions=0,n<2&&s.data.actionType!=="Physical Action"){let r=Gt(o,"mystical-actions/mystical-actions-03");if(r&&o.decisions.wantCounterspell(o,e)){let y=o.decisions.counterSpell(o,e),m=y?o.hand.find((v)=>v.data.id===y&&ge(v)&&v.data.actionType!=="Physical Action"):void 0;if(m)ve(o,r.uid),o.discard.push(r),p(e,`P${u} COUNTERSPELL chains ${E(m)}`),re(e,u,m.uid,n+1)}}let c=(r=!1)=>{if(ve(i,a),s.data.deck==="summoning-actions"&&C(e,t,"body/body-b21"))M(e,t,"body/body-b21","CON",2,"body (summoning played)");if(ge(s)&&!tt(s)&&C(e,t,"head/head-06"))M(e,t,"head/head-06","SPI",1,"head (non-physical action played)");if(i.champion.runecarvedUid!=null&&s.uid===i.champion.runecarvedUid)i.deck.unshift(s),p(e,`P${t} RUNECARVED: ${E(s)} returns to the top of the deck`);else if(s.data.deck==="summoning-actions"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&i.champion.passives.some((ps)=>ps.cardId===l)){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field (passive)`)}else qt(e,t,s,r);return p(e,`P${t} plays ${E(s)}`),!0};switch(l){case"physical-actions/01":return g(e,t,l,"AIM",{},["aimDmg"]),c();case"physical-actions/02":{let r=f(e,t,"STR")+f(e,t,"CON");return ae(e,t,"RES",r,2,"BLOCK"),ae(e,t,"CON",r,2,"BLOCK"),c(!0)}case"physical-actions/05":{let y=q(e,t,u)>1||N(e,t,["Melee","Ranged"],"CRITICAL HIT")===1,m=Z(e,t,u,y),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;let k=N(e,t,[...de],"CRITICAL HIT trait"),T=f(e,t,de[k]);return v.vitalityDamage+=T,v.label="CRITICAL HIT",v.fromActionCard=!0,p(e,`P${t} CRITICAL HIT: +${T} damage (${de[k]})`),O(e,v),c()}case"physical-actions/06":return ae(e,t,"SPE",f(e,t,"SPE"),3,"DASH"),c();case"physical-actions/07":{if(!o.champion.equipment.flex.some((v)=>v!==null&&le(v)))return!1;let y=q(e,t,u)>1,m=Z(e,t,u),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;return v.label="DISARM",v.fromActionCard=!0,v.onHitCardIds.push("__disarm"),O(e,v),c()}case"physical-actions/08":{let r=2*f(e,t,"DEX");return ae(e,t,"RES",r,2,"DODGE"),ae(e,t,"CON",r,2,"DODGE"),c()}case"physical-actions/09":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=i.decisions.chooseTrait(i,r,"FOCUS",e);return g(e,t,l,`FOCUS (${y})`,{[y]:f(e,t,"SPI")}),c()}case"physical-actions/10":return i.champion.guardShield=f(e,t,"RES")+2*f(e,t,"STR"),p(e,`P${t} GUARD shield ${i.champion.guardShield}`),c();case"physical-actions/11":return H(e,t,f(e,t,"CON"),"HEALING POTION"),H(e,t,f(e,t,"CON"),"HEALING POTION"),c();case"physical-actions/12":{if(q(e,t,u)>1)return rj(e,"PUSH needs you adjacent to the foe."),!1;let r=o.champion.position<i.champion.position?-3:3,d=Math.max(0,Math.min(8,o.champion.position+r));if(d===i.champion.position)d=i.champion.position-(r>0?1:-1);return o.champion.position=d,p(e,`P${t} PUSH: foe to ${o.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),c()}case"physical-actions/13":{if(q(e,t,u)>1)return rj(e,"RESTRAIN needs you adjacent to the foe."),!1;return o.champion.flags.cannotMoveUntilTurn=e.turnCount+(e.cfTurnPlayer===t?2:1),p(e,`P${t} RESTRAIN: P${u} cannot move until P${t}'s next turn`),c()}case"physical-actions/14":return p(e,`P${t} RIPOSTE can only trigger as a reaction`),!1;case"physical-actions/15":{let r=o.champion.position<i.champion.position?1:-1,d=Math.max(0,Math.min(8,o.champion.position+r*3));if(d===i.champion.position)d=i.champion.position-r;return o.champion.position=d,p(e,`P${t} STEALTH: foe to ${o.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),c()}case"physical-actions/16":{let r=i.hand.filter((k)=>k.uid!==a&&ge(k));if(r.length===0)return p(e,`P${t} TRAP: no action card in hand to tuck`),!1;let y=i.decisions.chooseCardIndexes(i,r,1,"TRAP",e),m=R(y[0]??0,r.length),v=r[m];return i.hand=i.hand.filter((k)=>k.uid!==v.uid),i.champion.trap=v,p(e,`P${t} TRAP set with ${E(v)} facedown`),g(e,t,l,"TRAP",{},["trap"]),c()}case"ranged-actions/ranged-actions-01":{let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.defConZero=!0,r.ev.label="DIRTY TACTICS",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-03":{if(!o.champion.equipment.flex.some((v)=>v!==null&&le(v)))return!1;let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.label="DISABLE",r.ev.fromActionCard=!0,r.ev.onHitCardIds.push("__disable"),O(e,r.ev),c(!0)}case"ranged-actions/ranged-actions-05":{let r=R(i.decisions.orChoice(i,["SPE","DEX"],"NET target",e),2),y=R(i.decisions.orChoice(i,["ACC","DEX"],"NET amount",e),2),m=z(t,u,"NET");return m.fromActionCard=!0,m.isRanged=!0,m.traitDamage.push({trait:r===0?"SPE":"DEX",amount:f(e,t,y===0?"ACC":"DEX")}),O(e,m),c()}case"ranged-actions/ranged-actions-07":return g(e,t,l,"SNIPER'S MARK",{},["sniperMark"]),c();case"ranged-actions/ranged-actions-09":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["STR","DEX","CON","RES"],"TRICK SHOT",e),4),m=["STR","DEX","CON","RES"];return r.ev.traitDamage.push({trait:m[y],amount:f(e,t,"ACC")}),r.ev.label="TRICK SHOT",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-11":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["DEX+SPE","STR+SPE"],"VOLLEY",e),2);return r.ev.vitalityDamage+=y===0?f(e,t,"DEX")+f(e,t,"SPE"):f(e,t,"STR")+f(e,t,"SPE"),r.ev.label="VOLLEY",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"divine-actions/divine-actions-01":return g(e,t,l,"BLIND",{},["blindOnHit"]),c();case"divine-actions/divine-actions-02":{let r=o.champion.passives,y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];if(m)o.champion.passives=o.champion.passives.filter((v)=>v!==m),ne(e,u,m.cardId),p(e,`P${t} CURE discards foe passive ${m.label}`);return i.champion.necrotic=0,p(e,`P${t} CURE clears necrotic`),c()}case"divine-actions/divine-actions-03":{let r=dispelCands(e,t);if(r.length===0)return!1;let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];return resolveDispel(e,m),p(e,`P${t} DISPEL MAGIC nullifies ${m.label} — the card stays on the field, its passive is off`),c()}case"divine-actions/divine-actions-04":{if(o.hand.length===0)return c();let r=i.decisions.chooseCardIndexes(i,o.hand,1,"DIVINATION",e),y=R(r[0]??0,o.hand.length),[m]=o.hand.splice(y,1);return o.discard.push(m),p(e,`P${t} DIVINATION discards foe's ${E(m)}`),c()}case"divine-actions/divine-actions-05":{let r=f(e,t,"SPI"),fc=R(i.decisions.orChoice(i,["RES","CON"],"FORCEFIELD",e),2);return g(e,t,l,"FORCEFIELD",{[fc===0?"RES":"CON"]:r}),c()}case"divine-actions/divine-actions-06":{let r=R(i.decisions.orChoice(i,["SPE","CUN"],"HASTE",e),2);return ae(e,t,r===0?"SPE":"CUN",f(e,t,"SPI"),2,"HASTE"),c(!0)}case"divine-actions/divine-actions-07":return H(e,t,f(e,t,"SPI"),"HEAL"),H(e,t,f(e,t,"SPI"),"HEAL"),i.champion.necrotic=0,p(e,`P${t} HEAL clears necrotic`),c();case"divine-actions/divine-actions-08":return g(e,t,l,"LIGHT",{PER:3},["lightAura"]),c();case"divine-actions/divine-actions-09":return g(e,t,l,"RADIANT STRIKE",{},["radiantStrikeOnHit"]),c();case"divine-actions/divine-actions-10":return i.champion.necrotic=0,g(e,t,l,"REGENERATION",{},["regenSpi"]),c();case"divine-actions/divine-actions-11":return g(e,t,l,"RES ELEM",{},["resistElemental"]),c(!0);case"divine-actions/divine-actions-12":return g(e,t,l,"RES MYST",{},["resistMystical"]),c(!0);case"divine-actions/divine-actions-13":return g(e,t,l,"RES PHYS",{},["resistPhysical"]),c(!0);default:break}let d=Ut(e,t,a,s,c);if(d!==null)return d;return p(e,`P${t} ${E(s)} has no encoded play handler`),!1}function Z(e,t,a,n=!1,igR=!1){let i=e.players[t],s=q(e,t,a),l=_(i.champion).map((d)=>d.uid),u=null,o=-1;for(let d of[...K(i.champion),...j(i.champion)]){let r=X(d.data.id);if(!r)continue;if(!igR&&(s<1||s>r.reach))continue;if(igR&&s<1)continue;if(r.base>o)u=d,o=r.base}if(u){let d=st(e,t,a,u.uid,l,igR);if(d){if(n)d.ev.isRanged=!0;return d}if(e.phase==="done")return null}let c=ie(e,t,a,n||s>1);return c?{ev:c,extraActions:0}:null}function N(e,t,a,n){let i=e.players[t];return R(i.decisions.orChoice(i,a,n,e),a.length)}function Ut(e,t,a,n,i){let s=e.players[t],l=1-t,u=e.players[l],o=n.data.id,c=(r)=>{s.champion.traits.TP+=r,p(e,`P${t} +${r} TP (${E(n)})`)},d=(r,y,m)=>{g(e,t,o,r,y,[...m,"summonForm"])};switch(o){case"summoning-actions/summoning-01":return c(5+f(e,t,N(e,t,["INS","SPI"],"EAGLE")===0?"INS":"SPI")),d("EAGLE FORM",{DEX:2},[]),i();case"summoning-actions/summoning-02":return c(15+f(e,t,N(e,t,["INS","SPI"],"LIZARD")===0?"INS":"SPI")),d("LIZARD FORM",{PER:2,RES:2},[]),i();case"summoning-actions/summoning-03":{let r=N(e,t,["CON+INS","CON+SPI"],"MONSTER");return c(25+f(e,t,"CON")+f(e,t,r===0?"INS":"SPI")),d("MONSTER FORM",{RES:2,STR:2},[]),i()}case"summoning-actions/summoning-04":{c(5+f(e,t,N(e,t,["CON","SPI"],"DEVIL")===0?"CON":"SPI"));let r=s.decisions.chooseTrait(s,[...L],"SUMMON DEVIL",e);return Se(e,t,10,{skipTP:!0}),d("SUMMON DEVIL",{[r]:5},[]),i()}case"summoning-actions/summoning-05":return c(5+f(e,t,N(e,t,["INS","SPI"],"DRYAD")===0?"INS":"SPI")),d("SUMMON DRYAD",{},["dryadSpi"]),i();case"summoning-actions/summoning-06":return c(5+f(e,t,"ARC")),d("SUMMON ELEMENTAL",{},["elemDmg2"]),i();case"summoning-actions/summoning-07":return c(5+f(e,t,N(e,t,["CON","SPI"],"LARVA")===0?"CON":"SPI")),d("SUMMON GIANT LARVA",{},["larvaHeal"]),i();case"summoning-actions/summoning-08":return c(5+f(e,t,N(e,t,["CON","INS"],"TOAD")===0?"CON":"INS")),d("SUMMON GIANT TOAD",{},["toadAttack"]),i();case"summoning-actions/summoning-09":return c(5+f(e,t,"ARC")),d("SUMMON IMP",{},["impAttack"]),i();case"summoning-actions/summoning-10":return c(5+f(e,t,N(e,t,["INS","SPI"],"RAVEN")===0?"INS":"SPI")),d("SUMMON RAVEN",{PER:2},[]),i();case"summoning-actions/summoning-11":return c(10+f(e,t,N(e,t,["INS","SPI"],"SPIDER")===0?"INS":"SPI")),d("SUMMON SPIDER",{},["spiderPoison"]),i();case"summoning-actions/summoning-13":return c(5+2*f(e,t,"CON")),d("SUMMON WRAITH",{},["wraithTP"]),i();case"summoning-actions/summoning-14":return c(5+f(e,t,N(e,t,["INS","SPI"],"WOLF")===0?"INS":"SPI")),d("WOLF FORM",{SPE:3,CUN:1},[]),i();case"summoning-actions/summoning-12":return c(5+f(e,t,N(e,t,["CON","SPI"],"SPORE")===0?"CON":"SPI")),we(e,t),i();case"summoning-actions/summoning-15":return c(5+f(e,t,"CON")),g(e,t,o,"ASTRAL HOUND",{PER:2},["astralHound"]),i();case"psionic-action/psionic-action-01":return s.champion.traits.INT+=1,s.champion.traits.ARC+=1,p(e,`P${t} AGE: INT+1 ARC+1`),i();case"psionic-action/psionic-action-02":return s.champion.traits.PER+=2,p(e,`P${t} CLEAR MIND: PER+2`),i();case"psionic-action/psionic-action-13":{let r=N(e,t,["RES","CON"],"PSYCHIC BARRIER"),y=N(e,t,["ARC","INT"],"PSYCHIC BARRIER amount"),m=f(e,t,y===0?"ARC":"INT");return s.champion.traits[r===0?"RES":"CON"]+=m,p(e,`P${t} PSYCHIC BARRIER: ${r===0?"RES":"CON"} +${m}`),i()}case"psionic-action/psionic-action-03":case"psionic-action/psionic-action-11":{let r=o.endsWith("-03")?s:u,y=r.discard.filter(ge);if(y.length===0)return i();let m=s.decisions.chooseCardIndexes(s,y,1,"MENTAL ECHO",e),v=R(m[0]??0,y.length),k=y[v];r.discard=r.discard.filter((T)=>T.uid!==k.uid),p(e,`P${t} reuses ${E(k)} from ${o.endsWith("-03")?"own":"foe's"} discard`),s.hand.push(k),re(e,t,k.uid);for(let T of[s.hand,s.discard,s.removed]){let G=T.findIndex((V)=>V.uid===k.uid);if(G>=0)T.splice(G,1)}return s.removed.push(k),i()}case"psionic-action/psionic-action-04":return g(e,t,o,"MIND WARD",{},["wardStats"]),i();case"psionic-action/psionic-action-05":return s.deck=W(e.rng,[...s.deck,...s.removed]),s.removed=[],p(e,`P${t} NEVER FORGOTTEN: removed cards shuffled into deck`),i();case"psionic-action/psionic-action-06":return he(e,t,2),p(e,`P${t} PREPARE: draws 2`),i();case"psionic-action/psionic-action-07":return p(e,`P${t} PSYCHIC MIRAGE can only trigger as a reaction`),!1;case"psionic-action/psionic-action-08":return s.deck=[...s.discard.reverse(),...s.deck],s.discard=[],he(e,t,2),p(e,`P${t} SLOW TIME: discard to top, draws 2`),i();case"psionic-action/psionic-action-09":{let r=LT.reduce((m,v)=>m+Math.max(0,f(e,t,v)),0),y=Math.max(0,Math.min(r,s.decisions.chooseAmount(s,r,"STRAIN",e)));if(y>0){let m=s.decisions.chooseTrait(s,[...LT],`STRAIN — take ${y} damage on which of YOUR traits?`,e);x(e,t,m,y,!1);let v=["STR","DEX","CON","RES"],k=N(e,t,[...v],`STRAIN — reduce which OPPONENT trait by ${y}?`),T=z(t,l,"STRAIN");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:y}),O(e,T)}else p(e,`P${t} STRAIN: X=0, no effect`);return i()}case"psionic-action/psionic-action-10":{let r=Z(e,t,l,!0,!0);if(!r)return!1;return r.ev.isRanged=!0,r.ev.isMelee=!1,r.ev.psychicMill+=1,r.ev.kinds.push("psychic"),r.ev.label="TELEKINESIS",r.ev.fromActionCard=!0,O(e,r.ev),i()}case"psionic-action/psionic-action-12":{let r=LT.reduce((m,v)=>m+Math.max(0,f(e,t,v)),0),y=Math.max(0,Math.min(r,s.decisions.chooseAmount(s,r,"TRANCE",e)));if(y>0){let m=s.decisions.chooseTrait(s,[...LT],`TRANCE — take ${y} damage on which of YOUR traits?`,e);x(e,t,m,y,!1);let v=["INT","SPI","CUN","ACC","INS"],k=N(e,t,[...v],`TRANCE — reduce which OPPONENT trait by ${y}?`),T=z(t,l,"TRANCE");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:y}),O(e,T)}else p(e,`P${t} TRANCE: X=0, no effect`);return i()}case"mystical-actions/mystical-actions-01":return s.champion.traits.RES+=2,s.champion.traits.CON+=2,p(e,`P${t} BLUR: RES+2 CON+2`),i();case"mystical-actions/mystical-actions-02":return g(e,t,o,"CLOUD",{},["cloudDebuff"]),g(e,l,o,"CLOUD",{},["cloudDebuff"]),i();case"mystical-actions/mystical-actions-03":return p(e,`P${t} COUNTERSPELL can only trigger as a reaction`),!1;case"mystical-actions/mystical-actions-04":{let r=N(e,t,["elemental","melee","ranged","necrotic","radiant","psychic"],"DAMAGE WARD"),y=["elemental","melee","ranged","necrotic","radiant","psychic"];return g(e,t,o,`DAMAGE WARD (${y[r]})`,{},[`damageWard:${y[r]}`]),i()}case"mystical-actions/mystical-actions-05":{let r=s.decisions.placeChampion(s,[u.champion.position],e);if(r>=0&&r<=8&&r!==u.champion.position)s.champion.position=r,p(e,`P${t} FLIGHT to ${r}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t);return i()}case"mystical-actions/mystical-actions-06":return s.champion.traits.INT+=1,p(e,`P${t} MENTAL MAP: INT+1`),i();case"mystical-actions/mystical-actions-07":{s.champion.traits.TP+=20;let r=N(e,t,["RES","CON"],"MIST FORM");return g(e,t,o,"MIST FORM",{[r===0?"RES":"CON"]:f(e,t,"ARC")}),i()}case"mystical-actions/mystical-actions-08":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=s.decisions.chooseTrait(s,[...r],"POLYMORPH — move points FROM which trait?",e),m=s.decisions.chooseTrait(s,[...r].filter((T)=>T!==y),"POLYMORPH — move points TO which trait?",e),v=f(e,t,N(e,t,["ARC","INT"],"POLYMORPH — move up to: ARC or INT?")===0?"ARC":"INT"),k=Math.min(v,f(e,t,y));if(k<=0)return!1;return x(e,t,y,k,!1),s.champion.traits[m]+=k,p(e,`P${t} POLYMORPH: ${k} ${y} -> ${m}`),i()}case"mystical-actions/mystical-actions-09":{let r=f(e,t,"ARC"),y=u.champion.position<s.champion.position?-1:1,d=Math.max(0,Math.min(8,u.champion.position+y*r));if(d===s.champion.position)d=s.champion.position-y;return u.champion.position=d,p(e,`P${t} PUSH AND PULL: foe to ${u.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),i()}case"mystical-actions/mystical-actions-10":{if(s.deck.length===0)return i();let r=s.decisions.chooseCardIndexes(s,s.deck,1,"SCRY",e),y=R(r[0]??0,s.deck.length),[m]=s.deck.splice(y,1);return s.hand.push(m),p(e,`P${t} SCRY finds ${E(m)}`),i()}case"mystical-actions/mystical-actions-11":{let r=N(e,t,["ARC+PER","INS+PER"],"SPELL ATTACK"),y=z(t,l,"SPELL ATTACK");if(y.isRanged=!0,y.isSpell=!0,y.isPhysical=!1,y.fromActionCard=!0,y.kinds.push("vitality"),r===0)y.arcUsed=!0;else y.insUsed=!0;if(y.vitalityDamage=r===0?f(e,t,"ARC")+f(e,t,"PER"):f(e,t,"INS")+f(e,t,"PER"),K(s.champion).some((v)=>v.data.id==="weapon/weapon-10")){let v=_(s.champion).map((T)=>T.uid),k=it(e,t,l,y,v);if(k>0)e.cardExtraActions=(e.cardExtraActions??0)+k;p(e,`P${t} MAGIC STAFF channels weapon traits into SPELL ATTACK`)}let m=Oe(e,t,!1,!0);if(y.vitalityDamage+=m.vitBonus,!xe(e,t,y))return i();return nt(e,t,y),O(e,y),i()}case"mystical-actions/mystical-actions-14":{let r=N(e,t,["STR","INS"],"STONE FORM"),y=f(e,t,"INT");return x(e,t,"INT",y,!1),g(e,t,o,"STONE FORM",{RES:5,[r===0?"STR":"INS"]:y}),i()}case"mystical-actions/mystical-actions-15":{let r=f(e,t,N(e,t,["ARC","SPI"],"STUDY")===0?"ARC":"SPI");return s.champion.traits.INT+=r,p(e,`P${t} STUDY: INT +${r}`),i()}default:return null}}function cfTrapTrigger(e,T){let s=e.players[T].champion,f=e.players[1-T].champion,o=e.players[T];if(!s.trap)return;let ipc=(o.inPlay??[]).find((r)=>r.data.id==="physical-actions/16");if(ipc&&(s.dispelledUids??[]).includes(ipc.uid))return;if(U(s.position,f.position,9)>1)return;let u=s.trap;s.trap=null;o.hand.push(u),p(e,`P${T} TRAP triggers: ${E(u)} activates`),re(e,T,u.uid);for(let c of[o.hand,o.discard,o.removed]){let d=c.findIndex((r)=>r.uid===u.uid);if(d>=0)c.splice(d,1)}o.discard.push(u),p(e,`P${T} TRAP: ${E(u)} discarded after firing`)}function Vt(e,t,a){let i=e.players[t].champion,s=e.players[1-t].champion;if(a<0||a>8||a===s.position)return rj(e,"That space is taken — choose an empty space."),!1;if((i.encrusted||0)>0)return p(e,`P${t} cannot move (ENCRUSTED)`),rj(e,"Encrusted — cold froze this champion's SPE to 0: no movement for 2 turns."),!1;if(i.flags.cannotMoveUntilTurn!==void 0&&e.turnCount<i.flags.cannotMoveUntilTurn)return p(e,`P${t} cannot move (restrained)`),rj(e,"Restrained — this champion cannot move yet."),!1;if(P(e,1-t,"race/race-39")&&U(i.position,s.position,9)<=1)return p(e,`P${t} cannot move (WRAITHVINE adjacent)`),rj(e,"WRAITHVINE is adjacent — this champion cannot move."),!1;if(i.grabbedBy!==null&&i.grabbedBy!==t){let u=e.players[i.grabbedBy].champion;if(C(e,i.grabbedBy,"gloves/gloves-10")&&U(i.position,u.position,9)<=1)return p(e,`P${t} cannot move (grabbed)`),rj(e,"Grabbed — this champion cannot move while the grabber stays adjacent."),!1}let l=P(e,t,"race/race-14")?8:f(e,t,"SPE")<=0?1:2+f(e,t,"SPE");if(U(a,i.position,9)>l)return rj(e,`That space is ${U(a,i.position,9)} spaces away — this champion can move up to ${l}.`),!1;return i.position=a,p(e,`P${t} moves to ${a}`),cfTrapTrigger(e,1-t),cfTrapTrigger(e,t),!0}function at(e,t,a){if(a===t)return!1;if(q(e,t,a)>1)return!1;if(!C(e,t,"gloves/gloves-10"))return!1;let n=e.players[t];if(R(n.decisions.orChoice(n,["Damage","Grab"],"gloves-10 grab",e),2)!==1)return!1;return e.players[a].champion.grabbedBy=t,n.champion.attackedThisTurn=!0,n.champion.attacksThisTurn+=1,p(e,`P${t} grabs P${a} (no damage; cannot move while adjacent)`),!0}function ot(e){e.phase="combat",p(e,"--- Phase 5: Combat setup ---");for(let l=0;l<2;l++){let u=e.players[l];u.deck=W(e.rng,u.deck)}Ft(e);let speT0=f(e,0,"SPE"),speT1=f(e,1,"SPE"),tieW=-1;if(speT0===speT1){let rolls=[];while(tieW<0){let r0=e.rng.d6(),r1=e.rng.d6();rolls.push([r0,r1]);if(r0>r1)tieW=0;else if(r1>r0)tieW=1}e.speTieBreak={spe:speT0,rolls:rolls,winner:tieW},p(e,`SPE tie at ${speT0}: `+rolls.map((r)=>`d6 P0=${r[0]} P1=${r[1]}`).join("; ")+` - P${tieW} places first and goes first`)}let t=tieW>=0?[tieW,1-tieW]:[0,1].sort((l,u)=>f(e,l,"SPE")-f(e,u,"SPE")),a=[];for(let l of t){let u=e.players[l],o=u.decisions.placeChampion(u,a,e);if(o<0||o>8||a.includes(o))o=[0,1,2,3,4,5,6,7,8].find((c)=>!a.includes(c))??0;u.champion.position=o,a.push(o),p(e,`P${l} placed at ${o} (SPE ${f(e,l,"SPE")})`)}let n=f(e,0,"SPE")+f(e,0,"PER"),i=f(e,1,"SPE")+f(e,1,"PER"),s=0;if(tieW>=0){s=tieW,e.turnPlayer=s,p(e,`P${s} goes first (SPE tie-break d6)`)}else{if(i>n)s=1;else if(i===n){let l=e.rng.d6(),u=e.rng.d6(),gd=0;while(l===u&&gd++<10){l=e.rng.d6(),u=e.rng.d6()}s=u>l?1:0,p(e,`turn-order tie: d6 P0=${l} P1=${u}`)}e.turnPlayer=s,p(e,`P${s} goes first (SPE+PER ${s===0?n:i})`)}for(let l=0;l<2;l++)he(e,l,3+f(e,l,"INT")),p(e,`P${l} starting hand: ${Wt(e,l)} cards`)}function Wt(e,t){return e.players[t].hand.length}function Xt(e,t){let a=e.players[t].champion,n=a.equipment,i=[n.head,n.body,n.gloves,n.boots,n.accessories,...n.flex].filter((s)=>s!==null&&!(a.dispelledUids??[]).includes(s.uid)).map((s)=>s.data.id).concat(a.copiedPassives??[]);if(i.includes("body/body-b01"))a.traits.TP+=5,p(e,`P${t} body armor: +5 TP`);if(i.includes("body/body-b13"))H(e,t,5,"body armor")}function Bt(e,t){let a=e.players[t],n=a.champion;if(!n.flags.fungal||n.flags.fungalUsed)return;let i=e.players[1-t],s=a.decisions.fungalChoice(a,i,e);if(!s){p(e,`P${t} FUNGAL: saved for a later turn`);return}let l=ke(i.champion).find((u)=>u.uid===s);if(!l){p(e,`P${t} FUNGAL: invalid choice, saved for a later turn`);return}n.flags.fungalUsed=!0,n.copiedPassives.push(l.data.id),fe(n,l),p(e,`P${t} FUNGAL copies ${E(l)} — gains its passive for the rest of the game`)}function we(e,t){let a=e.players[t],n=a.champion,i=[];for(let o of ke(n)){let c=o.data.id,d={};for(let y of ce[c]??[])d[y.trait]=(d[y.trait]??0)+y.amount;let r=Q[c]??[];if(Object.keys(d).length===0&&r.length===0)continue;i.push({key:o.uid,name:E(o),statMods:d,flags:[...r]})}for(let o of n.passives){if(!o.flags.includes("summonForm"))continue;i.push({key:`summon:${o.label}`,name:o.label,statMods:{...o.statMods},flags:o.flags.filter((c)=>c!=="summonForm")})}let s=i.length>0?a.decisions.sporeChoice(a,i,e):null,l=i.find((o)=>o.key===s)??null,u=l?`SUMMON SPORE (copying ${l.name})`:"SUMMON SPORE";if(g(e,t,"summoning-actions/summoning-12",u,l?{...l.statMods}:{},[...l?.flags??[],"summonForm"]),l)p(e,`P${t} SUMMON SPORE copies ${l.name}`);else p(e,`P${t} SUMMON SPORE: no active passive to copy`)}function Ft(e){for(let t=0;t<2;t++){let a=e.players[t];if(!a.champion.flags.runecarved||a.deck.length===0)continue;let n=a.decisions.runecarvedPick(a,[...a.deck],e),i=a.deck.find((s)=>s.uid===n)??a.deck[0];a.champion.runecarvedUid=i.uid,p(e,`P${t} RUNECARVED chooses ${E(i)} as Living Spell`)}}
+function U(e,t,a=9){let n=Math.abs(e-t);return Math.min(n,a-n)}function q(e,t,a){return U(e.players[t].champion.position,e.players[a].champion.position,9)}function R(e,t){if(t===0)return 0;return Math.max(0,Math.min(t-1,e))}function Oe(e,t,a,n){let i=e.players[t].champion,s=e.players[t],l=0,u=0;for(let o of i.passives){if(o.flags.includes("aimDmg")){let c=s.decisions.orChoice(s,["ACC","PER"],"AIM damage",e);l+=f(e,t,c===0?"ACC":"PER")}if(o.flags.includes("sniperMark")&&n)l+=f(e,t,"ACC");if(o.flags.includes("rangedDmgMod")&&n){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b18",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"CUN")}if(o.flags.includes("meleeDmgMod")&&a){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b19",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"ACC")}if(o.flags.includes("traitDmgPlus1"))u+=1;if(o.flags.includes("traitDmgPlus2"))u+=2;if(o.flags.includes("traitDmgPlus3"))u+=3}return{vitBonus:l,traitBonus:u}}function z(e,t,a){return{attacker:e,defender:t,vitalityDamage:0,traitDamage:[],kinds:[],isMelee:!1,isRanged:!1,isSpell:!1,weaponId:null,onHitCardIds:[],necroticCounters:0,forceDiscard:0,psychicMill:0,defConZero:!1,noCon:!1,fromActionCard:!1,isPhysical:!0,label:a}}function ie(e,t,a,n){let i=e.players[t],s=f(e,t,"STR"),l=f(e,t,"DEX");if(s<=0&&l<=0)return p(e,`P${t} cannot attack unarmed (STR and DEX are 0)`),rj(e,"STR and DEX are both 0 — this champion is too weak to attack."),null;let u=i.decisions.unarmedStat(i,e);if(u==="STR"&&s<=0)u="DEX";if(u==="DEX"&&l<=0)u="STR";let o=q(e,t,a);if(!n&&o>1)return rj(e,`Unarmed melee attacks must be adjacent — the foe is ${o} spaces away.`),null;let c=z(t,a,`unarmed (${u})`);c.vitalityDamage=2+f(e,t,u),c.kinds.push("vitality"),c.isMelee=!n,c.isRanged=n;let d=Oe(e,t,c.isMelee,c.isRanged);if(c.vitalityDamage+=d.vitBonus,!xe(e,t,c))return null;return c}function xe(e,t,a){let n=e.players[t],i=n.champion;if(a.isMelee&&P(e,t,"race/race-01")){if(a.vitalityDamage+=1,!a.kinds.includes("fire"))a.kinds.push("fire");a.forceDiscard+=1,p(e,`P${t} ASHENBORN: +1 fire damage`)}if(P(e,t,"race/race-23")){let s=Math.min(10,Math.max(0,i.traits.VIT)),l=Math.max(0,Math.min(s,n.decisions.chooseAmount(n,s,"INFESTED",e)));if(l>0){if(i.traits.VIT-=l,i.traits.VIT<=0)return e.phase="done",e.drawReason="INFESTED self-conversion to 0 VIT",p(e,`P${t} INFESTED: VIT reduced to 0 — DRAW, attack does not resolve`),!1;a.vitalityDamage+=l,p(e,`P${t} INFESTED: -${l} VIT, +${l} damage`)}}if(P(e,t,"race/race-38")){if(a.necroticCounters+=1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} VAMPIRE: +1 necrotic counter`)}if(C(e,t,"accessories/a14")){if(a.necroticCounters+=1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} accessory: +1 necrotic counter`)}return!0}function nt(e,t,a){if(!a.isSpell)return;let n=e.players[t];if(C(e,t,"body/body-b02")||C(e,t,"body/body-b10")){if(a.necroticCounters+=2,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} body: +2 necrotic (spell attack)`)}if(C(e,t,"body/body-b08")||C(e,t,"body/body-b15")){let i=n.decisions.chooseElement(n,[...Te],"body elemental rider",e);if(a.vitalityDamage+=2,!a.kinds.includes(i))a.kinds.push(i);p(e,`P${t} body: +2 ${i} (spell attack)`)}if(C(e,t,"body/body-b20")){if(a.traitDamage.push({trait:"CON",amount:1},{trait:"RES",amount:1}),!a.kinds.includes("radiant"))a.kinds.push("radiant");p(e,`P${t} body: target CON-1 RES-1 (radiant spell attack)`)}}function it(e,t,a,n,i){let s=e.players[t],l=s.champion,u=e.players[a],o=Be();for(let d of i){let r=_(l).find((y)=>y.uid===d);if(!r)continue;if(Fe(r.data.id,o))n.onHitCardIds.push(r.data.id);else p(e,`weapon trait ${r.data.id} UNIMPLEMENTED, skipped`)}let c=0;if(o.flags.includes("bleed")&&u.champion.traits.TP>0)o.vitalityBonus+=5,p(e,"BLEED +5 (opponent has TP)");if(o.flags.includes("heavyHitter")&&s.decisions.heavyHitter(s,e))o.vitalityBonus+=10,c+=1,p(e,`P${t} HEAVY HITTER +10 (extra action)`);n.vitalityDamage+=o.vitalityBonus;for(let d of o.traitDamageOr){let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r],m;if(d.fixed!==void 0)m=d.fixed;else{let v=R(s.decisions.orChoice(s,d.atk,"trait damage amount",e),d.atk.length);m=f(e,t,d.atk[v])}n.traitDamage.push({trait:y,amount:m})}for(let d of o.traitDamageFlat)n.traitDamage.push({...d});if(o.kinds.length)p(e,`P${t} weapon trait kinds: ${[...new Set(o.kinds)].join(", ")}`);return n.kinds.push(...o.kinds),n.necroticCounters+=o.necroticCounters,n.forceDiscard+=o.defenderDiscard,n.psychicMill+=o.psychicMill,c}function rj(e,r){e.lastReject={reason:r,seq:(e.rejectSeq=(e.rejectSeq||0)+1)}}function st(e,t,a,n,i,igR=!1){let s=e.players[t],l=s.champion,u=K(l).find((T)=>T.uid===n)??j(l).find((T)=>T.uid===n)??null;if(!u)return rj(e,"That weapon is no longer equipped."),null;let o=X(u.data.id);if(!o)return p(e,`P${t} weapon ${u.data.id} has no encoded profile`),rj(e,`${E(u)} cannot be used to attack — it has no attack profile.`),null;let c=q(e,t,a);if(!igR&&(c>o.reach||c<1))return rj(e,c<1?`${E(u)} cannot hit a foe standing on your own space.`:`${E(u)} reaches ${o.reach} space${o.reach===1?"":"s"} — the foe is ${c} spaces away. Move closer first.`),null;if(igR&&c<1)return rj(e,`${E(u)} cannot hit a foe standing on your own space.`),null;if(f(e,t,"STR")<=0&&f(e,t,"DEX")<=0)return p(e,`P${t} cannot make weapon attack (STR and DEX are 0)`),rj(e,"STR and DEX are both 0 — this champion is too weak to attack with a weapon."),null;let d=z(t,a,`${E(u)}`);d.weaponId=u.data.id,d.isSpell=o.isSpell,d.isPhysical=!o.isSpell,d.isMelee=o.reach<=1,d.isRanged=o.reach>1;let r=o.options.map((T)=>T.join("+")),y=R(s.decisions.orChoice(s,r,"weapon damage:"+u.uid,e),r.length),m=o.options[y];if(d.vitalityDamage=o.base+m.reduce((T,G)=>T+f(e,t,G),0),d.kinds.push("vitality"),m.includes("INS"))d.insUsed=!0;if(m.includes("ARC"))d.arcUsed=!0;let v=it(e,t,a,d,i);if(u.data.id==="weapon/weapon-02"){let T=s.decisions.blunderbussDiscard(s,e);if(T!==null&&T>=0&&T<s.hand.length){let[G]=s.hand.splice(T,1);s.discard.push(G),d.vitalityDamage+=f(e,t,"STR"),p(e,`P${t} BLUNDERBUSS discards ${E(G)}: +${f(e,t,"STR")} damage`)}}if(w(l,"lightAura")&&d.kinds.includes("radiant")){for(let T of d.traitDamage)T.amount+=2;p(e,"LIGHT: radiant +2")}if(w(l,"elemDmg2")&&d.kinds.some((T)=>T==="fire"||T==="cold"||T==="lightning"||T==="poison")){for(let T of d.traitDamage)T.amount+=2;p(e,"SUMMON ELEMENTAL: elemental +2")}if(w(l,"spiderPoison")){let T=R(s.decisions.orChoice(s,["DEX","STR"],"spider poison",e),2);d.traitDamage.push({trait:T===0?"DEX":"STR",amount:2}),d.kinds.push("poison")}let k=Oe(e,t,d.isMelee,d.isRanged);if(d.vitalityDamage+=k.vitBonus,k.traitBonus>0)for(let T of d.traitDamage)T.amount+=k.traitBonus;if(d.isMelee&&!u.data.id.startsWith("natural/")&&P(e,t,"race/race-15"))d.vitalityDamage+=5,p(e,`P${t} FORGEBORN: +5 melee weapon damage`);if(!xe(e,t,d))return null;nt(e,t,d);for(let T of l.passives){if(T.flags.includes("blindOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-01");if(T.flags.includes("radiantStrikeOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-09");if(T.flags.includes("larvaHeal"))d.onHitCardIds.push("summoning-actions/summoning-07")}for(let T of[l.equipment.gloves]){if(T&&T.data.id==="gloves/gloves-05")d.onHitCardIds.push(T.data.id);if(T&&T.data.id==="gloves/gloves-11")d.onHitCardIds.push(T.data.id)}for(let T of l.copiedPassives??[])if((T==="gloves/gloves-05"||T==="gloves/gloves-11")&&!d.onHitCardIds.includes(T))d.onHitCardIds.push(T);return{ev:d,extraActions:v}}function tt(e){let t=e.data.actionType??"";return t==="Physical Action"||t==="Ranged Action"}function ge(e){return/-actions?$/.test(e.data.deck)}function re(e,t,a,n=0){let i=e.players[t],s=i.hand.find((r)=>r.uid===a);if(!s)return!1;if(cfRequiresRangedWeapon(s.data.id)&&!cfHasRangedWeapon(i.champion))return rj(e,"Needs a ranged weapon"),p(e,`P${t} ${E(s)} cannot be played — needs a ranged weapon`),!1;let l=s.data.id,u=1-t,o=e.players[u];if(e.roundCount===0&&cfAffectsOpponent(l))return cfR1Reject(e),p(e,`P${t} ${E(s)} barred in Round 1 (no contact)`),!1;if(e.cardExtraActions=0,n<2&&s.data.actionType!=="Physical Action"){let r=Gt(o,"mystical-actions/mystical-actions-03");if(r&&o.decisions.wantCounterspell(o,e)){let y=o.decisions.counterSpell(o,e),m=y?o.hand.find((v)=>v.data.id===y&&ge(v)&&v.data.actionType!=="Physical Action"):void 0;if(m)ve(o,r.uid),o.discard.push(r),p(e,`P${u} COUNTERSPELL chains ${E(m)}`),re(e,u,m.uid,n+1)}}let c=(r=!1)=>{if(ve(i,a),s.data.deck==="summoning-actions"&&C(e,t,"body/body-b21"))M(e,t,"body/body-b21","CON",2,"body (summoning played)");if(ge(s)&&!tt(s)&&C(e,t,"head/head-06"))M(e,t,"head/head-06","SPI",1,"head (non-physical action played)");if(i.champion.runecarvedUid!=null&&s.uid===i.champion.runecarvedUid)i.deck.unshift(s),p(e,`P${t} RUNECARVED: ${E(s)} returns to the top of the deck`);else if(s.data.deck==="summoning-actions"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&i.champion.passives.some((ps)=>ps.cardId===l)){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field (passive)`)}else qt(e,t,s,r);return p(e,`P${t} plays ${E(s)}`),!0};switch(l){case"physical-actions/01":return g(e,t,l,"AIM",{},["aimDmg"]),c();case"physical-actions/02":{let r=f(e,t,"STR")+f(e,t,"CON");return ae(e,t,"RES",r,2,"BLOCK"),ae(e,t,"CON",r,2,"BLOCK"),c(!0)}case"physical-actions/05":{let y=q(e,t,u)>1||N(e,t,["Melee","Ranged"],"CRITICAL HIT")===1,m=Z(e,t,u,y),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;let k=N(e,t,[...de],"CRITICAL HIT trait"),T=f(e,t,de[k]);return v.vitalityDamage+=T,v.label="CRITICAL HIT",v.fromActionCard=!0,p(e,`P${t} CRITICAL HIT: +${T} damage (${de[k]})`),O(e,v),c()}case"physical-actions/06":return ae(e,t,"SPE",f(e,t,"SPE"),3,"DASH"),c();case"physical-actions/07":{if(!o.champion.equipment.flex.some((v)=>v!==null&&le(v)))return!1;let y=q(e,t,u)>1,m=Z(e,t,u),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;return v.label="DISARM",v.fromActionCard=!0,v.onHitCardIds.push("__disarm"),O(e,v),c()}case"physical-actions/08":{let r=2*f(e,t,"DEX");return ae(e,t,"RES",r,2,"DODGE"),ae(e,t,"CON",r,2,"DODGE"),c()}case"physical-actions/09":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=i.decisions.chooseTrait(i,r,"FOCUS",e);return g(e,t,l,`FOCUS (${y})`,{[y]:f(e,t,"SPI")}),c()}case"physical-actions/10":return i.champion.guardShield=f(e,t,"RES")+2*f(e,t,"STR"),p(e,`P${t} GUARD shield ${i.champion.guardShield}`),c();case"physical-actions/11":return H(e,t,f(e,t,"CON"),"HEALING POTION"),H(e,t,f(e,t,"CON"),"HEALING POTION"),c();case"physical-actions/12":{if(q(e,t,u)>1)return rj(e,"PUSH needs you adjacent to the foe."),!1;let r=o.champion.position<i.champion.position?-3:3,d=Math.max(0,Math.min(8,o.champion.position+r));if(d===i.champion.position)d=i.champion.position-(r>0?1:-1);return o.champion.position=d,p(e,`P${t} PUSH: foe to ${o.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),c()}case"physical-actions/13":{if(q(e,t,u)>1)return rj(e,"RESTRAIN needs you adjacent to the foe."),!1;return o.champion.flags.cannotMoveUntilTurn=e.turnCount+(e.cfTurnPlayer===t?2:1),p(e,`P${t} RESTRAIN: P${u} cannot move until P${t}'s next turn`),c()}case"physical-actions/14":return p(e,`P${t} RIPOSTE can only trigger as a reaction`),!1;case"physical-actions/15":{let r=o.champion.position<i.champion.position?1:-1,d=Math.max(0,Math.min(8,o.champion.position+r*3));if(d===i.champion.position)d=i.champion.position-r;return o.champion.position=d,p(e,`P${t} STEALTH: foe to ${o.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),c()}case"physical-actions/16":{let r=i.hand.filter((k)=>k.uid!==a&&ge(k));if(r.length===0)return p(e,`P${t} TRAP: no action card in hand to tuck`),!1;let y=i.decisions.chooseCardIndexes(i,r,1,"TRAP",e),m=R(y[0]??0,r.length),v=r[m];return i.hand=i.hand.filter((k)=>k.uid!==v.uid),i.champion.trap=v,p(e,`P${t} TRAP set with ${E(v)} facedown`),g(e,t,l,"TRAP",{},["trap"]),c()}case"ranged-actions/ranged-actions-01":{let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.defConZero=!0,r.ev.label="DIRTY TACTICS",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-03":{if(!o.champion.equipment.flex.some((v)=>v!==null&&le(v)))return!1;let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.label="DISABLE",r.ev.fromActionCard=!0,r.ev.onHitCardIds.push("__disable"),O(e,r.ev),c(!0)}case"ranged-actions/ranged-actions-05":{let r=R(i.decisions.orChoice(i,["SPE","DEX"],"NET target",e),2),y=R(i.decisions.orChoice(i,["ACC","DEX"],"NET amount",e),2),m=z(t,u,"NET");return m.fromActionCard=!0,m.isRanged=!0,m.traitDamage.push({trait:r===0?"SPE":"DEX",amount:f(e,t,y===0?"ACC":"DEX")}),O(e,m),c()}case"ranged-actions/ranged-actions-07":return g(e,t,l,"SNIPER'S MARK",{},["sniperMark"]),c();case"ranged-actions/ranged-actions-09":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["STR","DEX","CON","RES"],"TRICK SHOT",e),4),m=["STR","DEX","CON","RES"];return r.ev.traitDamage.push({trait:m[y],amount:f(e,t,"ACC")}),r.ev.label="TRICK SHOT",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-11":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["DEX+SPE","STR+SPE"],"VOLLEY",e),2);return r.ev.vitalityDamage+=y===0?f(e,t,"DEX")+f(e,t,"SPE"):f(e,t,"STR")+f(e,t,"SPE"),r.ev.label="VOLLEY",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"divine-actions/divine-actions-01":return g(e,t,l,"BLIND",{},["blindOnHit"]),c();case"divine-actions/divine-actions-02":{let r=o.champion.passives,y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];if(m)o.champion.passives=o.champion.passives.filter((v)=>v!==m),ne(e,u,m.cardId),p(e,`P${t} CURE discards foe passive ${m.label}`);return i.champion.necrotic=0,p(e,`P${t} CURE clears necrotic`),c()}case"divine-actions/divine-actions-03":{let r=dispelCands(e,t);if(r.length===0)return!1;let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];return resolveDispel(e,m),p(e,`P${t} DISPEL MAGIC nullifies ${m.label} — the card stays on the field, its passive is off`),c()}case"divine-actions/divine-actions-04":{if(o.hand.length===0)return c();let r=i.decisions.chooseCardIndexes(i,o.hand,1,"DIVINATION",e),y=R(r[0]??0,o.hand.length),[m]=o.hand.splice(y,1);return o.discard.push(m),p(e,`P${t} DIVINATION discards foe's ${E(m)}`),c()}case"divine-actions/divine-actions-05":{let r=f(e,t,"SPI"),fc=R(i.decisions.orChoice(i,["RES","CON"],"FORCEFIELD",e),2);return g(e,t,l,"FORCEFIELD",{[fc===0?"RES":"CON"]:r}),c()}case"divine-actions/divine-actions-06":{let r=R(i.decisions.orChoice(i,["SPE","CUN"],"HASTE",e),2);return ae(e,t,r===0?"SPE":"CUN",f(e,t,"SPI"),2,"HASTE"),c(!0)}case"divine-actions/divine-actions-07":return H(e,t,f(e,t,"SPI"),"HEAL"),H(e,t,f(e,t,"SPI"),"HEAL"),i.champion.necrotic=0,p(e,`P${t} HEAL clears necrotic`),c();case"divine-actions/divine-actions-08":return g(e,t,l,"LIGHT",{PER:3},["lightAura"]),c();case"divine-actions/divine-actions-09":return g(e,t,l,"RADIANT STRIKE",{},["radiantStrikeOnHit"]),c();case"divine-actions/divine-actions-10":return i.champion.necrotic=0,g(e,t,l,"REGENERATION",{},["regenSpi"]),c();case"divine-actions/divine-actions-11":return g(e,t,l,"RES ELEM",{},["resistElemental"]),c(!0);case"divine-actions/divine-actions-12":return g(e,t,l,"RES MYST",{},["resistMystical"]),c(!0);case"divine-actions/divine-actions-13":return g(e,t,l,"RES PHYS",{},["resistPhysical"]),c(!0);default:break}let d=Ut(e,t,a,s,c);if(d!==null)return d;return p(e,`P${t} ${E(s)} has no encoded play handler`),!1}function Z(e,t,a,n=!1,igR=!1){let i=e.players[t],s=q(e,t,a),l=_(i.champion).map((d)=>d.uid),u=null,o=-1;for(let d of[...K(i.champion),...j(i.champion)]){let r=X(d.data.id);if(!r)continue;if(!igR&&(s<1||s>r.reach))continue;if(igR&&s<1)continue;if(r.base>o)u=d,o=r.base}if(u){let d=st(e,t,a,u.uid,l,igR);if(d){if(n)d.ev.isRanged=!0;return d}if(e.phase==="done")return null}let c=ie(e,t,a,n||s>1);return c?{ev:c,extraActions:0}:null}function N(e,t,a,n){let i=e.players[t];return R(i.decisions.orChoice(i,a,n,e),a.length)}function Ut(e,t,a,n,i){let s=e.players[t],l=1-t,u=e.players[l],o=n.data.id,c=(r)=>{s.champion.traits.TP+=r,p(e,`P${t} +${r} TP (${E(n)})`)},d=(r,y,m)=>{g(e,t,o,r,y,[...m,"summonForm"])};switch(o){case"summoning-actions/summoning-01":return c(5+f(e,t,N(e,t,["INS","SPI"],"EAGLE")===0?"INS":"SPI")),d("EAGLE FORM",{DEX:2},[]),i();case"summoning-actions/summoning-02":return c(15+f(e,t,N(e,t,["INS","SPI"],"LIZARD")===0?"INS":"SPI")),d("LIZARD FORM",{PER:2,RES:2},[]),i();case"summoning-actions/summoning-03":{let r=N(e,t,["CON+INS","CON+SPI"],"MONSTER");return c(25+f(e,t,"CON")+f(e,t,r===0?"INS":"SPI")),d("MONSTER FORM",{RES:2,STR:2},[]),i()}case"summoning-actions/summoning-04":{c(5+f(e,t,N(e,t,["CON","SPI"],"DEVIL")===0?"CON":"SPI"));let r=s.decisions.chooseTrait(s,[...L],"SUMMON DEVIL",e);return Se(e,t,10,{skipTP:!0}),d("SUMMON DEVIL",{[r]:5},[]),i()}case"summoning-actions/summoning-05":return c(5+f(e,t,N(e,t,["INS","SPI"],"DRYAD")===0?"INS":"SPI")),d("SUMMON DRYAD",{},["dryadSpi"]),i();case"summoning-actions/summoning-06":return c(5+f(e,t,"ARC")),d("SUMMON ELEMENTAL",{},["elemDmg2"]),i();case"summoning-actions/summoning-07":return c(5+f(e,t,N(e,t,["CON","SPI"],"LARVA")===0?"CON":"SPI")),d("SUMMON GIANT LARVA",{},["larvaHeal"]),i();case"summoning-actions/summoning-08":return c(5+f(e,t,N(e,t,["CON","INS"],"TOAD")===0?"CON":"INS")),d("SUMMON GIANT TOAD",{},["toadAttack"]),i();case"summoning-actions/summoning-09":return c(5+f(e,t,"ARC")),d("SUMMON IMP",{},["impAttack"]),i();case"summoning-actions/summoning-10":return c(5+f(e,t,N(e,t,["INS","SPI"],"RAVEN")===0?"INS":"SPI")),d("SUMMON RAVEN",{PER:2},[]),i();case"summoning-actions/summoning-11":return c(10+f(e,t,N(e,t,["INS","SPI"],"SPIDER")===0?"INS":"SPI")),d("SUMMON SPIDER",{},["spiderPoison"]),i();case"summoning-actions/summoning-13":return c(5+2*f(e,t,"CON")),d("SUMMON WRAITH",{},["wraithTP"]),i();case"summoning-actions/summoning-14":return c(5+f(e,t,N(e,t,["INS","SPI"],"WOLF")===0?"INS":"SPI")),d("WOLF FORM",{SPE:3,CUN:1},[]),i();case"summoning-actions/summoning-12":return c(5+f(e,t,N(e,t,["CON","SPI"],"SPORE")===0?"CON":"SPI")),we(e,t),i();case"summoning-actions/summoning-15":return c(5+f(e,t,"CON")),g(e,t,o,"ASTRAL HOUND",{PER:2},["astralHound"]),i();case"psionic-action/psionic-action-01":return s.champion.traits.INT+=1,s.champion.traits.ARC+=1,p(e,`P${t} AGE: INT+1 ARC+1`),i();case"psionic-action/psionic-action-02":return s.champion.traits.PER+=2,p(e,`P${t} CLEAR MIND: PER+2`),i();case"psionic-action/psionic-action-13":{let r=N(e,t,["RES","CON"],"PSYCHIC BARRIER"),y=N(e,t,["ARC","INT"],"PSYCHIC BARRIER amount"),m=f(e,t,y===0?"ARC":"INT");return s.champion.traits[r===0?"RES":"CON"]+=m,p(e,`P${t} PSYCHIC BARRIER: ${r===0?"RES":"CON"} +${m}`),i()}case"psionic-action/psionic-action-03":case"psionic-action/psionic-action-11":{let r=o.endsWith("-03")?s:u,y=r.discard.filter(ge);if(y.length===0)return i();let m=s.decisions.chooseCardIndexes(s,y,1,"MENTAL ECHO",e),v=R(m[0]??0,y.length),k=y[v];r.discard=r.discard.filter((T)=>T.uid!==k.uid),p(e,`P${t} reuses ${E(k)} from ${o.endsWith("-03")?"own":"foe's"} discard`),s.hand.push(k),re(e,t,k.uid);for(let T of[s.hand,s.discard,s.removed]){let G=T.findIndex((V)=>V.uid===k.uid);if(G>=0)T.splice(G,1)}return s.removed.push(k),i()}case"psionic-action/psionic-action-04":return g(e,t,o,"MIND WARD",{},["wardStats"]),i();case"psionic-action/psionic-action-05":return s.deck=W(e.rng,[...s.deck,...s.removed]),s.removed=[],p(e,`P${t} NEVER FORGOTTEN: removed cards shuffled into deck`),i();case"psionic-action/psionic-action-06":return he(e,t,2),p(e,`P${t} PREPARE: draws 2`),i();case"psionic-action/psionic-action-07":return p(e,`P${t} PSYCHIC MIRAGE can only trigger as a reaction`),!1;case"psionic-action/psionic-action-08":return s.deck=[...s.discard.reverse(),...s.deck],s.discard=[],he(e,t,2),p(e,`P${t} SLOW TIME: discard to top, draws 2`),i();case"psionic-action/psionic-action-09":{let r=LT.reduce((m,v)=>m+Math.max(0,f(e,t,v)),0),y=Math.max(0,Math.min(r,s.decisions.chooseAmount(s,r,"STRAIN",e)));if(y>0){let m=s.decisions.chooseTrait(s,[...LT],`STRAIN — take ${y} damage on which of YOUR traits?`,e);x(e,t,m,y,!1);let v=["STR","DEX","CON","RES"],k=N(e,t,[...v],`STRAIN — reduce which OPPONENT trait by ${y}?`),T=z(t,l,"STRAIN");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:y}),O(e,T)}else p(e,`P${t} STRAIN: X=0, no effect`);return i()}case"psionic-action/psionic-action-10":{let r=Z(e,t,l,!0,!0);if(!r)return!1;return r.ev.isRanged=!0,r.ev.isMelee=!1,r.ev.psychicMill+=1,r.ev.kinds.push("psychic"),r.ev.label="TELEKINESIS",r.ev.fromActionCard=!0,O(e,r.ev),i()}case"psionic-action/psionic-action-12":{let r=LT.reduce((m,v)=>m+Math.max(0,f(e,t,v)),0),y=Math.max(0,Math.min(r,s.decisions.chooseAmount(s,r,"TRANCE",e)));if(y>0){let m=s.decisions.chooseTrait(s,[...LT],`TRANCE — take ${y} damage on which of YOUR traits?`,e);x(e,t,m,y,!1);let v=["INT","SPI","CUN","ACC","INS"],k=N(e,t,[...v],`TRANCE — reduce which OPPONENT trait by ${y}?`),T=z(t,l,"TRANCE");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:y}),O(e,T)}else p(e,`P${t} TRANCE: X=0, no effect`);return i()}case"mystical-actions/mystical-actions-01":return s.champion.traits.RES+=2,s.champion.traits.CON+=2,p(e,`P${t} BLUR: RES+2 CON+2`),i();case"mystical-actions/mystical-actions-02":return g(e,t,o,"CLOUD",{},["cloudDebuff"]),g(e,l,o,"CLOUD",{},["cloudDebuff"]),i();case"mystical-actions/mystical-actions-03":return p(e,`P${t} COUNTERSPELL can only trigger as a reaction`),!1;case"mystical-actions/mystical-actions-04":{let r=N(e,t,["elemental","melee","ranged","necrotic","radiant","psychic"],"DAMAGE WARD"),y=["elemental","melee","ranged","necrotic","radiant","psychic"];return g(e,t,o,`DAMAGE WARD (${y[r]})`,{},[`damageWard:${y[r]}`]),i()}case"mystical-actions/mystical-actions-05":{let r=s.decisions.placeChampion(s,[u.champion.position],e);if(r>=0&&r<=8&&r!==u.champion.position)s.champion.position=r,p(e,`P${t} FLIGHT to ${r}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t);return i()}case"mystical-actions/mystical-actions-06":return s.champion.traits.INT+=1,p(e,`P${t} MENTAL MAP: INT+1`),i();case"mystical-actions/mystical-actions-07":{s.champion.traits.TP+=20;let r=N(e,t,["RES","CON"],"MIST FORM");return g(e,t,o,"MIST FORM",{[r===0?"RES":"CON"]:f(e,t,"ARC")}),i()}case"mystical-actions/mystical-actions-08":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=s.decisions.chooseTrait(s,[...r],"POLYMORPH — move points FROM which trait?",e),m=s.decisions.chooseTrait(s,[...r].filter((T)=>T!==y),"POLYMORPH — move points TO which trait?",e),v=f(e,t,N(e,t,["ARC","INT"],"POLYMORPH — move up to: ARC or INT?")===0?"ARC":"INT"),k=Math.min(v,f(e,t,y));if(k<=0)return!1;return x(e,t,y,k,!1),s.champion.traits[m]+=k,p(e,`P${t} POLYMORPH: ${k} ${y} -> ${m}`),i()}case"mystical-actions/mystical-actions-09":{let r=f(e,t,"ARC"),y=u.champion.position<s.champion.position?-1:1,d=Math.max(0,Math.min(8,u.champion.position+y*r));if(d===s.champion.position)d=s.champion.position-y;return u.champion.position=d,p(e,`P${t} PUSH AND PULL: foe to ${u.champion.position}`),cfTrapTrigger(e,t),cfTrapTrigger(e,1-t),i()}case"mystical-actions/mystical-actions-10":{if(s.deck.length===0)return i();let r=s.decisions.chooseCardIndexes(s,s.deck,1,"SCRY",e),y=R(r[0]??0,s.deck.length),[m]=s.deck.splice(y,1);return s.hand.push(m),p(e,`P${t} SCRY finds ${E(m)}`),i()}case"mystical-actions/mystical-actions-11":{let r=N(e,t,["ARC+PER","INS+PER"],"SPELL ATTACK"),y=z(t,l,"SPELL ATTACK");if(y.isRanged=!0,y.isSpell=!0,y.isPhysical=!1,y.fromActionCard=!0,y.kinds.push("vitality"),r===0)y.arcUsed=!0;else y.insUsed=!0;if(y.vitalityDamage=r===0?f(e,t,"ARC")+f(e,t,"PER"):f(e,t,"INS")+f(e,t,"PER"),K(s.champion).some((v)=>v.data.id==="weapon/weapon-10")){let v=_(s.champion).map((T)=>T.uid),k=it(e,t,l,y,v);if(k>0)e.cardExtraActions=(e.cardExtraActions??0)+k;p(e,`P${t} MAGIC STAFF channels weapon traits into SPELL ATTACK`)}let m=Oe(e,t,!1,!0);if(y.vitalityDamage+=m.vitBonus,!xe(e,t,y))return i();return nt(e,t,y),O(e,y),i()}case"mystical-actions/mystical-actions-14":{let r=N(e,t,["STR","INS"],"STONE FORM"),y=f(e,t,"INT");return x(e,t,"INT",y,!1),g(e,t,o,"STONE FORM",{RES:5,[r===0?"STR":"INS"]:y}),i()}case"mystical-actions/mystical-actions-15":{let r=f(e,t,N(e,t,["ARC","SPI"],"STUDY")===0?"ARC":"SPI");return s.champion.traits.INT+=r,p(e,`P${t} STUDY: INT +${r}`),i()}default:return null}}/* TRAP lifecycle (Norman, 2026-10-19, supersedes the same-night
+   "stays on the field per print" choice): TRAP is one-shot. When it
+   activates and the tucked card has resolved and been discarded,
+   TRAP itself leaves the field for its owner's discard (via the
+   engine's purgeCard, which also purges its passive stacks) and
+   cannot fire again. An unfired TRAP stays in play; a Dispel-
+   nullified TRAP still never reaches this code (the dispelledUids
+   check above returns first) and stays on the field, inert. */
+function cfTrapTrigger(e,T){let s=e.players[T].champion,f=e.players[1-T].champion,o=e.players[T];if(!s.trap)return;let ipc=(o.inPlay??[]).find((r)=>r.data.id==="physical-actions/16");if(ipc&&(s.dispelledUids??[]).includes(ipc.uid))return;if(U(s.position,f.position,9)>1)return;let u=s.trap;s.trap=null;o.hand.push(u),p(e,`P${T} TRAP triggers: ${E(u)} activates`),re(e,T,u.uid);for(let c of[o.hand,o.discard,o.removed]){let d=c.findIndex((r)=>r.uid===u.uid);if(d>=0)c.splice(d,1)}o.discard.push(u),p(e,`P${T} TRAP: ${E(u)} discarded after firing`);if(ipc)ne(e,T,"physical-actions/16"),p(e,`P${T} TRAP itself is discarded after activating — it does not stay on the field`)}function Vt(e,t,a){let i=e.players[t].champion,s=e.players[1-t].champion;if(a<0||a>8||a===s.position)return rj(e,"That space is taken — choose an empty space."),!1;if((i.encrusted||0)>0)return p(e,`P${t} cannot move (ENCRUSTED)`),rj(e,"Encrusted — cold froze this champion's SPE to 0: no movement for 2 turns."),!1;if(i.flags.cannotMoveUntilTurn!==void 0&&e.turnCount<i.flags.cannotMoveUntilTurn)return p(e,`P${t} cannot move (restrained)`),rj(e,"Restrained — this champion cannot move yet."),!1;if(P(e,1-t,"race/race-39")&&U(i.position,s.position,9)<=1)return p(e,`P${t} cannot move (WRAITHVINE adjacent)`),rj(e,"WRAITHVINE is adjacent — this champion cannot move."),!1;if(i.grabbedBy!==null&&i.grabbedBy!==t){let u=e.players[i.grabbedBy].champion;if(C(e,i.grabbedBy,"gloves/gloves-10")&&U(i.position,u.position,9)<=1)return p(e,`P${t} cannot move (grabbed)`),rj(e,"Grabbed — this champion cannot move while the grabber stays adjacent."),!1}let l=P(e,t,"race/race-14")?8:f(e,t,"SPE")<=0?1:2+f(e,t,"SPE");if(U(a,i.position,9)>l)return rj(e,`That space is ${U(a,i.position,9)} spaces away — this champion can move up to ${l}.`),!1;return i.position=a,p(e,`P${t} moves to ${a}`),cfTrapTrigger(e,1-t),cfTrapTrigger(e,t),!0}function at(e,t,a){if(a===t)return!1;if(q(e,t,a)>1)return!1;if(!C(e,t,"gloves/gloves-10"))return!1;let n=e.players[t];if(R(n.decisions.orChoice(n,["Damage","Grab"],"gloves-10 grab",e),2)!==1)return!1;return e.players[a].champion.grabbedBy=t,n.champion.attackedThisTurn=!0,n.champion.attacksThisTurn+=1,p(e,`P${t} grabs P${a} (no damage; cannot move while adjacent)`),!0}function ot(e){e.phase="combat",p(e,"--- Phase 5: Combat setup ---");for(let l=0;l<2;l++){let u=e.players[l];u.deck=W(e.rng,u.deck)}Ft(e);let speT0=f(e,0,"SPE"),speT1=f(e,1,"SPE"),tieW=-1;if(speT0===speT1){let rolls=[];while(tieW<0){let r0=e.rng.d6(),r1=e.rng.d6();rolls.push([r0,r1]);if(r0>r1)tieW=0;else if(r1>r0)tieW=1}e.speTieBreak={spe:speT0,rolls:rolls,winner:tieW},p(e,`SPE tie at ${speT0}: `+rolls.map((r)=>`d6 P0=${r[0]} P1=${r[1]}`).join("; ")+` - P${tieW} places first and goes first`)}let t=tieW>=0?[tieW,1-tieW]:[0,1].sort((l,u)=>f(e,l,"SPE")-f(e,u,"SPE")),a=[];for(let l of t){let u=e.players[l],o=u.decisions.placeChampion(u,a,e);if(o<0||o>8||a.includes(o))o=[0,1,2,3,4,5,6,7,8].find((c)=>!a.includes(c))??0;u.champion.position=o,a.push(o),p(e,`P${l} placed at ${o} (SPE ${f(e,l,"SPE")})`)}let n=f(e,0,"SPE")+f(e,0,"PER"),i=f(e,1,"SPE")+f(e,1,"PER"),s=0;if(tieW>=0){s=tieW,e.turnPlayer=s,p(e,`P${s} goes first (SPE tie-break d6)`)}else{if(i>n)s=1;else if(i===n){let l=e.rng.d6(),u=e.rng.d6(),gd=0;while(l===u&&gd++<10){l=e.rng.d6(),u=e.rng.d6()}s=u>l?1:0,p(e,`turn-order tie: d6 P0=${l} P1=${u}`)}e.turnPlayer=s,p(e,`P${s} goes first (SPE+PER ${s===0?n:i})`)}for(let l=0;l<2;l++)he(e,l,3+f(e,l,"INT")),p(e,`P${l} starting hand: ${Wt(e,l)} cards`)}function Wt(e,t){return e.players[t].hand.length}function Xt(e,t){let a=e.players[t].champion,n=a.equipment,i=[n.head,n.body,n.gloves,n.boots,n.accessories,...n.flex].filter((s)=>s!==null&&!(a.dispelledUids??[]).includes(s.uid)).map((s)=>s.data.id).concat(a.copiedPassives??[]);if(i.includes("body/body-b01"))a.traits.TP+=5,p(e,`P${t} body armor: +5 TP`);if(i.includes("body/body-b13"))H(e,t,5,"body armor")}function Bt(e,t){let a=e.players[t],n=a.champion;if(!n.flags.fungal||n.flags.fungalUsed)return;let i=e.players[1-t],s=a.decisions.fungalChoice(a,i,e);if(!s){p(e,`P${t} FUNGAL: saved for a later turn`);return}let l=ke(i.champion).find((u)=>u.uid===s);if(!l){p(e,`P${t} FUNGAL: invalid choice, saved for a later turn`);return}n.flags.fungalUsed=!0,n.copiedPassives.push(l.data.id),fe(n,l),p(e,`P${t} FUNGAL copies ${E(l)} — gains its passive for the rest of the game`)}function we(e,t){let a=e.players[t],n=a.champion,i=[];for(let o of ke(n)){let c=o.data.id,d={};for(let y of ce[c]??[])d[y.trait]=(d[y.trait]??0)+y.amount;let r=Q[c]??[];if(Object.keys(d).length===0&&r.length===0)continue;i.push({key:o.uid,name:E(o),statMods:d,flags:[...r]})}for(let o of n.passives){if(!o.flags.includes("summonForm"))continue;i.push({key:`summon:${o.label}`,name:o.label,statMods:{...o.statMods},flags:o.flags.filter((c)=>c!=="summonForm")})}let s=i.length>0?a.decisions.sporeChoice(a,i,e):null,l=i.find((o)=>o.key===s)??null,u=l?`SUMMON SPORE (copying ${l.name})`:"SUMMON SPORE";if(g(e,t,"summoning-actions/summoning-12",u,l?{...l.statMods}:{},[...l?.flags??[],"summonForm"]),l)p(e,`P${t} SUMMON SPORE copies ${l.name}`);else p(e,`P${t} SUMMON SPORE: no active passive to copy`)}function Ft(e){for(let t=0;t<2;t++){let a=e.players[t];if(!a.champion.flags.runecarved||a.deck.length===0)continue;let n=a.decisions.runecarvedPick(a,[...a.deck],e),i=a.deck.find((s)=>s.uid===n)??a.deck[0];a.champion.runecarvedUid=i.uid,p(e,`P${t} RUNECARVED chooses ${E(i)} as Living Spell`)}}
 var R1Foe=new Set(["physical-actions/05","physical-actions/07","physical-actions/12","physical-actions/13","physical-actions/14","physical-actions/15","ranged-actions/ranged-actions-01","ranged-actions/ranged-actions-03","ranged-actions/ranged-actions-05","ranged-actions/ranged-actions-09","ranged-actions/ranged-actions-11","divine-actions/divine-actions-02","divine-actions/divine-actions-03","divine-actions/divine-actions-04","psionic-action/psionic-action-07","psionic-action/psionic-action-09","psionic-action/psionic-action-10","psionic-action/psionic-action-11","psionic-action/psionic-action-12","mystical-actions/mystical-actions-02","mystical-actions/mystical-actions-03","mystical-actions/mystical-actions-09","mystical-actions/mystical-actions-11"]);
 function cfAffectsOpponent(e){return R1Foe.has(e)}
 function cfR1Reject(e){return rj(e,"Round 1 \u2014 no contact: nothing may affect your opponent in Round 1 (no attacks, damage, trait damage, forced movement, discard, or debuffs). Your action was not used.")}
@@ -464,7 +472,7 @@ return module.exports;
 
 
 /* ===== bridge.js (hosted verbatim) ===== */
-const { NeedInput, cardSummary, createSession, newSessionGame, runStep, snapshotGame, instantiate } = (() => {
+const { NeedInput, cardSummary, createSession, newSessionGame, runStep, snapshotGame, instantiate, describe } = (() => {
 // bridge.js — DOM-free bridge between the engine's synchronous Decisions
 // hooks and an async UI. The engine's phase/turn functions run to completion
 // synchronously; any hook belonging to the human player throws NeedInput.
@@ -802,14 +810,14 @@ function describe(hook, player, args, ctx) {
     case 'spendRes': {
       const avail = Math.max(0, E.effT(game, pi, 'RES') - player.champion.spentRes);
       req.title = 'Spend Resistance?';
-      req.hint = `Incoming trait damage: ${args[0]}. Resistance replenishes each turn.`;
+      req.hint = `Incoming trait damage: ${args[0]}. You have ${avail} Resistance available (RES ${E.effT(game, pi, 'RES')}). Resistance replenishes each turn.`;
       req.max = Math.min(avail, args[0]);
       break;
     }
     case 'spendCon': {
       const avail = Math.max(0, E.effT(game, pi, 'CON') - player.champion.spentCon);
       req.title = 'Spend Constitution?';
-      req.hint = `Incoming vitality damage: ${args[0]}. Constitution replenishes each turn.`;
+      req.hint = `Incoming vitality damage: ${args[0]}. You have ${avail} Constitution available (CON ${E.effT(game, pi, 'CON')}). Constitution replenishes each turn.`;
       req.max = Math.min(avail, args[0]);
       break;
     }
@@ -820,7 +828,7 @@ function describe(hook, player, args, ctx) {
       req.max = args[0];
       if (args[1] === 'INFESTED') {
         req.title = 'INFESTED — feed the attack?';
-        req.hint = `Choose how much of your Vitality to burn for extra damage on this attack (0–${args[0]}). You lose that much Vitality; the attack gains that much damage. Careful: if this takes your Vitality to 0, the game ends in a draw right away and the attack does not happen.`;
+        req.hint = `Choose how much of your Vitality to burn for extra damage on this attack (0–${args[0]}). Your Vitality is ${player.champion.traits.VIT} — you lose that much Vitality; the attack gains that much damage. Careful: if this takes your Vitality to 0, the game ends in a draw right away and the attack does not happen.`;
       } else if (args[1] === 'STRAIN' || args[1] === 'TRANCE') {
         req.title = `${args[1]} — how much trait damage (X)?`;
         const foeC = game.players[1 - pi].champion;
@@ -874,7 +882,11 @@ function describe(hook, player, args, ctx) {
       // CURE keeps the old optional behaviour.
       const isDispel = (args[0] || []).some((c) => typeof c.cardId === 'string' && c.cardId.startsWith('dispel:'));
       req.title = isDispel ? 'DISPEL MAGIC — nullify a passive (the card stays on the field; only its passive switches off)' : 'Discard one of your passives?';
-      req.candidates = args[0].map((c) => ({ cardId: c.cardId, label: c.label }));
+      // src/owner ride along so the renderer can append the source
+      // card's FULL passive text to each option (the engine label's
+      // snippet is capped at 90 chars — a pick must never hinge on
+      // text the chooser truncated away, Norman 2026-10-19).
+      req.candidates = args[0].map((c) => ({ cardId: c.cardId, label: c.label, src: c.src || null, owner: c.owner != null ? c.owner : null }));
       req.allowNone = !isDispel;
       break;
     }
@@ -957,6 +969,17 @@ function describe(hook, player, args, ctx) {
       // These candidates are the FOE's cards: their live card-face
       // numbers must reflect the foe champion's build, not the chooser's.
       cards.forEach((c) => { c.ownerIdx = foe.idx; });
+      // Dispel state (Norman, 2026-10-19): a candidate whose passive
+      // DISPEL MAGIC has nullified grants nothing when copied, and the
+      // chooser must say so on the option instead of presenting the
+      // dead text as live. Same bookkeeping the engine keeps
+      // (resolveDispel / cardActive / raceActive): equipment and
+      // other uid-keyed cards by uid, races by card id.
+      const disUids = foe.champion.dispelledUids || [];
+      const disIds = foe.champion.dispelledIds || [];
+      cards.forEach((c) => {
+        c.dispelled = disUids.includes(c.uid) || (c.deck === 'race' && disIds.includes(c.id));
+      });
       req.cards = cards;
       req.allowNone = true;
       break;
@@ -1249,12 +1272,25 @@ async function runStep(ctx, fn) {
         for (let i = log.length - 1; i >= 0; i--) { if (log[i].hook === 'combatAction') { idx = i; break; } }
         if (idx >= 0) { log.length = idx; continue; }
       }
+      if (answer && answer.__cfFungalPick) {
+        // FUNGAL button (Norman, 2026-10-19): the player committed
+        // their once-per-game copy from the battle UI mid-step. This
+        // step's fungalChoice entry (auto-saved at turn start — the
+        // prompt no longer exists) is replaced with the pick and the
+        // step replays: the engine applies the copy at its usual
+        // turn-start point, and the step's later answers replay after
+        // it in order. The token itself is never logged as an answer.
+        const log = ctx.decisionLog;
+        const fi = log.findIndex((x) => x.hook === 'fungalChoice' && x.player === e.request.playerIdx);
+        if (fi >= 0) log[fi] = { ...log[fi], answer: answer.__cfFungalPick };
+        continue;
+      }
       ctx.decisionLog.push({ hook: e.request.hook, player: e.request.playerIdx, answer });
     }
   }
 }
 
-return { NeedInput, cardSummary, createSession, newSessionGame, runStep, snapshotGame, instantiate };
+return { NeedInput, cardSummary, createSession, newSessionGame, runStep, snapshotGame, instantiate, describe };
 })();
 
 
@@ -1272,6 +1308,7 @@ const S = {
   lastPhase: '',
   draftCount: 0,
   pendingReq: null,    // request currently on screen (drives the phase label)
+  fungalArmedUid: null, // FUNGAL button: a copy pick queued from the battle UI; the next turn-start fungal ask consumes it
   recapKey: '',        // fingerprint of the attack already recapped
   lastRecap: '',       // HTML of the most recent attack-result math panel
   lastIncomingVit: null, // vitality damage of the attack being reacted to (for choice math)
@@ -1497,6 +1534,15 @@ function faceOverlayHtml(summary) {
   if (!summary || !summary.id || !summary.art) return '';
   const txt = summary.effectText ? annotateCardText(summary.effectText, summary) : '';
   const isRace = summary.deck === 'race';
+  // IRONROOT (Norman, 2026-10-19): the calibration card for the
+  // card-text batch. Its sparse one-line passive anchored the rule
+  // now in fitFaceText — sparse content scales UP ≈+20% and centers
+  // (dense text like MAGIC STAFF, his "all the space is well used"
+  // reference, is never touched). This class survives only for the
+  // cost numeral's nudge in the CSS: Ironroot's cost sat too high,
+  // touching the plate's top border line, and moves down a smidge —
+  // a per-card art quirk, not part of the batch rule.
+  const isIronroot = summary.id === 'race/race-24';
   const isHero = summary.deck === 'gold-hero-cards' || summary.deck === 'silver-hero';
   const geo = isRace ? ' ft-race' : ' ft-classic';
   // Printed-face layout family (Norman, 2026-10-19): on the printed
@@ -1546,7 +1592,7 @@ function faceOverlayHtml(summary) {
       ? `<div class="ft-foot">${quick}<span class="ft-label">${esc(label)}</span><span></span></div>`
       : '';
   }
-  return `<div class="facetext ft-live${geo}${tier}${fam}${isHero ? ' ft-hero' : ''}" aria-hidden="true"><div class="ft-head">${nameHtml}${costHtml}</div>${bodyHtml}${footHtml}</div>`;
+  return `<div class="facetext ft-live${geo}${tier}${fam}${isHero ? ' ft-hero' : ''}${isIronroot ? ' ft-proto-ironroot' : ''}" aria-hidden="true"><div class="ft-head">${nameHtml}${costHtml}</div>${bodyHtml}${footHtml}</div>`;
 }
 const game = () => S.sess.game;
 /* Who "you" are at this phone: player 0 vs the AI, or your seat in a
@@ -1695,8 +1741,9 @@ function fitFaceText(face) {
     return inner.offsetHeight <= targetH && inner.scrollWidth <= inner.clientWidth + 1;
   };
   let steps = 0;
+  let size = parseFloat(getComputedStyle(body).fontSize) || 0;
+  const tierSize = size;
   if (!fitsNow()) {
-    let size = parseFloat(getComputedStyle(body).fontSize) || 0;
     const floor = Math.max(3.4, face.clientWidth * 0.017);
     let lh = 1.38;
     while (!fitsNow() && size > floor && steps < 28) {
@@ -1708,6 +1755,41 @@ function fitFaceText(face) {
       }
       steps++;
     }
+  }
+  // CARD-TEXT BATCH (Norman, 2026-10-19 go word — "get that all fixed
+  // including the card texts", with his guardrail: "many of the cards
+  // look good... don't let it screw up cards that are already
+  // graphically excellent... best use of the space inside of the text
+  // box without text overlapping eachother or getting to close to the
+  // edge"). This generalizes the approved Ironroot calibration to every
+  // card, BY MEASUREMENT, in this one pass that already measures every
+  // face on every surface:
+  //   - A face whose tier size already fills at least half its text
+  //     area is NEVER touched — dense, approved faces (Magic Staff
+  //     ≈80%, Disarm ≈54%) render byte-for-byte as before.
+  //   - A sparse face (fill under half) steps UP in small increments,
+  //     capped at +22% over its tier size (Norman's ≈+20% for the
+  //     Ironroot class), re-checking the fit ceiling and the width
+  //     after every step — the step that would crowd is reverted, so
+  //     the ceiling/margin guards are never violated.
+  //   - A face still under half full after stepping up is vertically
+  //     centered in its text area (the Ironroot placement), so its
+  //     block no longer strands at the top with dead plate below.
+  // Faces that needed the step-DOWN above (steps > 0) are at their
+  // ceiling already and are skipped entirely.
+  if (steps === 0 && tierSize > 0 && inner.textContent.trim()) {
+    const availH = body.clientHeight;
+    const fillRatio = () => (availH ? inner.offsetHeight / availH : 1);
+    let upSteps = 0;
+    while (fillRatio() < 0.5 && size < tierSize * 1.22 && upSteps < 6) {
+      const prev = size;
+      size = Math.min(tierSize * 1.22, size * 1.06);
+      body.style.fontSize = size.toFixed(2) + 'px';
+      if (!fitsNow()) { size = prev; body.style.fontSize = prev > tierSize ? prev.toFixed(2) + 'px' : ''; break; }
+      upSteps++;
+    }
+    if (fillRatio() < 0.5) body.style.alignItems = 'center';
+    steps += upSteps;
   }
   // Header: a name wrapping past two lines crowds the plate's strip —
   // step it down until it takes at most two.
@@ -1748,7 +1830,7 @@ function refitAllFaces() {
   document.querySelectorAll('.facetext').forEach((face) => {
     fitDoneFaces.delete(face);
     const body = face.querySelector('.ft-body');
-    if (body) { body.style.fontSize = ''; body.style.lineHeight = ''; }
+    if (body) { body.style.fontSize = ''; body.style.lineHeight = ''; body.style.alignItems = ''; }
     const nameEl = face.querySelector('.ft-name');
     if (nameEl) nameEl.style.fontSize = '';
     face.removeAttribute('data-fit-steps');
@@ -2644,6 +2726,30 @@ async function mpDraftAsk(req) {
   return answer;
 }
 
+/* FUNGAL button (Norman, 2026-10-19): "instead of asking me every
+   turn give me a fungal button when i'm this race that I can click
+   as a quick action once per game to do it." The engine still asks
+   at the start of every Fungal turn (its only application point),
+   but the prompt is gone: the ask is answered automatically — a
+   pick queued from the FUNGAL button when one is armed, otherwise
+   "save for later" (null). A queued pick whose card has since left
+   the foe's board is dropped rather than wasted on a dead target.
+   Bot-controlled Fungal never reaches here (its hooks route to the
+   AI in the bridge); in multiplayer this runs only for the LOCAL
+   player's own ask, and the answer relays like any other decision. */
+function fungalAutoAnswer(req) {
+  const uid = S.fungalArmedUid;
+  S.fungalArmedUid = null;
+  if (!uid) return null;
+  try {
+    const foe = game().players[1 - req.playerIdx];
+    const eq = foe.champion.equipment;
+    const live = [eq.head, eq.body, eq.gloves, eq.boots, eq.accessories, ...eq.flex, ...foe.champion.races];
+    if (!live.some((c) => c && c.uid === uid)) return null;
+  } catch (e) { return null; }
+  return uid;
+}
+
 async function ask(req) {
   if (S.mp) {
     if (S.mp.catchUp) {
@@ -2657,10 +2763,16 @@ async function ask(req) {
       S.pendingReq = null;
       return answer;
     }
+    if (req.hook === 'fungalChoice') {
+      const answer = fungalAutoAnswer(req);
+      S.mp.sendDecision(req.hook, answer);
+      return answer;
+    }
     const answer = await askUi(req);
     S.mp.sendDecision(req.hook, answer);
     return answer;
   }
+  if (req.hook === 'fungalChoice') return fungalAutoAnswer(req);
   return askUi(req);
 }
 
@@ -2910,6 +3022,115 @@ async function askUi(req) {
   });
 }
 
+/* Explanation line under a card's name in the name-list choosers
+   (Norman, 2026-10-19 — NO BLIND PICKS: an option must show what the
+   pick does, inside the option itself). The text is the card's own
+   face text with live values keyed to the card's OWNER (the
+   summary's ownerIdx stamp), exactly as its face renders it. A card
+   whose passive Dispel has nullified says so plainly instead of
+   presenting the dead text as live. */
+function cardExplHtml(c) {
+  if (c.dispelled) return '<span class="opt-expl opt-expl-dead">Passive nullified by Dispel — copying gains nothing</span>';
+  if (!c.effectText) return '';
+  return `<span class="opt-expl">${lvHtml(annotateCardText(c.effectText, c))}</span>`;
+}
+function nameExplButton(c, onTap) {
+  const b = document.createElement('button');
+  b.innerHTML = `<span class="opt-name">${esc(c.name)}</span>${cardExplHtml(c)}`;
+  b.onclick = onTap;
+  return b;
+}
+
+/* The FUNGAL copy-a-passive chooser modal, shared by the retired
+   prompt's safety-net case and the FUNGAL battle button. Each option
+   is one tappable button: name, the passive it would grant
+   underneath, tap → zoom → confirm. "Save for later" picks nothing. */
+function openFungalModal(req, handlers) {
+  openModal(`
+    <h2>${esc(req.title)}</h2>
+    <div class="hint">${esc(req.hint)}</div>
+    <div class="opt-list" id="fg-list"></div>
+    <div class="opt-list"><button id="fg-no">Save for later</button></div>`);
+  const list = $('fg-list');
+  req.cards.forEach((c) => {
+    list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Copy this passive', onAction: () => handlers.onPick(c.uid) })));
+  });
+  if (!req.cards.length) list.innerHTML = '<div class="hint">Opponent has no in-play cards.</div>';
+  $('fg-no').onclick = () => handlers.onCancel();
+}
+
+/* The LOCAL player's Fungal situation, for the battle button:
+   null when no button should exist at all. */
+function fungalUiState() {
+  if (!S.sess) return null;
+  const g = game();
+  if (!g || g.phase !== 'combat') return null;
+  const ch = human().champion;
+  if (!ch || !ch.flags || !ch.flags.fungal) return null;
+  if (ch.flags.fungalUsed) return { stage: 'spent' };
+  if (S.fungalArmedUid) return { stage: 'queued' };
+  return { stage: 'ready' };
+}
+
+/* Open the copy-a-passive chooser from the FUNGAL button. The
+   request is built by the same describe() that built the old
+   prompt's, so candidates, owner-keyed live values, explanations
+   and Dispel notes are identical to the prompt's — the button only
+   changes WHEN the choice is offered, never what it offers. */
+function openFungalChooser(note, onPick, onClose) {
+  const g = game();
+  const req = describe('fungalChoice', g.players[myIdx()], [g.players[foeIdx()]], S.sess);
+  if (note) req.hint = `${req.hint} ${note}`;
+  openFungalModal(req, { onPick, onCancel: onClose });
+}
+
+/* The FUNGAL battle button (Norman, 2026-10-19). Present whenever
+   the local champion is the Fungal race, in the battle UI's action
+   area: on the player's own turn (uiCombat), on the foe's turn
+   (renderCombatIdle), and inside the quick-action window
+   (quickInterrupt). States: ready → opens the chooser; queued → a
+   pick is armed for the next turn start; spent → the once-per-game
+   copy is used, disabled and marked for the rest of the game.
+   inject=true where a committed pick can be applied at once (the
+   player's own-turn action prompt in a bot game: the step runner
+   swaps it into this step's turn-start answer and replays); the
+   caller receives the pick via after(uid). Everywhere else the
+   pick is queued (S.fungalArmedUid) and after(null) just re-renders. */
+function fungalButton(inject, after) {
+  const st = fungalUiState();
+  if (!st) return null;
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'fungal-btn';
+  if (st.stage === 'spent') {
+    b.textContent = '🍄 FUNGAL — spent';
+    b.disabled = true;
+    b.classList.add('spent');
+    b.setAttribute('aria-label', 'Fungal copy already used this game');
+    return b;
+  }
+  if (st.stage === 'queued') {
+    b.textContent = '🍄 FUNGAL — queued ✓';
+    b.disabled = true;
+    b.classList.add('spent');
+    b.setAttribute('aria-label', 'Fungal copy queued — it applies at the start of your next turn');
+    return b;
+  }
+  b.textContent = '🍄 FUNGAL — copy a passive';
+  b.setAttribute('aria-label', 'Fungal: copy one of the opponent\'s in-play passives (once per game)');
+  b.onclick = () => {
+    openFungalChooser(
+      inject ? 'Applies right away, this turn.' : 'Applies at the start of your next turn.',
+      (uid) => {
+        if (inject) after(uid);
+        else { S.fungalArmedUid = uid; closeModal(); if (after) after(null); }
+      },
+      () => { closeModal(); if (after) after(null); },
+    );
+  };
+  return b;
+}
+
 function renderDecision(req, done) {
   const mid = $('mid');
   switch (req.hook) {
@@ -2956,7 +3177,19 @@ function renderDecision(req, done) {
       return d ? `${o.label} — ${d}` : o.label;
     });
     case 'choosePassiveToDiscard': {
-      const r2 = { ...req, options: req.candidates.map((c) => ({ id: c.cardId, label: c.label })) };
+      // NO BLIND PICKS (Norman, 2026-10-19): the engine's option label
+      // carries only a 90-char snippet of the passive — append the
+      // source card's FULL text (live values keyed to the card's
+      // owner) so the pick never hinges on truncated text.
+      const r2 = { ...req, options: req.candidates.map((c) => {
+        let label = c.label;
+        const src = c.src ? cardDataById(c.src) : null;
+        if (src && src.effectText) {
+          const full = annotateCardText(src.effectText, { id: src.id, ownerIdx: c.owner != null ? c.owner : req.playerIdx });
+          if (full && !label.includes(full.slice(0, 24))) label = `${label} · ${full}`;
+        }
+        return { id: c.cardId, label };
+      }) };
       if (req.allowNone) r2.options.push({ id: null, label: 'Keep all' });
       return modalOptions(r2, done);
     }
@@ -2968,10 +3201,7 @@ function renderDecision(req, done) {
         <div class="opt-list"><button id="rx-no">No reaction</button></div>`);
       const list = $('rx-list');
       req.hand.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Play reaction', onAction: () => done(c.id) });
-        list.appendChild(b);
+        list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Play reaction', onAction: () => done(c.id) })));
       });
       if (!req.hand.length) list.innerHTML = '<div class="hint">No reaction cards in hand.</div>';
       $('rx-no').onclick = () => done(null);
@@ -2985,10 +3215,7 @@ function renderDecision(req, done) {
         <div class="opt-list"><button id="cs-no">Don't play a card</button></div>`);
       const list = $('cs-list');
       req.hand.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Chain this card', onAction: () => done(c.id) });
-        list.appendChild(b);
+        list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Chain this card', onAction: () => done(c.id) })));
       });
       if (!req.hand.length) list.innerHTML = '<div class="hint">No non-physical action cards in hand to chain.</div>';
       $('cs-no').onclick = () => done(null);
@@ -3010,30 +3237,32 @@ function renderDecision(req, done) {
         <div class="opt-list"><button id="qi-no">Pass</button></div>`);
       const list = $('qi-list');
       req.hand.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Play quick card', onAction: () => done(c.uid) });
-        list.appendChild(b);
+        list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Play quick card', onAction: () => done(c.uid) })));
       });
       if (!req.hand.length) list.innerHTML = '<div class="hint">No quick cards in hand.</div>';
       $('qi-no').onclick = () => done(null);
+      // FUNGAL in the quick-action window (Norman, 2026-10-19): the
+      // copy is a quick action too — the button lives here while the
+      // foe's attack is pending. A pick queues and applies at the
+      // start of your next turn; the quick choice itself is still
+      // owed afterwards, so the modal re-renders when the chooser
+      // closes either way.
+      if (fungalUiState() && fungalUiState().stage === 'ready') {
+        const wrap = document.createElement('div');
+        wrap.className = 'opt-list';
+        wrap.appendChild(fungalButton(false, () => renderDecision(req, done)));
+        $('modal').appendChild(wrap);
+      }
       return;
     }
     case 'fungalChoice': {
-      openModal(`
-        <h2>${esc(req.title)}</h2>
-        <div class="hint">${esc(req.hint)}</div>
-        <div class="opt-list" id="fg-list"></div>
-        <div class="opt-list"><button id="fg-no">Save for later</button></div>`);
-      const list = $('fg-list');
-      req.cards.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Copy this passive', onAction: () => done(c.uid) });
-        list.appendChild(b);
-      });
-      if (!req.cards.length) list.innerHTML = '<div class="hint">Opponent has no in-play cards.</div>';
-      $('fg-no').onclick = () => done(null);
+      // Safety net only: the turn-start prompt is retired (the ask is
+      // auto-answered — see fungalAutoAnswer) and the live choice is
+      // made from the FUNGAL battle button via openFungalChooser,
+      // which renders this same modal. If a request ever reaches the
+      // UI anyway (e.g. a step saved by an older build), it answers
+      // through the identical chooser.
+      openFungalModal(req, { onPick: (uid) => done(uid), onCancel: () => done(null) });
       return;
     }
     case 'sporeChoice': {
@@ -3044,10 +3273,7 @@ function renderDecision(req, done) {
         <div class="opt-list"><button id="sp-no">Don't copy a passive</button></div>`);
       const list = $('sp-list');
       req.cards.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Copy this passive', onAction: () => done(c.uid) });
-        list.appendChild(b);
+        list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Copy this passive', onAction: () => done(c.uid) })));
       });
       if (!req.cards.length) list.innerHTML = '<div class="hint">No active passives to copy.</div>';
       $('sp-no').onclick = () => done(null);
@@ -3060,10 +3286,7 @@ function renderDecision(req, done) {
         <div class="opt-list" id="rc-list" style="max-height:50vh;overflow:auto"></div>`);
       const list = $('rc-list');
       req.cards.forEach((c) => {
-        const b = document.createElement('button');
-        b.textContent = c.name;
-        b.onclick = () => zoomCard(c, { actionLabel: 'Choose this action', onAction: () => done(c.uid) });
-        list.appendChild(b);
+        list.appendChild(nameExplButton(c, () => zoomCard(c, { actionLabel: 'Choose this action', onAction: () => done(c.uid) })));
       });
       if (!req.cards.length) list.innerHTML = '<div class="hint">No actions in deck.</div>';
       return;
@@ -3593,7 +3816,9 @@ function orChoiceDetail(req, o) {
       if (!single) return '';
       const amt = mine('SPI');
       const resAvail = foeResAvail();
-      return `foe ${single} −${Math.max(0, amt - resAvail)} (your SPI ${amt} − foe RES ${resAvail})`;
+      const lands = Math.max(0, amt - resAvail);
+      const now = foes(single);
+      return `foe ${single} now ${now} → ${Math.max(0, now - lands)} (−${lands}: your SPI ${amt} − foe RES ${resAvail})`;
     }
     case 'spider poison': {
       if (!single) return '';
@@ -3605,7 +3830,13 @@ function orChoiceDetail(req, o) {
       if (!single) return '';
       const amt = mine('ACC');
       const resAvail = foeResAvail();
-      return `foe ${single} −${Math.max(0, amt - resAvail)} (your ACC ${amt} − foe RES ${resAvail})`;
+      const lands = Math.max(0, amt - resAvail);
+      const now = foes(single);
+      // NO BLIND PICKS (Norman, 2026-10-19): the foe's CURRENT value
+      // of the target trait is the deciding fact — −3 off a CON of 2
+      // and off a CON of 12 are different plays — so it leads the
+      // line, with the landing value after it.
+      return `foe ${single} now ${now} → ${Math.max(0, now - lands)} (−${lands}: your ACC ${amt} − foe RES ${resAvail})`;
     }
     case 'NET target':
     case 'trait damage target':
@@ -3659,7 +3890,7 @@ function chooseTraitDetail(req, o) {
       return `the toad deals ${lands} damage to the foe's ${o.id} (${amt} − foe RES ${resAvail}; now ${Math.max(0, foeV - lands)})`;
     }
     case 'CURSEDBLOOD':
-      return `foe ${o.id} \u22122, ignoring Resistance (now ${foeV})`;
+      return `foe ${o.id} \u22122, ignoring Resistance (now ${foeV} \u2192 ${Math.max(0, foeV - 2)})`;
     case 'FOCUS': {
       const spi = E.effT(g, pi, 'SPI');
       return `${o.id} ${v} + ${spi} (SPI) = ${v + spi}`;
@@ -4419,6 +4650,22 @@ function uiCombat(req, done, mid) {
      never sees the uncommitted selection. On confirm, the engine
      resolves the card exactly as before — reactions first, then the
      card's own follow-up choices (trait picks, Melee/Ranged, …). */
+  // NO BLIND PICKS (Norman, 2026-10-19): the attack-card target step
+  // shows the same deciding state the weapon/unarmed steps show —
+  // what the card does (live, owner-keyed) and the foe's current
+  // VIT/TP plus the CON/RES they can still soak with.
+  const attackCardPanel = (c2) => {
+    const g = game();
+    const fi = foeIdx();
+    const foeCh = g.players[fi].champion;
+    const resAvail = Math.max(0, E.effT(g, fi, 'RES') - (foeCh.spentRes || 0));
+    const conAvail = Math.max(0, E.effT(g, fi, 'CON') - (foeCh.spentCon || 0));
+    return `<div class="math-panel">
+      <h4>${esc(c2.name)}</h4>
+      <div class="def">${lvHtml(annotateCardText(c2.effectText || '', c2))}</div>
+      <div class="def">Foe now: <b>VIT ${foeCh.traits.VIT}</b> · <b>TP ${foeCh.traits.TP}</b> · soaks with <b>CON ${conAvail}</b> (vitality damage) and <b>RES ${resAvail}</b> (trait damage).</div>
+    </div>`;
+  };
   const attackCardTargetStep = (c) => {
     const prof = ATTACK_CARD_PROFILE[c.id] || { kind: 'ranged', label: 'Attack' };
     const bar = $('actionbar');
@@ -4436,6 +4683,7 @@ function uiCombat(req, done, mid) {
       title: `${c.name} — choose a target`,
       hint: `Choose a target: tap the highlighted ${foeName()} champion — on the map or their card above — to confirm the attack (${prof.label}).`,
       targetPrompt: '◎ CHOOSE A TARGET — tap the foe to attack',
+      panel: attackCardPanel(c),
       neighbors: prof.kind === 'melee' ? ringNeighbors(st.myPos) : undefined,
       targetable: [st.foePos], onTap: (i) => { if (i === st.foePos) confirmCardAttack(); },
     });
@@ -4573,6 +4821,18 @@ function uiCombat(req, done, mid) {
   }
   mk('☾ Rest', () => done({ kind: 'rest' }), outOfActions, 'No actions left to rest with — tap End Turn instead.');
   mk(IC_END + ' End Turn', () => done({ kind: 'endTurn' }));
+  // FUNGAL button (Norman, 2026-10-19): the once-per-game copy lives
+  // here with the turn's other actions — a quick action that costs
+  // no action point. In a bot game a pick made now can be applied at
+  // once (this step's turn-start answer is swapped and replayed);
+  // in multiplayer a committed pick can only enter the shared log
+  // at the next turn-start ask, so it queues instead.
+  const fgBtn = fungalButton(
+    !S.mp && S.sess && Array.isArray(S.sess.decisionLog)
+      && S.sess.decisionLog.some((e2) => e2.hook === 'fungalChoice' && e2.player === myIdx()),
+    (uid) => { if (uid) done({ __cfFungalPick: uid }); else uiCombat(req, done, mid); },
+  );
+  if (fgBtn) bar.appendChild(fgBtn);
   syncModeButtons();
   function syncModeButtons() { /* mode highlight could go here */ }
 }
@@ -4641,6 +4901,17 @@ function renderCombatIdle() {
   renderBoard({ title: S.activePi === foeIdx() ? (S.mp ? "Friend's turn…" : 'AI turn…') : 'Resolving…', hint: '' });
   $('actionbar').classList.add('hidden');
   fillReadonlyHand();
+  // FUNGAL button on the foe's turn too (Norman, 2026-10-19): the
+  // copy is a quick action, so its button stays in the action area
+  // while the foe plays. A pick made now queues and applies at the
+  // start of your next turn.
+  const fgBtn = fungalButton(false, () => renderCombatIdle());
+  if (fgBtn) {
+    const bar = $('actionbar');
+    bar.innerHTML = '';
+    bar.appendChild(fgBtn);
+    bar.classList.remove('hidden');
+  }
 }
 
 // ------------------------------------------------------------ game flow
@@ -4689,6 +4960,15 @@ async function runStepSeededOnce(ctx, fn, seedLog) {
         for (let i = log.length - 1; i >= 0; i--) { if (log[i].hook === 'combatAction') { idx = i; break; } }
         if (idx >= 0) { log.length = idx; continue; }
       }
+      if (answer && answer.__cfFungalPick) {
+        // FUNGAL button: same mid-step pick injection as runStep —
+        // replace this step's auto-saved fungalChoice answer with the
+        // committed pick and replay; the token is never logged.
+        const log = ctx.decisionLog;
+        const fi = log.findIndex((x) => x.hook === 'fungalChoice' && x.player === e.request.playerIdx);
+        if (fi >= 0) log[fi] = { ...log[fi], answer: answer.__cfFungalPick };
+        continue;
+      }
       ctx.decisionLog.push({ hook: e.request.hook, player: e.request.playerIdx, answer });
     }
   }
@@ -4712,7 +4992,7 @@ function persistWith(flowStep, stepSnap, decisionLog, combat) {
     stepSnap,
     decisionLog: decisionLog || [],
     combat: combat || null,
-    ui: { actionsUsed: S.actionsUsed, activePi: S.activePi, recapKey: S.recapKey, lastRecap: S.lastRecap, lastIncomingVit: S.lastIncomingVit, lastCardResult: S.lastCardResult, pendingCardResult: S.pendingCardResult, foeSeen: S.foeSeen ? [...S.foeSeen] : [] },
+    ui: { actionsUsed: S.actionsUsed, activePi: S.activePi, recapKey: S.recapKey, lastRecap: S.lastRecap, lastIncomingVit: S.lastIncomingVit, lastCardResult: S.lastCardResult, pendingCardResult: S.pendingCardResult, fungalArmedUid: S.fungalArmedUid || null, foeSeen: S.foeSeen ? [...S.foeSeen] : [] },
     turnCount: g ? g.turnCount : 0,
   };
   let phase = flowStep;
@@ -4747,6 +5027,7 @@ function persistBoundary(nextFlowStep, combat) {
 
 async function startNewGame() {
   leaveMp();
+  S.fungalArmedUid = null;
   S.saveId = null;
   S.combatCtx = null;
   S.flowStep = 'phase1';
@@ -4779,6 +5060,7 @@ async function startGame(seed, resumePayload) {
     S.combatCtx = resumePayload.combat || null;
     if (resumePayload.ui) {
       S.actionsUsed = resumePayload.ui.actionsUsed || 0;
+      S.fungalArmedUid = resumePayload.ui.fungalArmedUid || null;
       S.activePi = resumePayload.ui.activePi || 0;
       S.recapKey = resumePayload.ui.recapKey || '';
       S.lastRecap = resumePayload.ui.lastRecap || '';
@@ -4800,6 +5082,7 @@ async function startGame(seed, resumePayload) {
   } else {
     newSessionGame(S.sess, seed);
     S.flowStep = 'phase1';
+    S.fungalArmedUid = null;
     S.foeSeen = new Set();
     S.revealQueue = [];
   }
@@ -6408,6 +6691,21 @@ h2 .necro-badge { margin-top: 0; vertical-align: 2px; }
 .facetext.ft-race.ft-t4 .ft-body { font-size: 4.0cqw; }
 .facetext.ft-race.ft-t5 .ft-body { font-size: 3.65cqw; }
 .facetext.ft-race.ft-t6 .ft-body { font-size: 3.4cqw; }
+/* IRONROOT (Norman, 2026-10-19): the calibration prototype whose
+   treatment the CARD-TEXT BATCH in fitFaceText generalized to every
+   card on his go word. Its +20% scale-up and its moved-down,
+   vertically-centered placement are no longer CSS here — the fit
+   pass derives both by measurement (sparse faces step up to a +22%
+   cap over their tier and center while still under half full;
+   Ironroot lands at ≈5.8cqw, centered — the approved values). What
+   remains Ironroot-only below is the cost numeral's nudge: at the
+   header's top it touched the plate's top border line, so it moves
+   DOWN 1.6cqw, centered in the header strip, keeping the earlier
+   fix's left inset (the header's right padding) exactly as it was.
+   The align-items here is belt-and-braces: the fit pass now sets the
+   same centering inline for any sparse face. */
+.facetext.ft-race.ft-proto-ironroot .ft-body { align-items: center; }
+.facetext.ft-proto-ironroot .ft-cost { transform: translateY(1.6cqw); }
 /* Live trait values — the parenthesized numbers — glow PURPLE
    everywhere they appear (Norman, 2026-10-19: the orangish-yellow is
    out): faces, zoom text, board rows. Soft violet glow, kept bright
@@ -6673,6 +6971,28 @@ button.play-cancel {
 }
 #modal h2 { color: #dceeff; text-shadow: 0 0 12px rgba(127, 212, 255, 0.6); }
 .opt-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+/* Chooser option explanations (Norman, 2026-10-19 — NO BLIND PICKS):
+   in the name-list choosers (FUNGAL, SUMMON SPORE, reactions,
+   COUNTERSPELL chains, quick actions, RUNECARVED) the card's name
+   sits on its own line with what the pick DOES underneath — smaller,
+   lighter, sentence register, in the modal's own voice. Live values
+   keep their purple .lv glow. A Dispel-nullified passive reads in
+   the warning red used for illegal options. */
+.opt-list button .opt-name { display: block; }
+.opt-list button .opt-expl {
+  display: block; margin-top: 4px; font-size: 12.5px; font-weight: 400;
+  letter-spacing: 0.02em; line-height: 1.4; color: #aebfdd;
+  text-shadow: none; white-space: pre-line;
+}
+.opt-list button .opt-expl-dead { color: #ff9a8a; }
+/* The FUNGAL battle button: a once-per-game quick action, so it
+   wears a green edge among the blue actions; spent/queued copies
+   dim to the standard disabled register. */
+.fungal-btn {
+  border-color: rgba(111, 227, 165, 0.65);
+  box-shadow: inset 0 0 12px rgba(111, 227, 165, 0.14), 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+.fungal-btn.spent { opacity: 0.45; box-shadow: none; border-color: var(--arcane-dim); }
 .stepper { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 14px 0; }
 .stepper .val {
   font-size: 34px; font-weight: 800; font-family: var(--serif); color: var(--arcane);
