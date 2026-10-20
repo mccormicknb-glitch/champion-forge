@@ -68,9 +68,16 @@ const CF_ART = {"accessories/a1.jpg":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQA
    How to Play, fitted champion strip, attack-flow fixes, immediate hero
    activation, card-face pass 2, flip reveals + 1.5× fast-forward,
    per-count board art, per-player piles, player names, hero tracker,
-   text commentary). Two shareable-only multiplayer guards from the
-   expansion port are kept: adopting the relay-reported seat on 'start',
-   and closing the room when the host leaves before the game begins.
+   text commentary). The Oct 20 evening batch is ported in full too:
+   the hosted How to Play video (with its unavailable-note fallback and
+   pause-on-close), the pre-race name headlines, the panels + skill-
+   points redesign (live SP beside the VIT heart, hero tracker asleep
+   until battle, sticky mini player cards in both buy views), and the
+   five per-card face fixes (MIRESPAWN, CURSEDBLOOD, RUNECARVED,
+   body-b08, body-b13 — flagged cards only). Two shareable-only
+   multiplayer guards from the expansion port are kept: adopting the
+   relay-reported seat on 'start', and closing the room when the host
+   leaves before the game begins.
    localStorage instead of the server. The GameHost seam below is what the
    host glue at the bottom implements. */
 let HOST = null;
@@ -1984,6 +1991,28 @@ function faceOverlayHtml(summary) {
   // border line, so it rides lower than the global drop every face
   // now gets — a per-card art quirk, not part of the batch rule.
   const isIronroot = summary.id === 'race/race-24';
+  // PER-CARD FACE FIXES (Norman, 2026-10-20 — card-by-card ONLY, his
+  // standing rule: "I'm just going to give you the cards I see that
+  // need help one by one. I don't want you fixing them to mess up
+  // other ones that look good."). Exactly five flagged cards carry a
+  // fix class; every other card's class string is byte-identical to
+  // before, so unflagged faces render exactly as they did.
+  //   ft-fix-fill (the fill/centering pass in fitFaceText + the CSS
+  //   centering below): MIRESPAWN, CURSEDBLOOD, RUNECARVED — text
+  //   bunched at the top of the race plate with dead space below, and
+  //   on the first two the cost numeral hanging over the text.
+  //   ft-fix-legible (the contrast treatment in the CSS below, plus
+  //   the same fitFaceText fill pass): the
+  //   two Body cards Norman screenshotted as blurry/washed-out —
+  //   body-b08 (cost 3, "add 2 ELEMENTAL DAMAGE", matched on its
+  //   effect text and its white-bearded-orb art) and body-b13
+  //   (cost 4, "CON +2 / healing: Increase VIT by 5…"). body-b15
+  //   carries the same elemental text with different art; Norman did
+  //   not flag it, so it is deliberately NOT in this set.
+  const FACE_FIX_FILL = { 'race/race-25': 1, 'race/race-06': 1, 'race/race-32': 1 };
+  const FACE_FIX_LEGIBLE = { 'body/body-b08': 1, 'body/body-b13': 1 };
+  const fixCls = (FACE_FIX_FILL[summary.id] ? ' ft-fix-fill' : '')
+    + (FACE_FIX_LEGIBLE[summary.id] ? ' ft-fix-legible' : '');
   const isHero = summary.deck === 'gold-hero-cards' || summary.deck === 'silver-hero';
   const geo = isRace ? ' ft-race' : ' ft-classic';
   // Printed-face layout family (Norman, 2026-10-19): on the printed
@@ -2033,7 +2062,7 @@ function faceOverlayHtml(summary) {
       ? `<div class="ft-foot">${quick}<span class="ft-label">${esc(label)}</span><span></span></div>`
       : '';
   }
-  return `<div class="facetext ft-live${geo}${tier}${fam}${isHero ? ' ft-hero' : ''}${isIronroot ? ' ft-proto-ironroot' : ''}" aria-hidden="true"><div class="ft-head">${nameHtml}${costHtml}</div>${bodyHtml}${footHtml}</div>`;
+  return `<div class="facetext ft-live${geo}${tier}${fam}${isHero ? ' ft-hero' : ''}${isIronroot ? ' ft-proto-ironroot' : ''}${fixCls}" aria-hidden="true"><div class="ft-head">${nameHtml}${costHtml}</div>${bodyHtml}${footHtml}</div>`;
 }
 const game = () => S.sess.game;
 /* Who "you" are at this phone: player 0 vs the AI, or your seat in a
@@ -2379,6 +2408,51 @@ function fitFaceText(face) {
       steps += upSteps;
     }
   }
+  // PER-CARD FILL FIX (Norman, 2026-10-20 — flagged faces ONLY; his
+  // standing rule for this batch is card-by-card fixes with unflagged
+  // faces untouched, so this branch is gated on the two fix classes
+  // faceOverlayHtml stamps for exactly the five flagged card ids —
+  // no other face can enter it). ft-fix-fill (MIRESPAWN, CURSEDBLOOD,
+  // RUNECARVED): their mid-length texts land just over the sparse
+  // branch's half-fill threshold (measured ≈52% at tile size), so
+  // they were left top-aligned with dead plate pooled below and —
+  // on MIRESPAWN and CURSEDBLOOD — the header cost numeral hanging
+  // into the body's first lines. ft-fix-legible (the two blurry Body
+  // cards): their new dark backing's padding counts toward the text
+  // block's measured height, which pushed body-b13 over the sparse
+  // threshold and cost it the centering/growth it used to get. For
+  // these five faces only: center the text block in its plate (the
+  // NIMBLEFOOT placement Norman approved as the exemplar) and step
+  // the size up toward a ≈78% fill under the same fitsNow guard
+  // every other face uses, so the block spreads down the full plate
+  // and its first line drops clear of the numeral.
+  if ((face.classList.contains('ft-fix-fill') || face.classList.contains('ft-fix-legible')) && inner.textContent.trim()) {
+    body.style.alignItems = 'center';
+    const fillNow = () => (body.clientHeight ? inner.offsetHeight / body.clientHeight : 1);
+    let cur = parseFloat(getComputedStyle(body).fontSize) || 0;
+    if (cur > 0 && fitsNow() && fillNow() < 0.78) {
+      const cap = cur * 2;
+      let lh = (parseFloat(getComputedStyle(body).lineHeight) || 0) / cur || 1.38;
+      let guard = 0;
+      while (fillNow() < 0.78 && cur < cap && guard < 40) {
+        const prev = cur;
+        cur = Math.min(cap, cur * 1.04);
+        body.style.fontSize = cur.toFixed(2) + 'px';
+        // A single wrap threshold can jump the block a whole line
+        // taller in one step (measured on CURSEDBLOOD: ×1.05 wrapped
+        // it past the fit ceiling while ×1.03 still fit) — ease the
+        // line-height toward 1.22 and retry the same size before
+        // giving the step back, the same trick the shrink pass uses.
+        if (!fitsNow() && lh > 1.22) {
+          lh = Math.max(1.22, lh - 0.045);
+          body.style.lineHeight = lh.toFixed(3);
+        }
+        if (!fitsNow()) { body.style.fontSize = prev.toFixed(2) + 'px'; break; }
+        guard++;
+      }
+      steps += guard;
+    }
+  }
   // Header: a name wrapping past two lines crowds the plate's strip —
   // step it down until it takes at most two.
   const nameEl = face.querySelector('.ft-name');
@@ -2463,7 +2537,17 @@ function openModal(html, opts) {
   $('modal').innerHTML = html;
   $('modal-wrap').classList.remove('hidden');
 }
-function closeModal() { modalBackdropClose = false; $('modal-wrap').classList.add('hidden'); }
+function closeModal() {
+  modalBackdropClose = false;
+  // Pause any video playing inside the modal (e.g. How to Play) so
+  // audio never continues after the panel is dismissed via backdrop
+  // tap or the Close button.
+  try {
+    const modalEl = $('modal');
+    if (modalEl) modalEl.querySelectorAll('video').forEach((v) => { try { v.pause(); } catch (_) {} });
+  } catch (_) {}
+  $('modal-wrap').classList.add('hidden');
+}
 
 function modalOptions(req, done, optsToLabels) {
   openModal(`
@@ -2940,6 +3024,35 @@ function mpApplyDropoutSurrender(seat) {
   try { renderChamps(); } catch (e) { /* ignore */ }
 }
 
+/* ---------------- skill points (live) ----------------
+   A player's current, spendable skill points — the exact value the
+   buy phases use everywhere else (engine: skillPoints - spentSP,
+   cf. req.remaining / req.allSP). Shown beside the VIT heart on every
+   champion panel and on the sticky mini player cards, in all phases
+   and for every seat, human and AI alike; it drops the moment a buy
+   lands because every market render rebuilds both surfaces from the
+   live game state. */
+function playerSP(pi) {
+  const g = game();
+  const p = g && g.players && g.players[pi];
+  if (!p || typeof p.skillPoints !== 'number') return 0;
+  return p.skillPoints - (p.spentSP || 0);
+}
+/* Has the battle phase begun? The engine snapshot can still carry
+   the previous phase while a decision is on screen, so — exactly
+   like renderTop — this reads displayPhase() (derived from the
+   pending request) as well as the snapshot's own phase. 'done' only
+   follows battle, so it counts as begun. */
+function battleHasBegun() {
+  const g = game();
+  if (!g) return false;
+  if (g.phase === 'combat' || g.phase === 'done') return true;
+  try {
+    const ph = displayPhase();
+    return ph === 'combat' || ph === 'done';
+  } catch (e) { return false; }
+}
+
 /* ---------------- hero tracker (3+ players) ----------------
    The number of DIFFERENT champions who have attacked this champion
    since their last turn — read straight off champion.heroAttackers,
@@ -2949,10 +3062,18 @@ function mpApplyDropoutSurrender(seat) {
    the same attacker appears once, and cfHeroTurnStart clears the set
    the moment that champion's own turn starts. Hidden completely at
    2 players — there are no hero cards in a duel, so no tracker
-   element (and no empty placeholder) is rendered at all. */
+   element (and no empty placeholder) is rendered at all.
+   SLEEPS UNTIL BATTLE (Norman, 2026-10-20): the tracker does not
+   render anywhere before the battle phase — not on the strip panels
+   and not in the player board's Hero Tracker section — because the
+   count carries no meaning while drafting and buying, and the room
+   it took on the panels now carries the player's skill points. From
+   the moment the battle phase begins it appears exactly as before:
+   same strip box, same board section, same live wording and hints. */
 function heroTrackerCount(pi) {
   const g = game();
   if (!g || !g.players || g.players.length < 3) return null;
+  if (!battleHasBegun()) return null;
   const ch2 = g.players[pi] && g.players[pi].champion;
   if (!ch2) return null;
   const set = Array.isArray(ch2.heroAttackers) ? ch2.heroAttackers : [];
@@ -3016,6 +3137,51 @@ function refreshHeroTrackers() {
   });
 }
 
+/* ---------------- sticky mini player cards ----------------
+   The old gold names+points row, redesigned (Norman, 2026-10-20):
+   a row of MINI PLAYER CARDS — a smaller version of the champion
+   panel above, one per seat, each carrying a stripe of that seat's
+   player color, the player's NAME, their RACE (the race or race
+   combo once picked; before the race draft, name only), and their
+   SKILL-POINT count. The row is sticky: it rides under the top bar
+   while the market scrolls, so it is on screen exactly when the main
+   champion panels have scrolled out of view. Tapping a mini card
+   opens that player's full board, same as tapping their champion
+   panel. Every seat fits side by side on ONE row at phone width for
+   2–5 players: the cards flex from a zero basis with min-width:0, the
+   row never wraps, and long names/races wrap INSIDE their own card.
+   spOverrides (seat -> remaining) lets a market request's fresher
+   totals win over the snapshot's for the seats it names. */
+function miniPlayerStrip(spOverrides) {
+  const g = game();
+  const wrap = document.createElement('div');
+  wrap.className = 'mini-strip sp-sticky';
+  wrap.dataset.count = String(g.players.length);
+  const parts = [];
+  g.players.forEach((p, pi) => {
+    const sp = spOverrides && typeof spOverrides[pi] === 'number' ? spOverrides[pi] : playerSP(pi);
+    parts.push(`${stripSeatName(pi)} ${sp}`);
+  });
+  wrap.setAttribute('aria-label', `Skill points available: ${parts.join(', ')}`);
+  g.players.forEach((p, pi) => {
+    const ch = p.champion;
+    const sp = spOverrides && typeof spOverrides[pi] === 'number' ? spOverrides[pi] : playerSP(pi);
+    const race = ch.races.length ? ch.races.map((r) => r.data.name).join(' + ') : '';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini-card' + (ch.eliminated ? ' eliminated' : '');
+    b.style.borderTop = '3px solid ' + seatColor(pi);
+    b.setAttribute('aria-label', 'Open ' + (pi === myIdx() ? 'your' : stripSeatName(pi) + '’s') + ` board — ${sp} skill points${race ? ', ' + race : ''}`);
+    b.innerHTML = `
+      <span class="mini-name">${esc(stripSeatName(pi))}</span>
+      ${race ? `<span class="mini-race">${esc(race)}</span>` : ''}
+      <span class="mini-sp"><span class="mini-sp-n">${sp}</span><span class="mini-sp-label">SP</span></span>`;
+    b.onclick = () => openBoard(pi);
+    wrap.appendChild(b);
+  });
+  return wrap;
+}
+
 function renderChamps() {
   const g = game();
   const el = $('champions');
@@ -3033,16 +3199,21 @@ function renderChamps() {
     d.setAttribute('role', 'button');
     d.setAttribute('aria-label', 'Open ' + (pi === myIdx() ? 'your' : stripSeatName(pi) + '’s') + ' board');
     d.style.borderTop = '3px solid ' + seatColor(pi);
-    // Strip labels carry NO difficulty (stripSeatName): before races are
-    // drafted the name line is just "Your champion" / "Champion" — the
-    // seat line above already says whose it is, so repeating the seat
-    // (let alone its difficulty) only crowded the card.
-    const stripCname = ch.races.length ? champName(pi) : (pi === myIdx() ? 'Your champion' : 'Champion');
+    // Strip labels carry NO difficulty (stripSeatName). Headline rules
+    // (Norman, 2026-10-20): BEFORE races are drafted there is no
+    // "Champion" / "Your champion" label at all — the player's NAME is
+    // the headline, in the big bright .cname treatment the label used
+    // to get, so a name is never the small dim line again. AFTER races
+    // are drafted, nothing changes: the small name line stays on top
+    // and the race combo is the headline, exactly as before.
+    const stripHeadline = ch.races.length
+      ? `<div class="who">${esc(stripSeatName(pi))}</div>
+      <div class="cname">${esc(champName(pi))}</div>`
+      : `<div class="cname cname-name">${esc(stripSeatName(pi))}</div>`;
     d.innerHTML = `
-      <div class="who">${esc(stripSeatName(pi))}</div>
-      <div class="cname">${esc(stripCname)}</div>
+      ${stripHeadline}
       <div class="vitbar"><div class="tp" style="width:${100 - vitW}%"></div><div style="width:${vitW}%"></div></div>
-      <div class="vitals"><span class="vit-heart">♥</span> ${ch.traits.VIT}${ch.traits.TP ? ` <span style="color:var(--blue)">+${ch.traits.TP} TP</span>` : ''}</div>
+      <div class="vitals"><span class="vit-heart">♥</span> ${ch.traits.VIT} <span class="panel-sp" data-panel-sp="${pi}" role="img" aria-label="${playerSP(pi)} skill points">✦ ${playerSP(pi)} SP</span>${ch.traits.TP ? ` <span style="color:var(--blue)">+${ch.traits.TP} TP</span>` : ''}</div>
       ${ch.necrotic ? `<div class="necro-badge" role="img" aria-label="${ch.necrotic} necrotic counter${ch.necrotic === 1 ? '' : 's'} on this champion — each one ticks 5 damage at the start of their turn">☠ Necrotic ×${ch.necrotic}</div>` : ''}
       ${ch.encrusted ? `<div class="necro-badge" role="img" aria-label="Encrusted — frozen in ice: this champion cannot move for ${ch.encrusted} more of their turns">❄ Encrusted ×${ch.encrusted} — cannot move</div>` : ''}
       ${(ch.flags && ch.flags.cannotMoveUntilTurn !== undefined && (g.turnCount || 0) < ch.flags.cannotMoveUntilTurn) ? `<div class="necro-badge" role="img" aria-label="Restrained — this champion's Move action is disabled until the restrain player's next turn">⛓ Restrained — Move action disabled</div>` : ''}
@@ -3225,8 +3396,13 @@ function openBoard(pi) {
   const eq = ch.equipment;
   const vitScale = Math.max(100, E.effT(g, pi, 'VIT'));
   const tpScale = Math.max(100, E.effT(g, pi, 'TP'));
+  // Board header follows the strip's headline rules (Norman,
+  // 2026-10-20): before races are drafted the header is the player's
+  // NAME alone — no "Your champion (Name)" champion-over-name stack;
+  // after races it stays "Race combo (Name)" exactly as before.
+  const boardTitle = ch.races.length ? `${esc(champName(pi))} (${esc(seatName(pi))})` : esc(seatName(pi));
   openModal(`
-    <h2>${esc(champName(pi))} (${esc(seatName(pi))})${ch.necrotic ? ` <span class="necro-badge">☠ Necrotic ×${ch.necrotic}</span>` : ''}</h2>
+    <h2>${boardTitle}${ch.necrotic ? ` <span class="necro-badge">☠ Necrotic ×${ch.necrotic}</span>` : ''}</h2>
     <div class="hint">Tap anywhere outside this panel to go back.</div>
     <div class="statpanel">
       ${statBar(g, pi, 'VIT', vitScale, 'vit')}
@@ -3585,12 +3761,11 @@ function openAid() {
    The learn-the-game walkthrough (Norman, 2026-10-20): a sequential
    teach that reads top to bottom, mirroring the how-to-play video's
    chapter order — distinct from the Player Aid, which stays the
-   alphabetical in-game reference. Everything lives on this page;
-   nothing links away. The empty #howto-video-slot at the top is
-   where the video will sit when Norman picks a home for it — the
-   panel needs no restructuring to take it. Content tracks the
-   Player Aid (the in-game source of truth) and must not contradict
-   it. */
+   alphabetical in-game reference. The video at the top is hosted on
+   the game's own GitHub Pages site and plays inline in this panel;
+   the written guide below it stays fully usable if the video cannot
+   load. Content tracks the Player Aid (the in-game source of truth)
+   and must not contradict it. */
 function openHowToPlay() {
   const row = (term, def) => `<div class="aid-row"><div class="aid-term">${esc(term)}</div><div class="aid-def">${esc(def)}</div></div>`;
   const step = (n, term, def) => `<div class="aid-step"><div class="aid-num">${n}</div><div class="aid-step-body"><div class="aid-term">${esc(term)}</div><div class="aid-def">${esc(def)}</div></div></div>`;
@@ -3607,8 +3782,8 @@ function openHowToPlay() {
   const IC_MOON = '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>';
   openModal(`
     <h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg>How to Play</h2>
-    <div class="hint">New to the Forge? Read this top to bottom once and you know the whole game. For a single rule mid-battle, the Player Aid is the quick reference. Tap anywhere outside this panel to go back.</div>
-    <div id="howto-video-slot"></div>
+    <div class="hint">New to the Forge? Watch the video or read this top to bottom once and you know the whole game. For a single rule mid-battle, the Player Aid is the quick reference. Tap anywhere outside this panel to go back.</div>
+    <div id="howto-video-slot"><video id="howto-video" controls playsinline preload="metadata" src="https://mccormicknb-glitch.github.io/champion-forge/how-to-play.mp4" aria-label="How to Play video — Champion Forge walkthrough"></video><div id="howto-video-fallback" class="howto-video-fallback" hidden>Video unavailable right now — the full guide is below.</div></div>
     ${sec('1 · Overview & goal', IC_CROWN)}
     <div class="aid-def howto-lead">The Divine Architects are forging champions for their arena — and you are one of the architects. You build your champion card by card through four drafting and buying phases, then throw them into the ring. Knock out every other champion and yours is the last one standing: that champion claims the Throne of the Gods, and you win.</div>
     ${sec('2 · Setup — players & the ring', IC_SEATS)}
@@ -3653,6 +3828,25 @@ function openHowToPlay() {
     ${row('Eternal Equilibrium (draw)', 'If no champion loses any VIT or TP for 5 turns in a row, the game ends in a draw — an unbreakable balance of power. The count only starts after Round 1, and any VIT or TP loss — attacks, trait damage, even your own self-costs — resets it to zero. A timer under the phase strip counts the quiet turns once a streak starts, so the draw never arrives unexplained.')}
     <div class="opt-list"><button id="howto-close">Close</button></div>`, { backdropClose: true });
   $('howto-close').onclick = closeModal;
+  // Graceful degradation for the hosted video: if it cannot load
+  // (offline, not uploaded yet, network error) hide the player and
+  // show a small note — the written guide below stays fully usable.
+  const hv = document.getElementById('howto-video');
+  const hfb = document.getElementById('howto-video-fallback');
+  if (hv && hfb) {
+    const showFallback = () => {
+      try { hv.removeAttribute('src'); hv.load(); } catch (_) {}
+      hv.style.display = 'none';
+      hv.hidden = true;
+      hfb.hidden = false;
+    };
+    hv.addEventListener('error', showFallback);
+    // Errors on a <source> child surface on the source, not the video.
+    hv.querySelectorAll('source').forEach((s) => s.addEventListener('error', showFallback));
+    // If the element already failed before listeners attached (e.g.
+    // cached 404 with preload), surface the fallback immediately.
+    if (hv.error || (hv.networkState === 3 /* NETWORK_NO_SOURCE */)) showFallback();
+  }
 }
 
 /* The snapshot the UI renders still carries the PREVIOUS phase (the engine
@@ -4301,10 +4495,14 @@ function renderPlanningMarket(remoteReq) {
   chip.setAttribute('aria-label', "Opponent's turn — they're buying now");
   chip.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.8h12M6 21.2h12M7.2 2.8v3.4L12 11l4.8-4.8V2.8M7.2 21.2v-3.4L12 13l4.8 4.8v3.4"/></svg>';
   mid.appendChild(chip);
-  const sp = document.createElement('div');
-  sp.className = 'sp-counter sp-sticky';
-  sp.setAttribute('aria-label', `Your skill points: ${myLeft}. Opponent skill points: ${remoteReq.remaining}`);
-  sp.innerHTML = `<span>${esc(seatName(myIdx()))}</span><span class="n">${myLeft}</span><span>${esc(foeName())}</span><span class="n">${remoteReq.remaining ?? '—'}</span>`;
+  // Sticky mini player cards (Norman, 2026-10-20): every seat's name,
+  // race and live SP in a mini panel that rides along while scrolling
+  // the market — the buyer's freshest total comes from their request,
+  // mine from the live state, the rest from the snapshot.
+  const spOverrides = { [myIdx()]: myLeft };
+  if (typeof remoteReq.playerIdx === 'number' && typeof remoteReq.remaining === 'number') spOverrides[remoteReq.playerIdx] = remoteReq.remaining;
+  else if (typeof remoteReq.remaining === 'number') spOverrides[foeIdx()] = remoteReq.remaining;
+  const sp = miniPlayerStrip(spOverrides);
   const topbarEl = $('topbar');
   if (topbarEl) sp.style.top = topbarEl.offsetHeight + 'px';
   mid.appendChild(sp);
@@ -5087,18 +5285,19 @@ function uiMarket(req, done, mid) {
   // could still defeat.
   phaseHead(req.title, '');
   appendBuyOrderPanel(mid);
-  const sp = document.createElement('div');
-  sp.className = 'sp-counter sp-sticky';
-  if (!S.mp && game() && game().players.length > 2 && Array.isArray(req.allSP)) {
-    const parts = req.allSP.map((e2) => `${stripSeatName(e2.idx)} ${e2.remaining}`).join(' · ');
-    sp.setAttribute('aria-label', `Skill points available: ${parts}`);
-    sp.innerHTML = req.allSP.map((e2) => `<span>${esc(stripSeatName(e2.idx))}</span><span class="n">${e2.remaining}</span>`).join('');
-  } else {
-    sp.setAttribute('aria-label', `Your skill points available: ${req.remaining}. Opponent skill points available: ${req.foeRemaining ?? 'unknown'}`);
-    sp.innerHTML = `<span>Skill points — ${esc(seatName(myIdx()))}</span><span class="n">${req.remaining}</span><span>${esc(foeName())}</span><span class="n">${req.foeRemaining ?? '—'}</span>`;
-  }
+  // Sticky mini player cards (Norman, 2026-10-20): the old wrapping
+  // names+points row is now one mini panel per seat — seat color,
+  // name, race, and that seat's live SP — all on ONE row, riding
+  // along under the top bar while the market scrolls, tap to open
+  // that player's board. Fresh totals from this request (allSP at
+  // 3+, or the two-seat remaining pair) override the snapshot.
+  const spOverrides = {};
+  if (Array.isArray(req.allSP)) req.allSP.forEach((e2) => { spOverrides[e2.idx] = e2.remaining; });
+  if (typeof req.remaining === 'number') spOverrides[myIdx()] = req.remaining;
+  if (!Array.isArray(req.allSP) && typeof req.foeRemaining === 'number') spOverrides[foeIdx()] = req.foeRemaining;
+  const sp = miniPlayerStrip(spOverrides);
   // Pin directly under the sticky top bar, whatever height it wraps to
-  // on this screen (its label wraps to two lines on narrow phones).
+  // on this screen.
   const topbar = $('topbar');
   if (topbar) sp.style.top = topbar.offsetHeight + 'px';
   mid.appendChild(sp);
@@ -9038,6 +9237,14 @@ h2 {
   letter-spacing: 0.03em; color: #fff3d0; line-height: 1.3;
   overflow-wrap: break-word; min-width: 0;
 }
+/* Pre-race name headline (Norman, 2026-10-20): the player name takes
+   the .cname slot before races exist. Names render uppercase like the
+   old .who line did, and a long typed name WRAPS inside its panel —
+   never nowrap/ellipsis, never pushing the panel wider at 2–5 seats. */
+.champ .cname-name {
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+}
 .vitbar {
   height: 11px; background: #160a12; border-radius: 6px; overflow: hidden; margin: 5px 0;
   border: 1px solid #4d2a1a;
@@ -9412,12 +9619,15 @@ h2 .necro-badge { margin-top: 0; vertical-align: 2px; }
 }
 .aid-step-body { flex: 1; min-width: 0; }
 /* How to Play: lead paragraphs open each chapter in the aid's own
-   definition voice; the video slot stays collapsed until a video is
-   placed in it, so the panel needs no restructuring to take one. */
+   definition voice. The video slot at the top hosts the walkthrough
+   hosted on the game's own site — native player, inline on phones,
+   never traps panel scrolling. */
 .howto-lead { padding: 5px 0 7px; border-bottom: 1px solid rgba(127, 212, 255, 0.12); }
 #howto-video-slot:empty { display: none; }
-#howto-video-slot { margin: 10px 0 2px; }
-#howto-video-slot video, #howto-video-slot iframe { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid rgba(127, 212, 255, 0.45); display: block; }
+#howto-video-slot { margin: 10px 0 4px; }
+#howto-video-slot video, #howto-video-slot iframe { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; height: auto; background: #000; border-radius: 8px; border: 1px solid rgba(127, 212, 255, 0.45); display: block; }
+#howto-video-slot video { touch-action: pan-y; }
+.howto-video-fallback { padding: 10px 12px; border: 1px solid rgba(127, 212, 255, 0.28); border-radius: 8px; background: rgba(127, 212, 255, 0.06); color: var(--dim, #aebfdd); font-size: 13px; line-height: 1.45; text-align: center; }
 .bsection {
   margin: 14px 0 6px; font-family: var(--serif); font-size: 13px;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
@@ -9607,6 +9817,31 @@ h2 .necro-badge { margin-top: 0; vertical-align: 2px; }
    same centering inline for any sparse face. */
 .facetext.ft-race.ft-proto-ironroot .ft-body { align-items: center; }
 .facetext.ft-proto-ironroot .ft-cost { transform: translateY(5cqw); }
+/* PER-CARD FACE FIXES (Norman, 2026-10-20 — flagged cards ONLY; see
+   FACE_FIX_FILL / FACE_FIX_LEGIBLE in faceOverlayHtml for the exact
+   five ids and why). No selector here can match an unflagged face.
+   ft-fix-fill (MIRESPAWN, CURSEDBLOOD, RUNECARVED): belt-and-braces
+   vertical centering for the race plate — the measured pass in
+   fitFaceText does the same inline plus the fill scale-up, this
+   keeps the block centered even before that pass runs. */
+.facetext.ft-fix-fill .ft-body { align-items: center; }
+/* ft-fix-legible (body-b08, body-b13): both faces' art stays bright
+   and busy behind the plate (a glowing orb, a bright open book), so
+   the shared text treatment washed out. Scoped to these two faces:
+   a soft dark backing behind the description block only (rounded,
+   edge-feathered by its own shadow so it reads as a darkened plate,
+   not a pasted box) and a deeper multi-layer text shadow over the
+   whole face, which the name, cost numeral, body, and type line all
+   inherit — live-value .lv spans keep their own violet glow. */
+.facetext.ft-fix-legible {
+  text-shadow: 0 1px 3px rgba(3, 4, 16, 0.95), 0 0 7px rgba(3, 4, 16, 0.9), 0 0 16px rgba(3, 4, 16, 0.7);
+}
+.facetext.ft-fix-legible .ft-body-in {
+  background: rgba(7, 9, 26, 0.55);
+  border-radius: 3cqw;
+  padding: 2.4cqw 3.2cqw;
+  box-shadow: 0 0 5cqw 1.5cqw rgba(7, 9, 26, 0.55);
+}
 /* Live trait values — the parenthesized numbers — glow PURPLE
    everywhere they appear (Norman, 2026-10-19: the orangish-yellow is
    out): faces, zoom text, board rows. Soft violet glow, kept bright
@@ -9724,6 +9959,66 @@ button.illegal { opacity: 0.45; filter: grayscale(0.75); }
   background: linear-gradient(180deg, rgba(36, 27, 10, 0.98), rgba(17, 12, 4, 0.98));
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55), inset 0 0 16px rgba(232, 182, 76, 0.10), 0 0 12px rgba(232, 182, 76, 0.12);
 }
+/* ---------------- sticky mini player cards ----------------
+   A smaller version of the champion panel, one card per seat, on a
+   single row that never wraps: cards flex from a zero basis with
+   min-width:0 so 2–5 seats share a 390px screen with no sideways
+   overflow, and long names/races wrap inside their own card. The row
+   itself is sticky (the .sp-sticky pin above, top set inline to the
+   top bar's height) with an opaque backing plate, so when it rides
+   along over the scrolling market the cards below never show
+   through the gaps. */
+.mini-strip {
+  display: flex; flex-wrap: nowrap; gap: 5px;
+  margin: 8px 12px; padding: 5px; box-sizing: border-box; max-width: calc(100% - 24px);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(16, 12, 30, 0.98), rgba(8, 6, 18, 0.98));
+  border: 1px solid rgba(201, 150, 46, 0.4);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+}
+.mini-strip.sp-sticky { position: sticky; top: 60px; z-index: 18; }
+.mini-card {
+  flex: 1 1 0; min-width: 0; box-sizing: border-box; overflow: hidden;
+  display: flex; flex-direction: column; gap: 2px; align-items: stretch;
+  margin: 0; padding: 6px 5px 5px; border-radius: 9px; cursor: pointer;
+  text-align: left; color: var(--text);
+  background: linear-gradient(180deg, rgba(24, 18, 48, 0.97), rgba(10, 8, 22, 0.97));
+  border: 1px solid var(--gold-deep);
+  box-shadow: inset 0 0 14px rgba(232, 182, 76, 0.05);
+  font-family: var(--serif); text-shadow: none; min-height: 44px;
+}
+.mini-card.eliminated { opacity: 0.55; }
+.mini-name {
+  font-weight: 700; font-size: 12px; letter-spacing: 0.04em; line-height: 1.2;
+  text-transform: uppercase; color: #fff3d0;
+  white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+}
+.mini-race {
+  font-size: 10px; letter-spacing: 0.02em; line-height: 1.25; color: #bcd9f2;
+  text-transform: uppercase;
+  white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+}
+.mini-sp { margin-top: auto; display: flex; align-items: baseline; gap: 3px; color: var(--gold); font-weight: 700; }
+.mini-sp-n { font-size: 18px; line-height: 1; text-shadow: 0 0 10px rgba(232, 182, 76, 0.55); }
+.mini-sp-label { font-size: 9px; letter-spacing: 0.14em; }
+.mini-strip[data-count="4"] { gap: 4px; }
+.mini-strip[data-count="5"] { gap: 4px; padding: 4px; }
+.mini-strip[data-count="4"] .mini-name { font-size: 11px; }
+.mini-strip[data-count="5"] .mini-name { font-size: 10px; letter-spacing: 0.02em; }
+.mini-strip[data-count="4"] .mini-race { font-size: 9px; }
+.mini-strip[data-count="5"] .mini-race { font-size: 8.5px; }
+.mini-strip[data-count="4"] .mini-sp-n { font-size: 16px; }
+.mini-strip[data-count="5"] .mini-sp-n { font-size: 15px; }
+.mini-strip[data-count="2"] .mini-name { font-size: 13px; }
+.mini-strip[data-count="2"] .mini-race { font-size: 11px; }
+/* Skill points beside the VIT heart on the champion panels: a compact
+   gold count in the vitals line (the room the sleeping hero tracker
+   freed). The vitals line may wrap INSIDE its panel rather than
+   ellipsize the SP away at five seats. */
+.champ .vitals { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.4; }
+.champ .panel-sp { color: var(--gold); white-space: nowrap; text-shadow: 0 0 8px rgba(232, 182, 76, 0.45); }
+#champions[data-count="5"] .champ .panel-sp { font-size: 10.5px; }
+#champions[data-count="4"] .champ .panel-sp { font-size: 11px; }
 /* Eternal Equilibrium turn timer: a plate under the phase strip in the
    game's gold-line style; at 4/5 it heats up (ember border and glow) so
    the last quiet turn reads as the warning it is. */
