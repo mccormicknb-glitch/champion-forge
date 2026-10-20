@@ -3783,7 +3783,7 @@ function openHowToPlay() {
   openModal(`
     <h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg>How to Play</h2>
     <div class="hint">New to the Forge? Watch the video or read this top to bottom once and you know the whole game. For a single rule mid-battle, the Player Aid is the quick reference. Tap anywhere outside this panel to go back.</div>
-    <div id="howto-video-slot"><video id="howto-video" controls playsinline preload="metadata" src="https://mccormicknb-glitch.github.io/champion-forge/how-to-play.mp4" aria-label="How to Play video — Champion Forge walkthrough"></video><div id="howto-video-fallback" class="howto-video-fallback" hidden>Video unavailable right now — the full guide is below.</div></div>
+    <div id="howto-video-slot"><video id="howto-video" controls playsinline preload="metadata" src="https://mccormicknb-glitch.github.io/champion-forge/how-to-play.mp4" aria-label="How to Play video — Champion Forge walkthrough"></video><div id="howto-video-fallback" class="howto-video-fallback" hidden>Video unavailable right now — the full guide is below.<br><a class="howto-video-link" href="https://mccormicknb-glitch.github.io/champion-forge/how-to-play.mp4" target="_blank" rel="noopener">▶ Watch the video</a></div></div>
     ${sec('1 · Overview & goal', IC_CROWN)}
     <div class="aid-def howto-lead">The Divine Architects are forging champions for their arena — and you are one of the architects. You build your champion card by card through four drafting and buying phases, then throw them into the ring. Knock out every other champion and yours is the last one standing: that champion claims the Throne of the Gods, and you win.</div>
     ${sec('2 · Setup — players & the ring', IC_SEATS)}
@@ -3828,24 +3828,45 @@ function openHowToPlay() {
     ${row('Eternal Equilibrium (draw)', 'If no champion loses any VIT or TP for 5 turns in a row, the game ends in a draw — an unbreakable balance of power. The count only starts after Round 1, and any VIT or TP loss — attacks, trait damage, even your own self-costs — resets it to zero. A timer under the phase strip counts the quiet turns once a streak starts, so the draw never arrives unexplained.')}
     <div class="opt-list"><button id="howto-close">Close</button></div>`, { backdropClose: true });
   $('howto-close').onclick = closeModal;
-  // Graceful degradation for the hosted video: if it cannot load
-  // (offline, not uploaded yet, network error) hide the player and
-  // show a small note — the written guide below stays fully usable.
+  // Graceful degradation for the hosted video — patient, not
+  // hair-trigger (Norman hit "video unavailable" on a healthy file,
+  // 2026-10-20). Every open starts fresh: player visible, fallback
+  // hidden, src (re)set and load() kicked off — a failure earlier in
+  // the session must not pre-judge a new open. A load error retries
+  // automatically (initial attempt + up to 2 retries, ~1s apart);
+  // only after the last attempt fails does the fallback appear, and
+  // the src is never stripped, so recovery stays possible. The
+  // fallback itself carries a direct "Watch the video" link: a
+  // top-level navigation plays the file even inside a wrapper whose
+  // media-src policy blocks inline playback. The written guide below
+  // stays fully usable either way.
+  const HOWTO_VIDEO_URL = 'https://mccormicknb-glitch.github.io/champion-forge/how-to-play.mp4';
   const hv = document.getElementById('howto-video');
   const hfb = document.getElementById('howto-video-fallback');
   if (hv && hfb) {
-    const showFallback = () => {
-      try { hv.removeAttribute('src'); hv.load(); } catch (_) {}
-      hv.style.display = 'none';
-      hv.hidden = true;
-      hfb.hidden = false;
+    hv.hidden = false;
+    hv.style.display = '';
+    hfb.hidden = true;
+    let howtoRetries = 0;
+    const tryLoad = () => {
+      if (hv.getAttribute('src') !== HOWTO_VIDEO_URL) hv.setAttribute('src', HOWTO_VIDEO_URL);
+      try { hv.load(); } catch (_) {}
     };
-    hv.addEventListener('error', showFallback);
+    const onVideoError = () => {
+      if (!hv.isConnected) return;
+      if (howtoRetries < 2) {
+        howtoRetries += 1;
+        setTimeout(() => { if (hv.isConnected) tryLoad(); }, 1000);
+      } else {
+        hv.style.display = 'none';
+        hv.hidden = true;
+        hfb.hidden = false;
+      }
+    };
+    hv.addEventListener('error', onVideoError);
     // Errors on a <source> child surface on the source, not the video.
-    hv.querySelectorAll('source').forEach((s) => s.addEventListener('error', showFallback));
-    // If the element already failed before listeners attached (e.g.
-    // cached 404 with preload), surface the fallback immediately.
-    if (hv.error || (hv.networkState === 3 /* NETWORK_NO_SOURCE */)) showFallback();
+    hv.querySelectorAll('source').forEach((s) => s.addEventListener('error', onVideoError));
+    tryLoad();
   }
 }
 
@@ -9628,6 +9649,8 @@ h2 .necro-badge { margin-top: 0; vertical-align: 2px; }
 #howto-video-slot video, #howto-video-slot iframe { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; height: auto; background: #000; border-radius: 8px; border: 1px solid rgba(127, 212, 255, 0.45); display: block; }
 #howto-video-slot video { touch-action: pan-y; }
 .howto-video-fallback { padding: 10px 12px; border: 1px solid rgba(127, 212, 255, 0.28); border-radius: 8px; background: rgba(127, 212, 255, 0.06); color: var(--dim, #aebfdd); font-size: 13px; line-height: 1.45; text-align: center; }
+.howto-video-link { display: inline-block; margin-top: 8px; padding: 9px 18px; border: 1px solid rgba(127, 212, 255, 0.65); border-radius: 8px; background: rgba(127, 212, 255, 0.14); color: #bfe6ff; font-size: 14px; font-weight: 700; letter-spacing: 0.02em; text-decoration: none; }
+.howto-video-link:active { background: rgba(127, 212, 255, 0.28); }
 .bsection {
   margin: 14px 0 6px; font-family: var(--serif); font-size: 13px;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
