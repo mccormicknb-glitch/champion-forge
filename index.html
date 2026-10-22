@@ -12070,6 +12070,194 @@ document.querySelectorAll('#mp-tablesize button[data-size]').forEach((b) => {
 });
 syncMpTableSize();
 
+/* ---------------- card codex (title screen only) ----------------
+   The smith's pattern archive: every card in the game's LIVE in-code
+   catalog (E.loadCardData() — the same 286 entries the engine plays
+   with), browsable by family and searchable by name and text. Faces
+   are rendered by the game's OWN renderer — summaries built by the
+   bridge's cardSummary(), tiles by cardEl(), the enlarged view by
+   zoomCard() — so a Codex face is the exact face a player sees in
+   play. With no champion build to value against (ownerIdx stays
+   null), faces show their plain printed text, exactly as they do in
+   the race draft before any build exists.
+   Category mapping (derived from the catalog's own deck field):
+     Races = deck 'race' (39 races + the 2 natural-weapon entries,
+       CATFOLK CLAWS and MIRESPAWN SPIT, which live in that deck);
+     equipment by slot decks: Head 'head', Body 'body', Gloves
+       'gloves', Boots 'boots', Accessories 'accessories', Weapons
+       'weapon', Weapon Traits 'weapon-traits';
+     Traits = 'trait-cards';
+     actions by deck: Physical 'physical-actions', Ranged
+       'ranged-actions', Mystical 'mystical-actions', Divine
+       'divine-actions', Psionic 'psionic-action' (its actionType is
+       mostly null in the catalog, so the deck is the family),
+       Summoning 'summoning-actions';
+     Hero — Silver 'silver-hero', Hero — Gold 'gold-hero-cards'.
+   The 17 counts sum to the full catalog (286). Only the open
+   category's (or the search results') tiles exist in the DOM at any
+   time — the rest of the archive is never rendered. The two natural
+   weapons have no standalone art anywhere in the game, so their
+   faces borrow their parent race's plate art (CATFOLK / MIRESPAWN)
+   through the same renderer; their text is the catalog's own. */
+const CODEX_CATS = [
+  { id: 'race', label: 'Races', decks: ['race'], blurb: 'Who your champion is' },
+  { id: 'head', label: 'Head', decks: ['head'], blurb: 'Equipment · Head slot' },
+  { id: 'body', label: 'Body', decks: ['body'], blurb: 'Equipment · Body slot' },
+  { id: 'gloves', label: 'Gloves', decks: ['gloves'], blurb: 'Equipment · Hands slot' },
+  { id: 'boots', label: 'Boots', decks: ['boots'], blurb: 'Equipment · Feet slot' },
+  { id: 'accessories', label: 'Accessories', decks: ['accessories'], blurb: 'Equipment · Accessory slot' },
+  { id: 'weapon', label: 'Weapons', decks: ['weapon'], blurb: 'Equipment · Flex slots' },
+  { id: 'weapon-traits', label: 'Weapon Traits', decks: ['weapon-traits'], blurb: 'Equipment · Flex slots' },
+  { id: 'trait-cards', label: 'Traits', decks: ['trait-cards'], blurb: 'Drafted trait boosts' },
+  { id: 'physical-actions', label: 'Physical Actions', decks: ['physical-actions'], blurb: 'Action cards' },
+  { id: 'ranged-actions', label: 'Ranged Actions', decks: ['ranged-actions'], blurb: 'Action cards' },
+  { id: 'mystical-actions', label: 'Mystical Actions', decks: ['mystical-actions'], blurb: 'Action cards' },
+  { id: 'divine-actions', label: 'Divine Actions', decks: ['divine-actions'], blurb: 'Action cards' },
+  { id: 'psionic-action', label: 'Psionic Actions', decks: ['psionic-action'], blurb: 'Action cards' },
+  { id: 'summoning-actions', label: 'Summoning Actions', decks: ['summoning-actions'], blurb: 'Action cards' },
+  { id: 'silver-hero', label: 'Hero — Silver', decks: ['silver-hero'], blurb: 'Hero cards · 3+ players' },
+  { id: 'gold-hero-cards', label: 'Hero — Gold', decks: ['gold-hero-cards'], blurb: 'Hero cards · 4–5 players' },
+];
+let codexScrollY = 0;
+
+/* The full live catalog: E.loadCardData() carries 284 entries; the
+   remaining 2 — the natural weapons CATFOLK CLAWS and MIRESPAWN SPIT —
+   live in the engine's own natural-weapon table (deck 'race',
+   copies 0) and are reached through the engine's own accessor,
+   E.naturalWeapons(), handed a probe champion holding their parent
+   races. 284 + 2 = 286, the catalog total the archive reports. */
+let codexCatalogCache = null;
+function codexAllCards() {
+  if (codexCatalogCache) return codexCatalogCache;
+  const base = E.loadCardData();
+  let naturals = [];
+  try {
+    const parents = base.filter((d) => d.id === 'race/race-04' || d.id === 'race/race-25');
+    const probe = { races: parents.map((d) => ({ uid: d.id, data: d })) };
+    naturals = E.naturalWeapons(probe)
+      .map((inst) => inst.data)
+      .filter((d) => d && !base.some((b) => b.id === d.id));
+  } catch (e) { naturals = []; }
+  codexCatalogCache = [...base, ...naturals];
+  return codexCatalogCache;
+}
+function codexDisplayName(d) { return d.name || (d.slot ? d.slot.toUpperCase() + ' item' : d.id); }
+function codexCatCards(cat) {
+  const decks = new Set(cat.decks);
+  return codexAllCards().filter((d) => decks.has(d.deck));
+}
+function codexSummary(d) {
+  const s = cardSummary({ uid: d.id, data: d });
+  if (!s.art) {
+    if (s.id === 'natural/catfolk-claws') s.art = artForId('race/race-04');
+    else if (s.id === 'natural/mirespawn-spit') s.art = artForId('race/race-25');
+  }
+  return s;
+}
+/* Enlarged view via the game's own zoomCard(); the grid stays mounted
+   underneath, and closing restores the exact scroll position the
+   player was reading at. */
+function codexZoom(summary) {
+  codexScrollY = window.scrollY || 0;
+  zoomCard(summary);
+  const restore = () => {
+    $('zoom-wrap').classList.add('hidden');
+    const y = codexScrollY;
+    requestAnimationFrame(() => window.scrollTo(0, y));
+    setTimeout(() => window.scrollTo(0, y), 60);
+  };
+  const zc = $('zoom-close');
+  if (zc) zc.onclick = restore;
+  $('zoom-wrap').onclick = (e) => { if (e.target.id === 'zoom-wrap') restore(); };
+}
+function codexRenderGrid(cards, emptyMsg) {
+  const grid = $('codex-grid');
+  grid.innerHTML = '';
+  if (!cards.length) {
+    const div = document.createElement('div');
+    div.className = 'codex-empty';
+    div.textContent = emptyMsg;
+    grid.appendChild(div);
+    return;
+  }
+  for (const d of cards) {
+    grid.appendChild(cardEl(codexSummary(d), { onTap: (s) => codexZoom(s), tapLabel: 'tap to view enlarged' }));
+  }
+}
+function codexShowBrowse(title) {
+  $('codex-cats').classList.add('hidden');
+  $('codex-browse').classList.remove('hidden');
+  $('codex-browse-title').textContent = title;
+}
+function codexShowIndex() {
+  $('codex-browse').classList.add('hidden');
+  $('codex-grid').innerHTML = '';
+  $('codex-cats').classList.remove('hidden');
+  $('codex-status').textContent = '';
+}
+function renderCodexCats() {
+  const host = $('codex-cats');
+  host.innerHTML = '';
+  $('codex-total').textContent = `${codexAllCards().length} cards in the live catalog — tap a family to open its plates.`;
+  for (const cat of CODEX_CATS) {
+    const n = codexCatCards(cat).length;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'codex-cat';
+    b.setAttribute('aria-label', `Open ${cat.label} category, ${n} cards`);
+    b.innerHTML = `<span class="codex-cat-name">${esc(cat.label)}</span><span class="codex-cat-count">${n} CARDS</span>${cat.blurb ? `<span class="codex-cat-blurb">${esc(cat.blurb)}</span>` : ''}`;
+    b.onclick = () => openCodexCat(cat.id);
+    host.appendChild(b);
+  }
+}
+function openCodexCat(catId) {
+  const cat = CODEX_CATS.find((c) => c.id === catId);
+  if (!cat) return;
+  const cards = codexCatCards(cat);
+  codexShowBrowse(`${cat.label} — ${cards.length} cards`);
+  $('codex-status').textContent = 'Tap any card to view it enlarged.';
+  codexRenderGrid(cards, 'No cards in this family yet.');
+  window.scrollTo(0, 0);
+}
+function codexSearch(raw) {
+  const q = String(raw || '').trim().toLowerCase();
+  if (q.length < 2) { codexShowIndex(); return; }
+  const nameHits = [];
+  const textHits = [];
+  for (const d of codexAllCards()) {
+    if (codexDisplayName(d).toLowerCase().includes(q) || d.id.toLowerCase().includes(q)) nameHits.push(d);
+    else if ((d.effectText || '').toLowerCase().includes(q)
+      || (d.slot || '').toLowerCase().includes(q)
+      || (d.actionType || '').toLowerCase().includes(q)) textHits.push(d);
+  }
+  const hits = [...nameHits, ...textHits];
+  const shown = hits.slice(0, 120);
+  codexShowBrowse(`Search — ${hits.length} match${hits.length === 1 ? '' : 'es'}`);
+  $('codex-status').textContent = hits.length > shown.length
+    ? `Showing the first ${shown.length} — refine your search to narrow it down.`
+    : (hits.length ? 'Name matches first, then text matches. Tap any card to view it enlarged.' : '');
+  codexRenderGrid(shown, `No card name or text matches "${String(raw || '').trim()}". Try a word printed on the card.`);
+}
+function openCodex() {
+  closeZoom();
+  closeModal();
+  $('screen-title').classList.add('hidden');
+  $('screen-game').classList.add('hidden');
+  $('gameover').classList.add('hidden');
+  $('screen-codex').classList.remove('hidden');
+  const inp = $('codex-search');
+  if (inp) inp.value = '';
+  renderCodexCats();
+  codexShowIndex();
+  window.scrollTo(0, 0);
+}
+function closeCodex() {
+  closeZoom();
+  $('screen-codex').classList.add('hidden');
+  $('screen-title').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
 // ------------------------------------------------------------ init
 
 initFaceFitObserver();
@@ -12137,6 +12325,16 @@ $('btn-surrender').onclick = () => confirmSurrender();
 $('btn-aid').onclick = () => openAid();
 $('btn-aid-title').onclick = () => openAid();
 $('btn-howto-title').onclick = () => openHowToPlay();
+$('btn-codex-title').onclick = () => openCodex();
+$('btn-codex-back').onclick = () => closeCodex();
+$('btn-codex-cats').onclick = () => {
+  const inp = $('codex-search');
+  if (inp) inp.value = '';
+  codexShowIndex();
+  window.scrollTo(0, 0);
+};
+$('codex-search').addEventListener('input', (e) => codexSearch(e.target.value));
+$('codex-search').addEventListener('search', (e) => codexSearch(e.target.value));
 // Title art (box thumbnail generated alongside card art)
 $('title-art').src = artForId('box-top');
 renderSavePanel();
@@ -13883,6 +14081,47 @@ button.play-cancel {
 #drop-diff-picker { display: flex; gap: 8px; margin: 0 0 10px; flex-wrap: wrap; }
 #drop-diff-picker button { flex: 1; min-height: 44px; }
 #drop-diff-picker button.sel { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(232, 182, 76, 0.35); }
+
+/* ---------------- card codex (title-screen pattern archive) ----------------
+   Forge/archive flavor inside the game's blue tech-hex + gold chrome:
+   forged-plate category tiles with ember-gold counts, no book imagery.
+   Card faces themselves are the game's own .card / cardEl rendering. */
+#screen-codex { text-align: center; padding: 28px 16px 44px; }
+.codex-head { max-width: 440px; margin: 0 auto; }
+.codex-title {
+  font-family: var(--serif); font-size: 26px; letter-spacing: 0.16em;
+  margin: 18px 0 4px; color: var(--gold);
+  text-shadow: 0 0 14px rgba(232, 182, 76, 0.45);
+}
+.codex-ic { display: inline-block; width: 22px; height: 22px; vertical-align: -4px; margin-right: 8px; stroke: var(--ember); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 5px rgba(255, 154, 60, 0.6)); }
+.codex-sub { font-family: var(--serif); color: var(--arcane); letter-spacing: 0.18em; font-size: 11px; text-transform: uppercase; text-shadow: 0 0 10px rgba(127, 212, 255, 0.5); }
+.codex-total { margin-top: 10px; }
+.codex-search-label { display: block; text-align: left; font-family: var(--serif); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin: 14px 0 6px; }
+#codex-search {
+  width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--arcane-dim); background: rgba(7, 5, 16, 0.85);
+  color: var(--text); font-size: 16px; font-family: inherit;
+  box-shadow: inset 0 0 12px rgba(127, 212, 255, 0.07);
+}
+#codex-search:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+#codex-search::placeholder { color: var(--dim); }
+.codex-status { min-height: 18px; margin-bottom: 4px; }
+#codex-cats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-width: 440px; margin: 6px auto 0; }
+.codex-cat {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-height: 74px; padding: 12px 8px; text-align: center;
+  border: 1px solid rgba(232, 182, 76, 0.45); border-radius: 10px;
+  background: linear-gradient(180deg, rgba(38, 32, 72, 0.9), rgba(13, 11, 30, 0.95));
+  box-shadow: inset 0 0 14px rgba(232, 182, 76, 0.07), 0 3px 12px rgba(0, 0, 0, 0.5);
+}
+.codex-cat:active { border-color: var(--gold); }
+.codex-cat-name { font-family: var(--serif); font-size: 13.5px; font-weight: 700; letter-spacing: 0.07em; color: #fff3d0; line-height: 1.3; }
+.codex-cat-count { font-family: var(--serif); font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em; color: var(--ember); text-shadow: 0 0 8px rgba(255, 154, 60, 0.45); }
+.codex-cat-blurb { font-size: 11.5px; line-height: 1.35; color: var(--dim); letter-spacing: 0.01em; text-shadow: none; font-family: inherit; font-weight: 400; }
+#codex-browse { max-width: 440px; margin: 6px auto 0; }
+#codex-browse-title { font-family: var(--serif); font-size: 18px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 16px 0 4px; text-shadow: 0 0 12px rgba(232, 182, 76, 0.4); }
+.codex-grid { padding: 8px 0; }
+.codex-empty { grid-column: 1 / -1; color: var(--dim); font-size: 14px; line-height: 1.5; padding: 18px 8px; }
 `;
 
 const GAME_HTML = `
@@ -13958,6 +14197,7 @@ const GAME_HTML = `
     </div>
     <button id="btn-aid-title" aria-label="Open player aid" style="width:100%;margin-top:8px;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.2C10.1 4.7 7.6 4.2 5 4.2v13.6c2.6 0 5.1.5 7 2 1.9-1.5 4.4-2 7-2V4.2c-2.6 0-5.1.5-7 2z"/><path d="M12 6.2v13.6"/></svg>Player Aid — Rules & Definitions</button>
     <button id="btn-howto-title" aria-label="Open how to play" style="width:100%;margin-top:8px;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg>How to Play</button>
+    <button id="btn-codex-title" aria-label="Open card codex" style="width:100%;margin-top:8px;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 9h18.4"/><path d="M6 9c.6 2.8 2.6 4.2 6 4.2s5.4-1.4 6-4.2"/><path d="M12 13.2V17"/><path d="M9.5 17h5l.8 3.5H8.7z"/></svg>CARD CODEX</button>
     <div id="save-panel"></div>
     <div class="howto">
       <b>How it plays:</b> Draft races, buy equipment, draft traits, buy action cards —
@@ -13968,6 +14208,24 @@ const GAME_HTML = `
       green, tap again to let one go. Everywhere else, tap a card to inspect it, then
       use its action button.
       In combat, choose Move / Unarmed / Weapon / Rest, or tap a hand card to play it.
+    </div>
+  </section>
+
+  <section id="screen-codex" class="hidden">
+    <div class="codex-head">
+      <button id="btn-codex-back" aria-label="Back to title screen" style="width:100%;">← Back to Title</button>
+      <h2 class="codex-title"><svg class="ic codex-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 9h18.4"/><path d="M6 9c.6 2.8 2.6 4.2 6 4.2s5.4-1.4 6-4.2"/><path d="M12 13.2V17"/><path d="M9.5 17h5l.8 3.5H8.7z"/></svg>CARD CODEX</h2>
+      <div class="codex-sub">Pattern Archive · Every plate in the forge</div>
+      <p class="hint codex-total" id="codex-total" aria-live="polite"></p>
+      <label class="codex-search-label" for="codex-search">Search the archive</label>
+      <input id="codex-search" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search by card name or card text…" aria-label="Search cards by name or text">
+      <p class="hint codex-status" id="codex-status" aria-live="polite"></p>
+    </div>
+    <div id="codex-cats" role="navigation" aria-label="Card categories"></div>
+    <div id="codex-browse" class="hidden">
+      <button id="btn-codex-cats" aria-label="Back to codex categories" style="width:100%;">← All Categories</button>
+      <h3 id="codex-browse-title"></h3>
+      <div id="codex-grid" class="card-grid two codex-grid"></div>
     </div>
   </section>
 
