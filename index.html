@@ -120,7 +120,7 @@ const E = (() => {
    ONCE, here inside the engine, and exported on the E namespace — the
    bridge and UI alias this same set, so every surface agrees. */
 const DEFENSIVE_QUICK = new Set(['physical-actions/02', 'physical-actions/08', 'physical-actions/10']);
-/* Item 33 (Norman, 2026-10-23): HASTE may only be played on the player's (private build, items 33+34)
+/* Item 33 (Norman, 2026-10-23): HASTE may only be played on the player's (private build, items 33+34) (private build, MP fix batch 2026-10-23)
    OWN turn — a play attempt on anyone else's turn is an illegal action.
    Returns the refusal reason when player t may not play HASTE in game e
    right now, null when the play is legal. e.cfTurnPlayer is stamped at
@@ -291,10 +291,10 @@ action below card.
 If opponent gets
 within 1 space activate
 facedown card as a
-quick action.`,copies:1},{id:"psionic-action/psionic-action-01",deck:"psionic-action",name:"AGE",value:3,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:`INT +1
-ARC +1`,copies:1},{id:"psionic-action/psionic-action-02",deck:"psionic-action",name:"CLEAR MIND",value:1,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"PER +2",copies:1},{id:"psionic-action/psionic-action-03",deck:"psionic-action",name:"MENTAL ECHO",value:2,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Use an action card from your discard pile.",copies:1},{id:"psionic-action/psionic-action-04",deck:"psionic-action",name:"MIND WARD",value:1,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:`Passive:
+quick action.`,copies:1},{id:"psionic-action/psionic-action-01",deck:"psionic-action",name:"AGE",value:3,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:`INT +1
+ARC +1`,copies:1},{id:"psionic-action/psionic-action-02",deck:"psionic-action",name:"CLEAR MIND",value:1,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"PER +2",copies:1},{id:"psionic-action/psionic-action-03",deck:"psionic-action",name:"MENTAL ECHO",value:2,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Use an action card from your discard pile.",copies:1},{id:"psionic-action/psionic-action-04",deck:"psionic-action",name:"MIND WARD",value:1,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:`Passive:
 PER//INT//CON
-cannot be reduced.`,copies:1},{id:"psionic-action/psionic-action-05",deck:"psionic-action",name:"NEVER FORGOTTEN",value:2,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Shuffle your out of play cards back into your deck.",copies:1},{id:"psionic-action/psionic-action-06",deck:"psionic-action",name:"PREPARE",value:2,slot:null,actionType:null,quick:!0,speed:null,vitality:null,effectText:"Draw 2 cards.",copies:1},{id:"psionic-action/psionic-action-07",deck:"psionic-action",name:"PSYCHIC MIRAGE",value:3,slot:null,actionType:null,quick:!0,speed:null,vitality:null,effectText:"Reduce VIT damage by PER//INT//CON.",copies:1},{id:"psionic-action/psionic-action-08",deck:"psionic-action",name:"SLOW TIME",value:3,slot:null,actionType:null,quick:!0,speed:null,vitality:null,effectText:"Put your discard pile at the top of your deck in any order, draw 2 cards.",copies:1},{id:"psionic-action/psionic-action-09",deck:"psionic-action",name:"STRAIN",value:1,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Inflict TRAIT DAMAGE to opponent STR//DEX//CON//RES by TRAIT DAMAGE to self.",copies:1},{id:"psionic-action/psionic-action-10",deck:"psionic-action",name:"TELEKINESIS",value:2,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Make a single melee attack action as if it were ranged. Apply 1 PSYCHIC DAMAGE (Remove the top card from opponent discard pile) to that attack.",copies:1},{id:"psionic-action/psionic-action-11",deck:"psionic-action",name:"TRAINED MIND",value:2,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Use an action card from your opponent's discard pile.",copies:1},{id:"psionic-action/psionic-action-12",deck:"psionic-action",name:"TRANCE",value:1,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Inflict TRAIT DAMAGE to INT//SPI//CUN//ACC//INS by TRAIT DAMAGE to self.",copies:1},{id:"race/race-01",deck:"race",name:"ASHENBORN",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"Melee Attacks gain 1 FIRE DAMAGE (Discard cards from opponent's hand)",copies:1},{id:"race/race-02",deck:"race",name:"AURORAN",value:3,slot:null,actionType:null,quick:!1,speed:7,vitality:50,effectText:"SPI +3",copies:1},{id:"race/race-03",deck:"race",name:"BONECLAD",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:'Passive "chitin armor": cannot wear body armor. RES +8 CON +2',copies:1},{id:"race/race-04",deck:"race",name:"CATFOLK",value:2,slot:null,actionType:null,quick:!1,speed:9,vitality:60,effectText:'Passive "natural weapon": Catfolk claws count as a dagger (STR//DEX+ACC) that cannot be dropped. Can be modified as a standard weapon.',copies:1},{id:"race/race-05",deck:"race",name:"CRESTBORN",value:1,slot:null,actionType:null,quick:!1,speed:7,vitality:60,effectText:"Passive: If VIT is above 30 DEX +5",copies:1},{id:"race/race-06",deck:"race",name:"CURSEDBLOOD",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"If an opponent does more than 10 damage to any character in a single action; inflict 2 TRAIT DAMAGE. Not affected by RES.",copies:1},{id:"race/race-07",deck:"race",name:"DRAGONSCALE",value:3,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"Add DEX//STR to all elemental damage.",copies:1},{id:"race/race-08",deck:"race",name:"ECHOFIENDS",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"PER +4",copies:1},{id:"race/race-09",deck:"race",name:"EGGBORN",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:`DEX +2
+cannot be reduced.`,copies:1},{id:"psionic-action/psionic-action-05",deck:"psionic-action",name:"NEVER FORGOTTEN",value:2,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Shuffle your out of play cards back into your deck.",copies:1},{id:"psionic-action/psionic-action-06",deck:"psionic-action",name:"PREPARE",value:2,slot:null,actionType:"Psionic Action",quick:!0,speed:null,vitality:null,effectText:"Draw 2 cards.",copies:1},{id:"psionic-action/psionic-action-07",deck:"psionic-action",name:"PSYCHIC MIRAGE",value:3,slot:null,actionType:"Psionic Action",quick:!0,speed:null,vitality:null,effectText:"Reduce VIT damage by PER//INT//CON.",copies:1},{id:"psionic-action/psionic-action-08",deck:"psionic-action",name:"SLOW TIME",value:3,slot:null,actionType:"Psionic Action",quick:!0,speed:null,vitality:null,effectText:"Put your discard pile at the top of your deck in any order, draw 2 cards.",copies:1},{id:"psionic-action/psionic-action-09",deck:"psionic-action",name:"STRAIN",value:1,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Inflict TRAIT DAMAGE to opponent STR//DEX//CON//RES by TRAIT DAMAGE to self.",copies:1},{id:"psionic-action/psionic-action-10",deck:"psionic-action",name:"TELEKINESIS",value:2,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Make a single melee attack action as if it were ranged. Apply 1 PSYCHIC DAMAGE (Remove the top card from opponent discard pile) to that attack.",copies:1},{id:"psionic-action/psionic-action-11",deck:"psionic-action",name:"TRAINED MIND",value:2,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Use an action card from your opponent's discard pile.",copies:1},{id:"psionic-action/psionic-action-12",deck:"psionic-action",name:"TRANCE",value:1,slot:null,actionType:"Psionic Action",quick:!1,speed:null,vitality:null,effectText:"Inflict TRAIT DAMAGE to INT//SPI//CUN//ACC//INS by TRAIT DAMAGE to self.",copies:1},{id:"race/race-01",deck:"race",name:"ASHENBORN",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"Melee Attacks gain 1 FIRE DAMAGE (Discard cards from opponent's hand)",copies:1},{id:"race/race-02",deck:"race",name:"AURORAN",value:3,slot:null,actionType:null,quick:!1,speed:7,vitality:50,effectText:"SPI +3",copies:1},{id:"race/race-03",deck:"race",name:"BONECLAD",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:'Passive "chitin armor": cannot wear body armor. RES +8 CON +2',copies:1},{id:"race/race-04",deck:"race",name:"CATFOLK",value:2,slot:null,actionType:null,quick:!1,speed:9,vitality:60,effectText:'Passive "natural weapon": Catfolk claws count as a dagger (STR//DEX+ACC) that cannot be dropped. Can be modified as a standard weapon.',copies:1},{id:"race/race-05",deck:"race",name:"CRESTBORN",value:1,slot:null,actionType:null,quick:!1,speed:7,vitality:60,effectText:"Passive: If VIT is above 30 DEX +5",copies:1},{id:"race/race-06",deck:"race",name:"CURSEDBLOOD",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"If an opponent does more than 10 damage to any character in a single action; inflict 2 TRAIT DAMAGE. Not affected by RES.",copies:1},{id:"race/race-07",deck:"race",name:"DRAGONSCALE",value:3,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:"Add DEX//STR to all elemental damage.",copies:1},{id:"race/race-08",deck:"race",name:"ECHOFIENDS",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"PER +4",copies:1},{id:"race/race-09",deck:"race",name:"EGGBORN",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:`DEX +2
 INS +2`,copies:1},{id:"race/race-10",deck:"race",name:"ETERNAL",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:80,effectText:"CON +8",copies:1},{id:"race/race-11",deck:"race",name:"FAIRYFOLK",value:4,slot:null,actionType:null,quick:!1,speed:7,vitality:45,effectText:"SPI +2, INS +2",copies:1},{id:"race/race-12",deck:"race",name:"FLESHWEAVER",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:100,effectText:"CON +2",copies:1},{id:"race/race-13",deck:"race",name:"FLOWERKIN",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:50,effectText:`SPI +2
 ARC +2`,copies:1},{id:"race/race-14",deck:"race",name:"FLYER",value:3,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:'Passive "winged": When you move, move to any spot.',copies:1},{id:"race/race-15",deck:"race",name:"FORGEBORN",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:85,effectText:"Damage +5 with melee weapons.",copies:1},{id:"race/race-16",deck:"race",name:"FROSTWIGHTS",value:3,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:'Passive "collect ice": The first time each turn you hit or get hit with COLD DAMAGE, RES//CON +2',copies:1},{id:"race/race-17",deck:"race",name:"FUNGAL",value:3,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"Once per game: Choose an opponent's card and receive its passive as well until the end of the game.",copies:1},{id:"race/race-18",deck:"race",name:"GIANT",value:1,slot:null,actionType:null,quick:!1,speed:4,vitality:90,effectText:"STR +4",copies:1},{id:"race/race-19",deck:"race",name:"GLOOMWRAITH",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"The first time each turn you are targeted by a PHYSICAL or RANGED ACTION CARD, RES//CON +2.",copies:1},{id:"race/race-20",deck:"race",name:"HARDSHELL",value:1,slot:null,actionType:null,quick:!1,speed:4,vitality:80,effectText:'Passive "shell": Opponent ranged attack damage - CON.',copies:1},{id:"race/race-21",deck:"race",name:"HIGHMINDED",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"INT +2",copies:1},{id:"race/race-22",deck:"race",name:"HIVEMIND",value:1,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:"CUN +1",copies:1},{id:"race/race-23",deck:"race",name:"INFESTED",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:85,effectText:"Reduce VIT and add it to the damage of an attack. Limit 10 VIT per attack.",copies:1},{id:"race/race-24",deck:"race",name:"IRONROOT",value:3,slot:null,actionType:null,quick:!1,speed:4,vitality:90,effectText:'Passive "resist stun": CUN cannot be reduced for any reason.',copies:1},{id:"race/race-25",deck:"race",name:"MIRESPAWN",value:4,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:'Passive "natural weapon"; Mirespawn spit counts as a shortbow (DEX+DEX) that cannot be dropped. Can be modified as a standard weapon.',copies:1},{id:"race/race-26",deck:"race",name:"NIMBLEFOOT",value:1,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:"If you haven't attacked SPE +3",copies:1},{id:"race/race-27",deck:"race",name:"NIMBLEHAND",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"DEX +4",copies:1},{id:"race/race-28",deck:"race",name:"OPENMINDED",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"Passive: On hit: remove opponent's top card in discard pile.",copies:1},{id:"race/race-29",deck:"race",name:"ORCBLOOD",value:1,slot:null,actionType:null,quick:!1,speed:5,vitality:75,effectText:`Passive "Bloodlust": If you did damage this turn STR +2, If you didn't STR -2.`,copies:1},{id:"race/race-30",deck:"race",name:"PLAGUETAIL",value:3,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:'Passive "Many Parts": Cannot take more than 10 damage to VIT in a single attack.',copies:1},{id:"race/race-31",deck:"race",name:"RISEN",value:4,slot:null,actionType:null,quick:!1,speed:3,vitality:0,effectText:"VIT = 0. Cannot gain VIT. When using multi-race VIT = 0 and TP = 100.",copies:1},{id:"race/race-32",deck:"race",name:"RUNECARVED",value:4,slot:null,actionType:null,quick:!1,speed:6,vitality:70,effectText:"Living Spell: Once per game choose an action. When you play that action, put it on the top of your deck instead of discarding or removing.",copies:1},{id:"race/race-33",deck:"race",name:"RUSTKIN",value:4,slot:null,actionType:null,quick:!1,speed:4,vitality:85,effectText:'Passive "rusted construct": Immune to all ELEMENTAL DAMAGE',copies:1},{id:"race/race-34",deck:"race",name:"SORROWKIN",value:4,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:"All champions can only attack once per turn.",copies:1},{id:"race/race-35",deck:"race",name:"STARKISSED",value:4,slot:null,actionType:null,quick:!1,speed:6,vitality:60,effectText:'Passive "mind in the stars": ARC +2 after each of your draw phases if you have 3 or more cards in your hand.',copies:1},{id:"race/race-36",deck:"race",name:"STONEMADE",value:6,slot:null,actionType:null,quick:!1,speed:3,vitality:90,effectText:'Passive "construct": Immune to POISON and NECROTIC DAMAGE',copies:1},{id:"race/race-37",deck:"race",name:"TIDEBORN",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"ARC +3",copies:1},{id:"race/race-38",deck:"race",name:"VAMPIRE",value:2,slot:null,actionType:null,quick:!1,speed:5,vitality:60,effectText:"Increase VIT by NECROTIC DAMAGE inflicted. On hit: apply 1 NECROTIC DAMAGE.",copies:1},{id:"race/race-39",deck:"race",name:"WRAITHVINE",value:6,slot:null,actionType:null,quick:!1,speed:6,vitality:70,effectText:"If an enemy is adjacent it cannot take the movement action.",copies:1},{id:"ranged-actions/ranged-actions-01",deck:"ranged-actions",name:"DIRTY TACTICS",value:3,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Ranged Attack: For this attack the opponents CON is considered 0 and cannot be increased.",copies:2},{id:"ranged-actions/ranged-actions-03",deck:"ranged-actions",name:"DISABLE",value:2,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Ranged Attack then On Hit: Discard opponent weapon; remove instead of discarding.",copies:2},{id:"ranged-actions/ranged-actions-05",deck:"ranged-actions",name:"NET",value:2,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Inflict TRAIT DAMAGE to opponent SPE//DEX by ACC//DEX.",copies:2},{id:"ranged-actions/ranged-actions-07",deck:"ranged-actions",name:"SNIPER'S MARK",value:3,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Passive: add 2 + ACC to ranged damage.",copies:2},{id:"ranged-actions/ranged-actions-09",deck:"ranged-actions",name:"TRICK SHOT",value:2,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Ranged Attack then On Hit; Inflict TRAIT DAMAGE to opponent STR//DEX// CON//RES by ACC.",copies:2},{id:"ranged-actions/ranged-actions-11",deck:"ranged-actions",name:"VOLLEY",value:2,slot:null,actionType:"Ranged Action",quick:!1,speed:null,vitality:null,effectText:"Ranged Attack increase damage by DEX+SPE// STR+SPE.",copies:2},{id:"silver-hero/silver-hero-01",deck:"silver-hero",name:"ADRENALINE RUSH",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"CON +5",copies:1},{id:"silver-hero/silver-hero-02",deck:"silver-hero",name:"BLESSED WEAPON",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Increase all weapon damage by 5.",copies:1},{id:"silver-hero/silver-hero-03",deck:"silver-hero",name:"CLARITY",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"CUN +1",copies:1},{id:"silver-hero/silver-hero-04",deck:"silver-hero",name:"ENVELOPED IN DARKNESS",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Increase TP by 30 and add 1 NECROTIC DAMAGE to every attack.",copies:1},{id:"silver-hero/silver-hero-05",deck:"silver-hero",name:"EPIPHANY",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"INT +2 ARC//SPI// INS +3",copies:1},{id:"silver-hero/silver-hero-06",deck:"silver-hero",name:"FORGOTTEN DESTINY",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Double your highest TRAIT. (Not including VIT or TP)",copies:1},{id:"silver-hero/silver-hero-07",deck:"silver-hero",name:"HOLY WARRIOR",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Add 2 RADIANT DAMAGE to every attack.",copies:1},{id:"silver-hero/silver-hero-08",deck:"silver-hero",name:"INNER PEACE",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"SPI//INS +5",copies:1},{id:"silver-hero/silver-hero-09",deck:"silver-hero",name:"IT'S OVER",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Add 5 ELEMENTAL DAMAGE to one attack each turn.",copies:1},{id:"silver-hero/silver-hero-10",deck:"silver-hero",name:"POSSESSED",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Each turn lose 5 VIT and add 2 to any TRAIT (other than CUN).",copies:1},{id:"silver-hero/silver-hero-11",deck:"silver-hero",name:"RAGE",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"STR//INS +7",copies:1},{id:"silver-hero/silver-hero-12",deck:"silver-hero",name:"SECOND WIND",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"VIT +30",copies:1},{id:"silver-hero/silver-hero-13",deck:"silver-hero",name:"THE ONE TRUE KING",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"Reduced damage by 5 per Attack.",copies:1},{id:"silver-hero/silver-hero-14",deck:"silver-hero",name:"THICK SKIN",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"CON +5 RES +5",copies:1},{id:"silver-hero/silver-hero-15",deck:"silver-hero",name:"WEAPON MASTER",value:null,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"ACC//DEX// STR +7",copies:1},{id:"summoning-actions/summoning-01",deck:"summoning-actions",name:"EAGLE FORM",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:'Increase TP 5 + (INS//SPI). Passive "Flight": When you move go to any space. DEX +2. If TP = 0 then discard.',copies:1},{id:"summoning-actions/summoning-02",deck:"summoning-actions",name:"LIZARD FORM",value:3,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 15 + (INS//SPI). Passive: PER +2, RES +2. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-03",deck:"summoning-actions",name:"MONSTER FORM",value:4,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 25 + (CON+INS//CON+SPI). Passive: RES +2, STR +2. If TP=0 then discard.",copies:1},{id:"summoning-actions/summoning-04",deck:"summoning-actions",name:"SUMMON DEVIL",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (CON//SPI). Passive: VIT -10, TRAIT +5 (other than CUN). If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-05",deck:"summoning-actions",name:"SUMMON DRYAD",value:3,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (INS//SPI). Passive: SPI + 1 at the beginning of each of your turns. If TP = 0 discard.",copies:1},{id:"summoning-actions/summoning-06",deck:"summoning-actions",name:"SUMMON ELEMENTAL",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + ARC. Passive: ELEMENTAL DAMAGE +2. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-07",deck:"summoning-actions",name:"SUMMON GIANT LARVA",value:3,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (CON//SPI). Passive: On Hit: VIT + Damage. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-08",deck:"summoning-actions",name:"SUMMON GIANT TOAD",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (CON//INS). Passive: When you add INS to attack or action Toad attacks: TRAIT DAMAGE to CON = SPI. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-09",deck:"summoning-actions",name:"SUMMON IMP",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + ARC. Passive: when you add ARC to an attack or action Imp attacks: 5 DAMAGE + INT. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-10",deck:"summoning-actions",name:"SUMMON RAVEN",value:1,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (INS//SPI). Passive: PER +2, If TP = 0 then discard",copies:1},{id:"summoning-actions/summoning-11",deck:"summoning-actions",name:"SUMMON SPIDER",value:2,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 10 + (INS//SPI). Passive: Add 2 POISON DAMAGE (DEX//STR) to attacks. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-12",deck:"summoning-actions",name:"SUMMON SPORE",value:3,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (CON//SPI). Passive: Choose and copy another passive. If TP = 0 then discard.",copies:1},{id:"summoning-actions/summoning-13",deck:"summoning-actions",name:"SUMMON WRAITH",value:4,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (CON+CON). Passive: Your TP takes half damage from physical attacks or action cards. After 5 attacks, remove this card. If TP = 0 OR CON+RES=0 then discard. Damage hits VIT normally.",copies:1},{id:"summoning-actions/summoning-14",deck:"summoning-actions",name:"WOLF FORM",value:3,slot:null,actionType:"Summoning Action",quick:!1,speed:null,vitality:null,effectText:"Increase TP 5 + (INS//SPI). Passive: SPE +3, CUN +1. If TP = 0 then discard.",copies:1},{id:"trait-cards/trait-01",deck:"trait-cards",name:"CUN +1",value:2,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:"CUN +1",copies:1},{id:"trait-cards/trait-02",deck:"trait-cards",name:`INT +2
 ARC +3`,value:5,slot:null,actionType:null,quick:!1,speed:null,vitality:null,effectText:`INT +2
@@ -463,7 +463,7 @@ if(t.onHitCardIds.includes("weapon-traits/weapon-traits-11"))addFx("weapon-trait
 if(fx.length===1){s+=fx[0].apply()||0}
 else if(fx.length>1){let rem=fx.slice();while(rem.length>0){let pick=0;if(n.decisions&&typeof n.decisions.onHitOrder==="function")pick=n.decisions.onHitOrder(n,rem.map((f2)=>({id:f2.id,label:f2.label})),e);let idx=typeof pick==="number"&&pick>=0&&pick<rem.length?Math.floor(pick):0;let[f2]=rem.splice(idx,1);p(e,`P${t.attacker} on-hit order: resolves ${f2.label}`);s+=f2.apply()||0}}
 return s}
-function U(e,t,a=9){let n=Math.abs(e-t);return Math.min(n,a-n)}function q(e,t,a){return U(e.players[t].champion.position,e.players[a].champion.position,cfBoardSize(e))}function R(e,t){if(t===0)return 0;return Math.max(0,Math.min(t-1,e))}function Oe(e,t,a,n,cfDef){let i=e.players[t].champion,s=e.players[t],l=0,u=0;for(let o of i.passives){if(o.flags.includes("aimDmg")){let c=s.decisions.orChoice(s,["ACC","PER"],"AIM damage",e);l+=f(e,t,c===0?"ACC":"PER")}if(o.flags.includes("sniperMark")&&n)l+=f(e,t,"ACC")+2;if(o.flags.includes("traitDmgPlus1"))u+=1;if(o.flags.includes("traitDmgPlus2"))u+=2;if(o.flags.includes("traitDmgPlus3"))u+=3}/* body-b18/b19 damage mods: read through w() so an EQUIPPED body card counts, not just a passive entry (Spore copy); applied once per attack. */if(n&&w(i,"rangedDmgMod")){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b18",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"CUN")}if(a&&w(i,"meleeDmgMod")){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b19",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"ACC")}if(cfDef!=null&&w(i,"awareDmg")){let dd=e.players[cfDef]&&e.players[cfDef].champion;if(dd&&typeof i.position==="number"&&typeof dd.position==="number"){let dst=U(i.position,dd.position,cfBoardSize(e));if(dst<=1)l+=f(e,t,"PER")}}return{vitBonus:l,traitBonus:u}}function z(e,t,a){return{attacker:e,defender:t,vitalityDamage:0,elementalVit:0,poisonVit:0,traitDamage:[],kinds:[],isMelee:!1,isRanged:!1,isSpell:!1,weaponId:null,onHitCardIds:[],necroticCounters:0,onHitNecroticCounters:0,forceDiscard:0,psychicMill:0,defConZero:!1,noCon:!1,fromActionCard:!1,isPhysical:!0,label:a}}function ie(e,t,a,n){let i=e.players[t],s=f(e,t,"STR"),l=f(e,t,"DEX");/* Norman 2026-10-21: NO 0-trait gate on unarmed attacks — an unarmed attack is always legal, exactly like a weapon attack; STR/DEX at 0 add 0 and the printed 2 + trait still lands. */let u=i.decisions.unarmedStat(i,e);if(u==="STR"&&s<=0)u="DEX";if(u==="DEX"&&l<=0)u="STR";let o=q(e,t,a);if(!n&&o>1)return rj(e,`Unarmed melee attacks must be adjacent — the foe is ${o} spaces away.`),null;let c=z(t,a,`unarmed (${u})`);c.vitalityDamage=2+f(e,t,u),c.kinds.push("vitality"),c.isMelee=!n,c.isRanged=n;/* Family-7 gloves/gloves-05: its printed text names no weapon ("On Hit: Inflict STR -1 // DEX -1"), so the unarmed builder picks the rider up exactly like the weapon builder (st) does — equipped gloves or a live copy. The on-hit gate in resolveDamage still applies: a fully negated hit fires nothing. */{let gl=i.champion.equipment.gloves;if(gl&&gl.data.id==="gloves/gloves-05"&&!(i.champion.dispelledUids??[]).includes(gl.uid))c.onHitCardIds.push(gl.data.id);for(let cp2 of i.champion.copiedPassives??[])if(cp2==="gloves/gloves-05"&&!c.onHitCardIds.includes(cp2))c.onHitCardIds.push(cp2)}let d=Oe(e,t,c.isMelee,c.isRanged,c.defender);if(c.vitalityDamage+=d.vitBonus,!xe(e,t,c))return null;return c}function xe(e,t,a){let n=e.players[t],i=n.champion;if(a.isMelee&&P(e,t,"race/race-01")){if(a.vitalityDamage+=1,a.elementalVit=(a.elementalVit||0)+1,!a.kinds.includes("fire"))a.kinds.push("fire");a.forceDiscard+=1,p(e,`P${t} ASHENBORN: +1 fire damage`)}if(P(e,t,"race/race-23")){let s=Math.min(10,Math.max(0,i.traits.VIT)),l=Math.max(0,Math.min(s,n.decisions.chooseAmount(n,s,"INFESTED",e)));if(l>0){e.vitLostThisTurn=!0,e.noDamageTurns=0,i.traits.VIT-=l,a.vitalityDamage+=l;if(i.traits.VIT<=0){a.cfInfestedSelfKill=!0,p(e,`P${t} INFESTED: -${l} VIT, +${l} damage — VIT at 0: the attack still resolves, then this champion is eliminated (Norman 2026-10-21: a draw only if this attack also kills the last other living champion)`)}else p(e,`P${t} INFESTED: -${l} VIT, +${l} damage`)}}/* R1 (Norman, 2026-10-21, supersedes the old blanket self-kill draw): an INFESTED sacrifice to VIT 0 no longer ends the game here and no longer aborts the attack. The boosted attack resolves in full through resolveDamage (O), whose end-of-resolution elimination check (me) eliminates this champion like any other VIT-0 death, and whose end check (Ie) then decides the game: foe alone standing = foe wins (Infested loss), no one standing = mutual-elimination draw, others still standing = the game plays on. */if(P(e,t,"race/race-38")){if(a.onHitNecroticCounters=(a.onHitNecroticCounters||0)+1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} VAMPIRE: +1 necrotic counter`)}if(C(e,t,"accessories/a14")){if(a.onHitNecroticCounters=(a.onHitNecroticCounters||0)+1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} accessory: +1 necrotic counter`)}return!0}function nt(e,t,a){if(!a.isSpell)return;let n=e.players[t];if(C(e,t,"body/body-b02")||C(e,t,"body/body-b10")){if(a.necroticCounters+=2,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} body: +2 necrotic (spell attack)`)}if(C(e,t,"body/body-b08")||C(e,t,"body/body-b15")){let i=n.decisions.chooseElement(n,[...Te],"body elemental rider",e);if(a.vitalityDamage+=2,a.elementalVit=(a.elementalVit||0)+2,i==="poison"&&(a.poisonVit=(a.poisonVit||0)+2),!a.kinds.includes(i))a.kinds.push(i);p(e,`P${t} body: +2 ${i} (spell attack)`)}if(C(e,t,"body/body-b20")){if(a.traitDamage.push({trait:"CON",amount:1,cfRider:1,cfPermanent:1},{trait:"RES",amount:1,cfRider:1,cfPermanent:1}),!a.kinds.includes("radiant"))a.kinds.push("radiant");p(e,`P${t} body: target CON-1 RES-1 (radiant spell attack)`)}}function it(e,t,a,n,i){let s=e.players[t],l=s.champion,u=e.players[a],o=Be();for(let d of i){let r=_(l).find((y)=>y.uid===d);if(!r)continue;if(Fe(r.data.id,o))n.onHitCardIds.push(r.data.id);else p(e,`weapon trait ${cfCardLabel(r.data.id)} UNIMPLEMENTED, skipped`)}let c=0;if(o.flags.includes("bleed")&&u.champion.traits.TP>0)o.vitalityBonus+=5,p(e,"BLEED +5 (opponent has TP)");if(o.flags.includes("heavyHitter")&&s.decisions.heavyHitter(s,e))o.vitalityBonus+=10,c+=1,p(e,`P${t} HEAVY HITTER +10 (extra action)`);n.vitalityDamage+=o.vitalityBonus;for(let d of o.traitDamageOr){let m;if(d.fixed!==void 0){let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r];m=d.fixed;n.traitDamage.push({trait:y,amount:m,...(d.kind?{kind:d.kind}:{}),cfRider:1})}else{let vs=d.atk.map((av)=>f(e,t,av));if(vs.every((x)=>x<=0)){if(d.kind){let ki=o.kinds.indexOf(d.kind);if(ki>=0)o.kinds.splice(ki,1)}continue}let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r],v=R(s.decisions.orChoice(s,d.atk,"trait damage amount",e),d.atk.length);m=vs[v];if(m<=0){if(d.kind){let ki=o.kinds.indexOf(d.kind);if(ki>=0)o.kinds.splice(ki,1)}continue}n.traitDamage.push({trait:y,amount:m,...(d.kind?{kind:d.kind}:{}),cfRider:1})}}for(let d of o.traitDamageFlat)n.traitDamage.push({...d,cfRider:1});if(o.kinds.length)p(e,`P${t} weapon trait kinds: ${[...new Set(o.kinds)].join(", ")}`);return n.kinds.push(...o.kinds),n.necroticCounters+=o.necroticCounters,n.forceDiscard+=o.defenderDiscard,n.psychicMill+=o.psychicMill,c}function rj(e,r){e.lastReject={reason:r,seq:(e.rejectSeq=(e.rejectSeq||0)+1)}}function st(e,t,a,n,i,igR=!1){let s=e.players[t],l=s.champion,u=K(l).find((T)=>T.uid===n)??j(l).find((T)=>T.uid===n)??null;if(!u)return rj(e,"That weapon is no longer equipped."),null;let o=X(u.data.id);if(!o)return p(e,`P${t} weapon ${cfCardLabel(u.data.id)} has no encoded profile`),rj(e,`${E(u)} cannot be used to attack — it has no attack profile.`),null;let c=q(e,t,a);if(!igR&&(c>o.reach||c<1))return rj(e,c<1?`${E(u)} cannot hit a foe standing on your own space.`:`${E(u)} reaches ${o.reach} space${o.reach===1?"":"s"} — the foe is ${c} spaces away. Move closer first.`),null;if(igR&&c<1)return rj(e,`${E(u)} cannot hit a foe standing on your own space.`),null;/* Norman 2026-10-21: NO 0-trait gate on weapon attacks — a weapon attack is always legal with a weapon equipped; STR/DEX at 0 add 0 and the weapon's base damage still hits (physical and spell modes alike). */let d=z(t,a,`${E(u)}`);d.weaponId=u.data.id,d.isSpell=o.isSpell,d.isPhysical=!o.isSpell,d.isMelee=o.kind==="melee"||(o.kind!=="ranged"&&o.reach<=1),d.isRanged=o.kind==="ranged"||(o.kind!=="melee"&&o.reach>1);let oo=o.options;if(o.meleeOptions&&(igR||c<=(o.meleeReach??1)))oo=o.options.concat(o.meleeOptions);let r=oo.map((T)=>T.join("+")),y=R(s.decisions.orChoice(s,r,"weapon damage:"+u.uid,e),r.length),m=oo[y];if(o.meleeOptions){if(o.meleeOptions.includes(m))d.isMelee=!0,d.isRanged=!1;else d.isMelee=!1,d.isRanged=!0}if(d.vitalityDamage=o.base+m.reduce((T,G)=>T+(G.charAt(0)==="-"?-f(e,t,G.slice(1)):f(e,t,G)),0),d.kinds.push("vitality"),m.includes("INS"))d.insUsed=!0;if(m.includes("ARC"))d.arcUsed=!0;let v=it(e,t,a,d,i);if(u.data.id==="weapon/weapon-02"){let T=s.decisions.blunderbussDiscard(s,e);if(T!==null&&T>=0&&T<s.hand.length){let[G]=s.hand.splice(T,1);s.discard.push(G),d.vitalityDamage+=f(e,t,"STR"),p(e,`P${t} BLUNDERBUSS discards ${E(G)}: +${f(e,t,"STR")} damage`)}}if(w(l,"lightAura")&&d.kinds.includes("radiant")){for(let T of d.traitDamage)T.amount+=2;p(e,"LIGHT: radiant +2")}if(w(l,"elemDmg2")&&d.kinds.some((T)=>T==="fire"||T==="cold"||T==="lightning"||T==="poison")){/* FAM3b SUMMON ELEMENTAL: "ELEMENTAL DAMAGE +2" applies to the elemental attack's damage — its health (VIT) damage as well as its trait damage (chosen reading, flagged in the fix report; the printed text does not split the two). The health +2 is stamped elementalVit like every other elemental health rider (ASHENBORN fire, body elemental rider, DRAGONSCALE bonus), so portion-immunity (RUSTKIN) treats it as elemental damage consistently. */d.vitalityDamage+=2,d.elementalVit=(d.elementalVit||0)+2;for(let T of d.traitDamage)T.amount+=2;p(e,"SUMMON ELEMENTAL: elemental +2")}if(w(l,"spiderPoison")){let T=R(s.decisions.orChoice(s,["DEX","STR"],"spider poison",e),2);d.traitDamage.push({trait:T===0?"DEX":"STR",amount:2,kind:"poison",cfRider:1}),d.kinds.push("poison")}let k=Oe(e,t,d.isMelee,d.isRanged,d.defender);if(d.vitalityDamage+=k.vitBonus,k.traitBonus>0)for(let T of d.traitDamage)T.amount+=k.traitBonus;if(d.isMelee&&!u.data.id.startsWith("natural/")&&P(e,t,"race/race-15"))d.vitalityDamage+=5,p(e,`P${t} FORGEBORN: +5 melee weapon damage`);if(!xe(e,t,d))return null;nt(e,t,d);for(let T of l.passives){if(T.flags.includes("blindOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-01");if(T.flags.includes("radiantStrikeOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-09");if(T.flags.includes("larvaHeal"))d.onHitCardIds.push("summoning-actions/summoning-07")}for(let T of[l.equipment.gloves]){if(T&&(l.dispelledUids??[]).includes(T.uid))continue;if(T&&T.data.id==="gloves/gloves-05")d.onHitCardIds.push(T.data.id);if(T&&T.data.id==="gloves/gloves-11")d.onHitCardIds.push(T.data.id)}for(let T of l.copiedPassives??[])if((T==="gloves/gloves-05"||T==="gloves/gloves-11")&&!d.onHitCardIds.includes(T))d.onHitCardIds.push(T);return{ev:d,extraActions:v}}function tt(e){let t=e.data.actionType??"";return t==="Physical Action"||t==="Ranged Action"}function ge(e){return/-actions?$/.test(e.data.deck)}function re(e,t,a,n=0){let i=e.players[t],s=i.hand.find((r)=>r.uid===a);if(!s)return!1;if(cfRequiresRangedWeapon(s.data.id)&&!cfHasRangedWeapon(i.champion))return rj(e,"Needs a ranged weapon"),p(e,`P${t} ${E(s)} cannot be played — needs a ranged weapon`),!1;if(s.data.id==="divine-actions/divine-actions-06"){let hg=cfHasteGate(e,t);if(hg)return rj(e,hg),p(e,`P${t} ${E(s)} cannot be played — ${hg}`),!1}let l=s.data.id,u=cfFoe(e,t),o=e.players[u];/* NO-RECAST GUARD (code audit, 2026-10-22): a card whose passive entry is already active on the caster's own board cannot be played again. RUNECARVED's top-of-deck disposition otherwise lets a summon or passive card cycle hand -> deck -> hand while its passive lives on, stacking a second entry and re-granting its play effects (summons re-granted TP) every turn. An action ruled illegal never consumes the action point (the refusal returns !1 like the other re() refusals). Exclusions: an ENEMY CLOUD entry on this board (cloudDebuff without cloudSource) is not the caster's registration, and a held FUNGAL/SPORE copy (copiedPassives) is not the card's own entry — neither ever blocks a play. COPIES (Norman, 2026-10-22): distinct physical copies of the same card ARE playable and their passives stack, so the guard now keys on the played instance's uid (registrations carry srcUid from g()): only the SAME instance — e.g. one RUNECARVED cycles back into hand — is refused while its own passive lives. Entries without srcUid (SPORE/FUNGAL copy machinery stamps its own; anything legacy) never block. */if(i.champion.passives.some((ps)=>ps.cardId===l&&ps.srcUid!=null&&ps.srcUid===s.uid&&!((ps.flags||[]).includes("cloudDebuff")&&!(ps.flags||[]).includes("cloudSource"))&&!(i.champion.copiedPassives||[]).includes(l)))return rj(e,"Already active"),p(e,`P${t} ${E(s)} is already active \u2014 it cannot be played again while its passive is on the field`),!1;if(e.roundCount===0&&cfAffectsOpponent(l))return cfR1Reject(e),p(e,`P${t} ${E(s)} barred in Round 1 (no contact)`),!1;if(e.cardExtraActions=0,n<2&&s.data.actionType!=="Physical Action"&&s.data.actionType!=="Ranged Action"){for(let oi of cfOpps(e,t)){let oo=e.players[oi],rr=Gt(oo,"mystical-actions/mystical-actions-03");if(!rr)continue;let o2=oo;if(o2.decisions.wantCounterspell(o2,e)){let y=o2.decisions.counterSpell(o2,e),m=y?o2.hand.find((v)=>v.data.id===y&&ge(v)&&v.data.actionType!=="Physical Action"&&v.data.actionType!=="Ranged Action"):void 0;if(m){if(e.roundCount===0&&cfAffectsOpponent(m.data.id)){cfR1Reject(e),p(e,`P${oi} COUNTERSPELL chain of ${E(m)} barred in Round 1 (no contact) — nothing is played, COUNTERSPELL stays in hand`)}else{let tg=t,chainOk=!0;if(cfChainTargetIds.has(m.data.id)){let ct2=o2.decisions.chainTarget(o2,e,m.data.id);if(ct2===null||ct2===void 0){chainOk=!1;p(e,`P${oi} COUNTERSPELL chain of ${E(m)} cancelled at the target step — nothing is played, COUNTERSPELL and ${E(m)} stay in hand`)}else if(typeof ct2==="number"&&ct2!==oi&&e.players[ct2]&&!e.players[ct2].champion.eliminated)tg=ct2}if(chainOk){ve(o2,rr.uid),o2.discard.push(rr),p(e,`P${oi} COUNTERSPELL chains ${E(m)}`);let sv=e.effectTarget;e.effectTarget=tg;re(e,oi,m.uid,n+1);e.effectTarget=sv}}}break}}}let c=(r=!1)=>{if(ve(i,a),s.data.deck==="summoning-actions"&&C(e,t,"body/body-b21")&&cfFirstTurn(e,t,"body/body-b21"))M(e,t,"body/body-b21","CON",2,"body (summoning played)");if(s.data.deck==="summoning-actions"&&C(e,t,"head/head-11"))M(e,t,"head/head-11","SPI",3,"head (summoning action played)");if(ge(s)&&!tt(s)&&C(e,t,"head/head-06"))M(e,t,"head/head-06","SPI",1,"head (non-physical action played)");if(i.champion.runecarvedUid!=null&&s.uid===i.champion.runecarvedUid)i.deck.unshift(s),p(e,`P${t} RUNECARVED: ${E(s)} returns to the top of the deck`);else if(s.data.deck==="summoning-actions"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&l==="physical-actions/16"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&i.champion.passives.some((ps)=>ps.cardId===l)){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field (passive)`)}else qt(e,t,s,r);return p(e,`P${t} plays ${E(s)}`),!0};switch(l){case"physical-actions/01":return g(e,t,l,"AIM",{},["aimDmg"],s.uid),c();case"physical-actions/02":{/* BLOCK (Norman, 2026-10-23): flat CON +10, duration 1 = the temp mod dies when turnCount advances, i.e. end of the CURRENT turn, incl. defensive-quick plays on the foe's turn. No RES, no scaling — the old STR+CON amount read its own still-active temp mods and compounded. */return ae(e,t,"CON",10,1,"BLOCK"),c(!0)}case"physical-actions/05":{let y=q(e,t,u)>1||N(e,t,["Melee","Ranged"],"CRITICAL HIT")===1,m=Z(e,t,u,y),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;let k=N(e,t,[...de],"CRITICAL HIT trait"),T=f(e,t,de[k]);return v.vitalityDamage+=T,v.label="CRITICAL HIT",v.fromActionCard=!0,p(e,`P${t} CRITICAL HIT: +${T} damage (${de[k]})`),O(e,v),c()}case"physical-actions/06":return ae(e,t,"SPE",f(e,t,"SPE"),3,"DASH"),c();case"physical-actions/07":{/* FAM4 (Norman, 2026-10-21): a foe with only a natural weapon (or no weapon) is a LEGAL target — the attack resolves in full and only the on-hit strip no-ops (the __disarm handler already logs that case). The old up-front gate fizzled the whole card. */let y=q(e,t,u)>1,m=Z(e,t,u),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;return v.label="DISARM",v.fromActionCard=!0,v.onHitCardIds.push("__disarm"),O(e,v),c()}case"physical-actions/08":{let r=2*f(e,t,"DEX");return ae(e,t,"RES",r,2,"DODGE"),ae(e,t,"CON",r,2,"DODGE"),c()}case"physical-actions/09":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=i.decisions.chooseTrait(i,r,"FOCUS",e);return g(e,t,l,`FOCUS (${y})`,{[y]:f(e,t,"SPI")},[],s.uid),c()}case"physical-actions/10":return i.champion.guardShield=f(e,t,"RES")+2*f(e,t,"STR"),p(e,`P${t} GUARD shield ${i.champion.guardShield}`),c();case"physical-actions/11":return H(e,t,f(e,t,"CON"),"HEALING POTION"),H(e,t,f(e,t,"CON"),"HEALING POTION"),c();case"physical-actions/12":{if(q(e,t,u)>1)return rj(e,"PUSH needs you adjacent to the foe."),!1;let r=o.champion.position<i.champion.position?-3:3,d=Math.max(0,Math.min(cfBoardSize(e)-1,o.champion.position+r));if(d===i.champion.position)d=i.champion.position-(r>0?1:-1);{let o0=o.champion.position;while(d!==o0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=o0>d?1:-1}return o.champion.position=d,p(e,`P${t} PUSH: foe to ${o.champion.position}`),cfTrapAll(e),c()}case"physical-actions/13":{if(q(e,t,u)>1)return rj(e,"RESTRAIN needs you adjacent to the foe."),!1;return o.champion.flags.cannotMoveUntilTurn=e.turnCount+(e.cfTurnPlayer===t?2:1),p(e,`P${t} RESTRAIN: P${u} cannot move until P${t}'s next turn`),c()}case"physical-actions/14":return p(e,`P${t} RIPOSTE can only trigger as a reaction`),!1;case"physical-actions/15":{let r=o.champion.position<i.champion.position?1:-1,d=Math.max(0,Math.min(cfBoardSize(e)-1,o.champion.position+r*3));if(d===i.champion.position)d=i.champion.position-r;{let o0=o.champion.position;while(d!==o0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=o0>d?1:-1}return o.champion.position=d,p(e,`P${t} STEALTH: foe to ${o.champion.position}`),cfTrapAll(e),c()}case"physical-actions/16":{let r=i.hand.filter((k)=>k.uid!==a&&ge(k));if(r.length===0)return p(e,`P${t} TRAP: no action card in hand to tuck`),!1;let y=i.decisions.chooseCardIndexes(i,r,1,"TRAP",e),m=R(y[0]??0,r.length),v=r[m];return i.hand=i.hand.filter((k)=>k.uid!==v.uid),i.champion.trap=v,p(e,`P${t} TRAP set with ${E(v)} facedown`),c()}case"ranged-actions/ranged-actions-01":{let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.defConZero=!0,r.ev.label="DIRTY TACTICS",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-03":{/* FAM4: same ruling as DISARM — natural-weapon / weaponless foe is a legal target; only the on-hit discard no-ops. */let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.label="DISABLE",r.ev.fromActionCard=!0,r.ev.onHitCardIds.push("__disable"),O(e,r.ev),c(!0)}case"ranged-actions/ranged-actions-05":{let r=R(i.decisions.orChoice(i,["SPE","DEX"],"NET target",e),2),y=R(i.decisions.orChoice(i,["ACC","DEX"],"NET amount",e),2),m=z(t,u,"NET");return m.fromActionCard=!0,m.isRanged=!0,m.traitDamage.push({trait:r===0?"SPE":"DEX",amount:f(e,t,y===0?"ACC":"DEX")}),O(e,m),c()}case"ranged-actions/ranged-actions-07":return g(e,t,l,"SNIPER'S MARK",{},["sniperMark"],s.uid),c();case"ranged-actions/ranged-actions-09":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["STR","DEX","CON","RES"],"TRICK SHOT",e),4),m=["STR","DEX","CON","RES"];return r.ev.traitDamage.push({trait:m[y],amount:f(e,t,"ACC"),cfRider:1}),r.ev.label="TRICK SHOT",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-11":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["DEX+SPE","STR+SPE"],"VOLLEY",e),2);return r.ev.vitalityDamage+=y===0?f(e,t,"DEX")+f(e,t,"SPE"):f(e,t,"STR")+f(e,t,"SPE"),r.ev.label="VOLLEY",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"divine-actions/divine-actions-01":return g(e,t,l,"BLIND",{},["blindOnHit"],s.uid),c();case"divine-actions/divine-actions-02":{let r=cureCands(e,t);if(r.length===0&&(i.champion.necrotic||0)<=0)return rj(e,"CURE needs an enemy passive affecting you, or necrotic damage to clear."),!1;if(r.length>0){let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];if(m.kind==="restrain"){delete i.champion.flags.cannotMoveUntilTurn,p(e,`P${t} CURE lifts RESTRAIN \u2014 the enemy move-block on P${t} ends`)}else resolveDispel(e,m),p(e,`P${t} CURE discards foe passive ${m.label}`)}return cfClearNecrotic(i.champion),p(e,`P${t} CURE clears necrotic`),c()}case"divine-actions/divine-actions-03":{let r=dispelCands(e,t);if(r.length===0)return!1;let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];let oc=resolveDispel(e,m);return p(e,oc==="discarded"?`P${t} DISPEL MAGIC dispels ${m.label} — the action card is discarded, its passive is gone`:`P${t} DISPEL MAGIC nullifies ${m.label} — the card stays on the field, its passive is off`),c()}case"divine-actions/divine-actions-04":{/* FIX FAMILY 4 — F2 (battery Finding 4): DIVINATION gets the same guard MENTAL ECHO and TRAINED MIND already have — against an empty foe hand the play refuses unconsumed (card stays in hand, no action point spent, real reason recorded via rj + log). */if(o.hand.length===0)return rj(e,"DIVINATION needs a card in your opponent's hand."),p(e,`P${t} DIVINATION cannot be played \u2014 no card in the opponent's hand`),!1;let r=i.decisions.chooseCardIndexes(i,o.hand,1,"DIVINATION",e),y=R(r[0]??0,o.hand.length),[m]=o.hand.splice(y,1);return o.discard.push(m),p(e,`P${t} DIVINATION discards foe's ${E(m)}`),c()}case"divine-actions/divine-actions-05":{let r=f(e,t,"SPI"),fc=R(i.decisions.orChoice(i,["RES","CON"],"FORCEFIELD",e),2);return g(e,t,l,"FORCEFIELD",{[fc===0?"RES":"CON"]:r},[],s.uid),c()}case"divine-actions/divine-actions-06":{(e.cfBonusBy??={})[t]=((e.cfBonusBy||{})[t]||0)+2;return p(e,`P${t} HASTE: +2 actions this turn`),c(!0)}case"divine-actions/divine-actions-07":return H(e,t,f(e,t,"SPI"),"HEAL"),H(e,t,f(e,t,"SPI"),"HEAL"),cfClearNecrotic(i.champion),p(e,`P${t} HEAL clears necrotic`),c();case"divine-actions/divine-actions-08":return g(e,t,l,"LIGHT",{PER:3},["lightAura"],s.uid),c();case"divine-actions/divine-actions-09":return g(e,t,l,"RADIANT STRIKE",{},["radiantStrikeOnHit"],s.uid),c();case"divine-actions/divine-actions-10":return cfClearNecrotic(i.champion),g(e,t,l,"REGENERATION",{},["regenSpi"],s.uid),c();case"divine-actions/divine-actions-11":return g(e,t,l,"RES ELEM",{},["resistElemental"],s.uid),c(!0);case"divine-actions/divine-actions-12":return g(e,t,l,"RES MYST",{},["resistMystical"],s.uid),c(!0);case"divine-actions/divine-actions-13":return g(e,t,l,"RES PHYS",{},["resistPhysical"],s.uid),c(!0);default:break}let d=Ut(e,t,a,s,c);if(d!==null)return d;return p(e,`P${t} ${E(s)} has no encoded play handler`),!1}function Z(e,t,a,n=!1,igR=!1){let i=e.players[t],s=q(e,t,a),l=_(i.champion).map((d)=>d.uid),u=null,o=-1;for(let d of[...K(i.champion),...j(i.champion)]){let r=X(d.data.id);if(!r)continue;if(!igR&&(s<1||s>r.reach))continue;if(igR&&s<1)continue;if(r.base>o)u=d,o=r.base}if(u){let d=st(e,t,a,u.uid,l,igR);if(d){if(n)d.ev.isRanged=!0;return d}if(e.phase==="done")return null}let c=ie(e,t,a,n||s>1);return c?{ev:c,extraActions:0}:null}function N(e,t,a,n){let i=e.players[t];return R(i.decisions.orChoice(i,a,n,e),a.length)}function Ut(e,t,a,n,i){let s=e.players[t],l=cfFoe(e,t),u=e.players[l],o=n.data.id,tpGrantAmt=0,c=(r)=>{tpGrantAmt=r;s.champion.traits.TP+=r,p(e,`P${t} +${r} TP (${E(n)})`)},d=(r,y,m)=>{g(e,t,o,r,y,[...m,"summonForm"],a,tpGrantAmt)},cfStampOwn=()=>{let es=s.champion.passives;for(let k=es.length-1;k>=0;k--){if(es[k].cardId===o&&es[k].srcUid==null){es[k].srcUid=a;if(tpGrantAmt>0)es[k].tpGrant=tpGrantAmt;break}}};switch(o){case"summoning-actions/summoning-01":return c(5+f(e,t,N(e,t,["INS","SPI"],"EAGLE")===0?"INS":"SPI")),d("EAGLE FORM",{DEX:2},[]),i();case"summoning-actions/summoning-02":return c(15+f(e,t,N(e,t,["INS","SPI"],"LIZARD")===0?"INS":"SPI")),d("LIZARD FORM",{PER:2,RES:2},[]),i();case"summoning-actions/summoning-03":{let r=N(e,t,["CON+INS","CON+SPI"],"MONSTER");return c(25+f(e,t,"CON")+f(e,t,r===0?"INS":"SPI")),d("MONSTER FORM",{RES:2,STR:2},[]),i()}case"summoning-actions/summoning-04":{c(5+f(e,t,N(e,t,["CON","SPI"],"DEVIL")===0?"CON":"SPI"));let r=s.decisions.chooseTrait(s,L.filter((q2)=>q2!=="CUN"),"SUMMON DEVIL",e);return Se(e,t,10,{skipTP:!0}),d("SUMMON DEVIL",{[r]:5},[]),i()}case"summoning-actions/summoning-05":return c(5+f(e,t,N(e,t,["INS","SPI"],"DRYAD")===0?"INS":"SPI")),d("SUMMON DRYAD",{},["dryadSpi"]),i();case"summoning-actions/summoning-06":return c(5+f(e,t,"ARC")),d("SUMMON ELEMENTAL",{},["elemDmg2"]),i();case"summoning-actions/summoning-07":return c(5+f(e,t,N(e,t,["CON","SPI"],"LARVA")===0?"CON":"SPI")),d("SUMMON GIANT LARVA",{},["larvaHeal"]),i();case"summoning-actions/summoning-08":return c(5+f(e,t,N(e,t,["CON","INS"],"TOAD")===0?"CON":"INS")),d("SUMMON GIANT TOAD",{},["toadAttack"]),i();case"summoning-actions/summoning-09":return c(5+f(e,t,"ARC")),d("SUMMON IMP",{},["impAttack"]),i();case"summoning-actions/summoning-10":return c(5+f(e,t,N(e,t,["INS","SPI"],"RAVEN")===0?"INS":"SPI")),d("SUMMON RAVEN",{PER:2},[]),i();case"summoning-actions/summoning-11":return c(10+f(e,t,N(e,t,["INS","SPI"],"SPIDER")===0?"INS":"SPI")),d("SUMMON SPIDER",{},["spiderPoison"]),i();case"summoning-actions/summoning-13":return c(5+2*f(e,t,"CON")),d("SUMMON WRAITH",{},["wraithTP"]),i();case"summoning-actions/summoning-14":return c(5+f(e,t,N(e,t,["INS","SPI"],"WOLF")===0?"INS":"SPI")),d("WOLF FORM",{SPE:3,CUN:1},[]),i();case"summoning-actions/summoning-12":return c(5+f(e,t,N(e,t,["CON","SPI"],"SPORE")===0?"CON":"SPI")),we(e,t),cfStampOwn(),i();case"summoning-actions/summoning-15":return c(5+f(e,t,"CON")),g(e,t,o,"ASTRAL HOUND",{PER:2},["astralHound"],a,tpGrantAmt),i();case"psionic-action/psionic-action-01":return s.champion.traits.INT+=1,s.champion.traits.ARC+=1,p(e,`P${t} AGE: INT+1 ARC+1`),i();case"psionic-action/psionic-action-02":return s.champion.traits.PER+=2,p(e,`P${t} CLEAR MIND: PER+2`),i();case"psionic-action/psionic-action-13":{let r=N(e,t,["RES","CON"],"PSYCHIC BARRIER"),y=N(e,t,["ARC","INT"],"PSYCHIC BARRIER amount"),m=f(e,t,y===0?"ARC":"INT");return s.champion.traits[r===0?"RES":"CON"]+=m,p(e,`P${t} PSYCHIC BARRIER: ${r===0?"RES":"CON"} +${m}`),i()}case"psionic-action/psionic-action-03":case"psionic-action/psionic-action-11":{let r=o.endsWith("-03")?s:u,y=r.discard.filter(ge);if(y.length===0)return rj(e,o.endsWith("-03")?"MENTAL ECHO needs an action card in your discard pile.":"TRAINED MIND needs an action card in your opponent's discard pile."),p(e,`P${t} ${o.endsWith("-03")?"MENTAL ECHO":"TRAINED MIND"} cannot be played \u2014 no action card in the ${o.endsWith("-03")?"":"opponent's "}discard pile`),!1;let m=s.decisions.chooseCardIndexes(s,y,1,"MENTAL ECHO",e),v=R(m[0]??0,y.length),k=y[v];r.discard=r.discard.filter((T)=>T.uid!==k.uid),p(e,`P${t} reuses ${E(k)} from ${o.endsWith("-03")?"own":"foe's"} discard`),s.hand.push(k),re(e,t,k.uid);for(let T of[s.hand,s.discard,s.removed]){let G=T.findIndex((V)=>V.uid===k.uid);if(G>=0)T.splice(G,1)}return s.removed.push(k),i()}case"psionic-action/psionic-action-04":return g(e,t,o,"MIND WARD",{},["wardStats"],a),i();case"psionic-action/psionic-action-05":return s.deck=W(e.rng,[...s.deck,...s.removed]),s.removed=[],p(e,`P${t} NEVER FORGOTTEN: removed cards shuffled into deck`),i();case"psionic-action/psionic-action-06":return he(e,t,2),p(e,`P${t} PREPARE: draws 2`),i();case"psionic-action/psionic-action-07":return p(e,`P${t} PSYCHIC MIRAGE can only trigger as a reaction`),!1;case"psionic-action/psionic-action-08":{/* FAM3b SLOW TIME: "in any order" — the player orders the moved cards through repeated normal card picks (the SCRY/TRAP chooseCardIndexes decision): the pile is presented top-first, each pick becomes the next card on top of the deck, the last remaining card needs no pick. A stub/bot answer of index 0 every time reproduces the old silent order exactly. */let pile=[...s.discard].reverse(),ordered=[];while(pile.length>1){let pk=s.decisions.chooseCardIndexes(s,[...pile],1,"SLOW TIME \u2014 pick the next card for the top of your deck",e),ix=R(pk&&pk[0]!==void 0?pk[0]:0,pile.length);ordered.push(pile.splice(ix,1)[0])}if(pile.length)ordered.push(pile[0]);return s.deck=[...ordered,...s.deck],s.discard=[],he(e,t,2),p(e,`P${t} SLOW TIME: discard to top (your order), draws 2`),i()}case"psionic-action/psionic-action-09":{let avail=LT.filter((v)=>cfSelfCostPayable(e,t,v)>0),r=avail.reduce((m,v)=>m+cfSelfCostPayable(e,t,v),0),amtRaw=s.decisions.chooseAmount(s,r,"STRAIN",e);/* FIX FAMILY 4 — F10 (battery Finding 14): a null/undefined picker answer is a CANCEL, not an answer — abort the whole play unconsumed (card stays, no action point, no damage either way), per the standing cancel rule. */if(amtRaw===null||amtRaw===void 0)return rj(e,"STRAIN cancelled \u2014 no amount was chosen."),p(e,`P${t} STRAIN cancelled at the amount step \u2014 nothing is played, STRAIN stays in hand`),!1;let y=Math.max(0,Math.min(r,amtRaw));if(y>0){let m=s.decisions.chooseTrait(s,[...avail],`STRAIN — take ${y} damage on which of YOUR traits?`,e);if(m===null||m===void 0)return rj(e,"STRAIN cancelled \u2014 no trait was chosen."),p(e,`P${t} STRAIN cancelled at the trait step \u2014 nothing is played, STRAIN stays in hand`),!1;if(!avail.includes(m))m=avail[0];let paid=x(e,t,m,y,!1);if(paid>0){let v=["STR","DEX","CON","RES"],k=N(e,t,[...v],`STRAIN — reduce which OPPONENT trait by ${paid}?`),T=z(t,l,"STRAIN");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:paid}),O(e,T)}else p(e,`P${t} STRAIN: ${m} cannot pay — no effect`)}else p(e,`P${t} STRAIN: X=0, no effect`);return i()}case"psionic-action/psionic-action-10":{let r=Z(e,t,l,!0,!0);if(!r)return!1;return r.ev.isRanged=!0,r.ev.isMelee=!1,r.ev.psychicMill+=1,r.ev.kinds.push("psychic"),r.ev.label="TELEKINESIS",r.ev.fromActionCard=!0,O(e,r.ev),i()}case"psionic-action/psionic-action-12":{let avail=LT.filter((v)=>cfSelfCostPayable(e,t,v)>0),r=avail.reduce((m,v)=>m+cfSelfCostPayable(e,t,v),0),amtRaw=s.decisions.chooseAmount(s,r,"TRANCE",e);/* FIX FAMILY 4 — F10: same null-cancel rule as STRAIN above. */if(amtRaw===null||amtRaw===void 0)return rj(e,"TRANCE cancelled \u2014 no amount was chosen."),p(e,`P${t} TRANCE cancelled at the amount step \u2014 nothing is played, TRANCE stays in hand`),!1;let y=Math.max(0,Math.min(r,amtRaw));if(y>0){let m=s.decisions.chooseTrait(s,[...avail],`TRANCE — take ${y} damage on which of YOUR traits?`,e);if(m===null||m===void 0)return rj(e,"TRANCE cancelled \u2014 no trait was chosen."),p(e,`P${t} TRANCE cancelled at the trait step \u2014 nothing is played, TRANCE stays in hand`),!1;if(!avail.includes(m))m=avail[0];let paid=x(e,t,m,y,!1);if(paid>0){let v=["INT","SPI","CUN","ACC","INS"],k=N(e,t,[...v],`TRANCE — reduce which OPPONENT trait by ${paid}?`),T=z(t,l,"TRANCE");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:paid}),O(e,T)}else p(e,`P${t} TRANCE: ${m} cannot pay — no effect`)}else p(e,`P${t} TRANCE: X=0, no effect`);return i()}case"mystical-actions/mystical-actions-01":return s.champion.traits.RES+=2,s.champion.traits.CON+=2,p(e,`P${t} BLUR: RES+2 CON+2`),i();case"mystical-actions/mystical-actions-02":/* FIX FAMILY 4 — F8 (battery Finding 12): the caster's own entry also carries "cloudSource" so elimination cleanup can tell a caster's Cloud from a mere target's copy; readers key on "cloudDebuff" only, so play/dispel/expiry behavior is unchanged. */return g(e,t,o,"CLOUD",{},["cloudDebuff","cloudSource"],a),g(e,l,o,"CLOUD",{},["cloudDebuff"],a),i();case"mystical-actions/mystical-actions-03":return p(e,`P${t} COUNTERSPELL can only trigger as a reaction`),!1;case"mystical-actions/mystical-actions-04":{let r=N(e,t,["elemental","melee","ranged","necrotic","radiant","psychic"],"DAMAGE WARD"),y=["elemental","melee","ranged","necrotic","radiant","psychic"];return g(e,t,o,`DAMAGE WARD (${y[r]})`,{},[`damageWard:${y[r]}`],a),i()}case"mystical-actions/mystical-actions-05":{let r=s.decisions.placeChampion(s,e.players.filter((q2,qi)=>qi!==t&&!q2.champion.eliminated).map((q2)=>q2.champion.position),e);if(r>=0&&r<cfBoardSize(e)&&r!==u.champion.position&&!e.players.some((q2,qi)=>qi!==t&&!q2.champion.eliminated&&q2.champion.position===r))s.champion.position=r,p(e,`P${t} FLIGHT to ${r}`),cfTrapAll(e);return i()}case"mystical-actions/mystical-actions-06":return s.champion.traits.INT+=1,p(e,`P${t} MENTAL MAP: INT+1`),i();case"mystical-actions/mystical-actions-07":{s.champion.traits.TP+=20;let r=N(e,t,["RES","CON"],"MIST FORM");return g(e,t,o,"MIST FORM",{[r===0?"RES":"CON"]:f(e,t,"ARC")},[],a,20),i()}case"mystical-actions/mystical-actions-08":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=s.decisions.chooseTrait(s,[...r],"POLYMORPH — move points FROM which trait?",e),m=s.decisions.chooseTrait(s,[...r].filter((T)=>T!==y),"POLYMORPH — move points TO which trait?",e),v=f(e,t,N(e,t,["ARC","INT"],"POLYMORPH — move up to: ARC or INT?")===0?"ARC":"INT"),k=Math.max(0,Math.min(v,f(e,t,y))),moved=k>0?x(e,t,y,k,!1):0;return s.champion.traits[m]+=moved,p(e,`P${t} POLYMORPH: ${moved} ${y} -> ${m}`),i()}/* POLYMORPH boundary (Norman, 2026-10-21): the move clamps at the source trait's current value — draining a trait exactly to 0 is legal, never below 0 — and the card RESOLVES at the boundary: a 0 move (source already 0, or an ARC/INT cap of 0) is a legal play moving 0, not a failure. The receiving trait gains only the amount actually moved (x's applied return). */case"mystical-actions/mystical-actions-09":{let r=f(e,t,"ARC"),y=u.champion.position<s.champion.position?-1:1,dir=N(e,t,["Push","Pull"],"PUSH AND PULL")===1?-y:y,d=Math.max(0,Math.min(cfBoardSize(e)-1,u.champion.position+dir*r));if(d===s.champion.position)d=s.champion.position-dir;{let u0=u.champion.position;while(d!==u0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=u0>d?1:-1}return u.champion.position=d,p(e,`P${t} PUSH AND PULL (${dir===y?"push":"pull"}): foe to ${u.champion.position}`),cfTrapAll(e),i()}case"mystical-actions/mystical-actions-10":{if(s.deck.length===0)return i();let r=s.decisions.chooseCardIndexes(s,s.deck,1,"SCRY",e),y=R(r[0]??0,s.deck.length),[m]=s.deck.splice(y,1);return s.hand.push(m),p(e,`P${t} SCRY finds ${E(m)}`),i()}case"mystical-actions/mystical-actions-11":{let r=N(e,t,["ARC+PER","INS+PER"],"SPELL ATTACK"),y=z(t,l,"SPELL ATTACK");if(y.isRanged=!0,y.isSpell=!0,y.isPhysical=!1,y.fromActionCard=!0,y.kinds.push("vitality"),r===0)y.arcUsed=!0;else y.insUsed=!0;if(y.vitalityDamage=r===0?f(e,t,"ARC")+f(e,t,"PER"):f(e,t,"INS")+f(e,t,"PER"),K(s.champion).some((v)=>v.data.id==="weapon/weapon-10")){let v=_(s.champion).map((T)=>T.uid),k=it(e,t,l,y,v);if(k>0)e.cardExtraActions=(e.cardExtraActions??0)+k;p(e,`P${t} MAGIC STAFF channels weapon traits into SPELL ATTACK`)}let m=Oe(e,t,!1,!0,y.defender);if(y.vitalityDamage+=m.vitBonus,!xe(e,t,y))return i();/* FIX FAMILY 3 — F6 (Norman, 2026-10-21): gloves/gloves-05 ("On Hit: Inflict STR -1 // DEX -1") names no weapon restriction, and the weapon builder (st) and the unarmed builder (ie, Family-7) both pick its rider up into onHitCardIds — but a SPELL ATTACK packet is built by hand here and never passed through either builder, so the gloves silently never fired on a connecting spell (while VAMPIRE's on-hit rider, applied in xe, did). The spell builder now picks the rider up exactly like the unarmed builder does — equipped gloves slot or a live copy, dispelled gloves skipped. The on-hit gate in resolveDamage still applies: a fully negated spell (0 to VIT and TP) fires nothing. */{let gl=s.champion.equipment.gloves;if(gl&&gl.data.id==="gloves/gloves-05"&&!(s.champion.dispelledUids??[]).includes(gl.uid))y.onHitCardIds.push(gl.data.id);for(let cp2 of s.champion.copiedPassives??[])if(cp2==="gloves/gloves-05"&&!y.onHitCardIds.includes(cp2))y.onHitCardIds.push(cp2)}return nt(e,t,y),O(e,y),i()}case"mystical-actions/mystical-actions-14":{let r=N(e,t,["STR","INS"],"STONE FORM"),y=f(e,t,"INT");return x(e,t,"INT",y,!1),g(e,t,o,"STONE FORM",{RES:5,[r===0?"STR":"INS"]:y},[],a),i()}case"mystical-actions/mystical-actions-15":{let r=f(e,t,N(e,t,["ARC","SPI"],"STUDY")===0?"ARC":"SPI");return s.champion.traits.INT+=r,p(e,`P${t} STUDY: INT +${r}`),i()}default:return null}}/* TRAP lifecycle (Norman, 2026-10-19, supersedes the same-night
+function U(e,t,a=9){let n=Math.abs(e-t);return Math.min(n,a-n)}function q(e,t,a){return U(e.players[t].champion.position,e.players[a].champion.position,cfBoardSize(e))}function R(e,t){if(t===0)return 0;return Math.max(0,Math.min(t-1,e))}function Oe(e,t,a,n,cfDef){let i=e.players[t].champion,s=e.players[t],l=0,u=0;for(let o of i.passives){if(o.flags.includes("aimDmg")){let c=s.decisions.orChoice(s,["ACC","PER"],"AIM damage",e);l+=f(e,t,c===0?"ACC":"PER")}if(o.flags.includes("sniperMark")&&n)l+=f(e,t,"ACC")+2;if(o.flags.includes("traitDmgPlus1"))u+=1;if(o.flags.includes("traitDmgPlus2"))u+=2;if(o.flags.includes("traitDmgPlus3"))u+=3}/* body-b18/b19 damage mods: read through w() so an EQUIPPED body card counts, not just a passive entry (Spore copy); applied once per attack. */if(n&&w(i,"rangedDmgMod")){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b18",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"CUN")}if(a&&w(i,"meleeDmgMod")){let c=s.decisions.orChoice(s,["DEX","STR"],"body-b19",e);l+=f(e,t,c===0?"DEX":"STR")+f(e,t,"ACC")}if(cfDef!=null&&w(i,"awareDmg")){let dd=e.players[cfDef]&&e.players[cfDef].champion;if(dd&&typeof i.position==="number"&&typeof dd.position==="number"){let dst=U(i.position,dd.position,cfBoardSize(e));if(dst<=1)l+=f(e,t,"PER")}}return{vitBonus:l,traitBonus:u}}function z(e,t,a){return{attacker:e,defender:t,vitalityDamage:0,elementalVit:0,poisonVit:0,traitDamage:[],kinds:[],isMelee:!1,isRanged:!1,isSpell:!1,weaponId:null,onHitCardIds:[],necroticCounters:0,onHitNecroticCounters:0,forceDiscard:0,psychicMill:0,defConZero:!1,noCon:!1,fromActionCard:!1,isPhysical:!0,label:a}}function ie(e,t,a,n){let i=e.players[t],s=f(e,t,"STR"),l=f(e,t,"DEX");/* Norman 2026-10-21: NO 0-trait gate on unarmed attacks — an unarmed attack is always legal, exactly like a weapon attack; STR/DEX at 0 add 0 and the printed 2 + trait still lands. */let u=i.decisions.unarmedStat(i,e);if(u==="STR"&&s<=0)u="DEX";if(u==="DEX"&&l<=0)u="STR";let o=q(e,t,a);if(!n&&o>1)return rj(e,`Unarmed melee attacks must be adjacent — the foe is ${o} spaces away.`),null;let c=z(t,a,`unarmed (${u})`);c.vitalityDamage=2+f(e,t,u),c.kinds.push("vitality"),c.isMelee=!n,c.isRanged=n;/* Family-7 gloves/gloves-05: its printed text names no weapon ("On Hit: Inflict STR -1 // DEX -1"), so the unarmed builder picks the rider up exactly like the weapon builder (st) does — equipped gloves or a live copy. The on-hit gate in resolveDamage still applies: a fully negated hit fires nothing. */{let gl=i.champion.equipment.gloves;if(gl&&gl.data.id==="gloves/gloves-05"&&!(i.champion.dispelledUids??[]).includes(gl.uid))c.onHitCardIds.push(gl.data.id);for(let cp2 of i.champion.copiedPassives??[])if(cp2==="gloves/gloves-05"&&!c.onHitCardIds.includes(cp2))c.onHitCardIds.push(cp2)}let d=Oe(e,t,c.isMelee,c.isRanged,c.defender);if(c.vitalityDamage+=d.vitBonus,!xe(e,t,c))return null;return c}function xe(e,t,a){let n=e.players[t],i=n.champion;if(a.isMelee&&P(e,t,"race/race-01")){if(a.vitalityDamage+=1,a.elementalVit=(a.elementalVit||0)+1,!a.kinds.includes("fire"))a.kinds.push("fire");a.forceDiscard+=1,p(e,`P${t} ASHENBORN: +1 fire damage`)}if(P(e,t,"race/race-23")){let s=Math.min(10,Math.max(0,i.traits.VIT)),l=Math.max(0,Math.min(s,n.decisions.chooseAmount(n,s,"INFESTED",e)));if(l>0){e.vitLostThisTurn=!0,e.noDamageTurns=0,i.traits.VIT-=l,a.vitalityDamage+=l;if(i.traits.VIT<=0){a.cfInfestedSelfKill=!0,p(e,`P${t} INFESTED: -${l} VIT, +${l} damage — VIT at 0: the attack still resolves, then this champion is eliminated (Norman 2026-10-21: a draw only if this attack also kills the last other living champion)`)}else p(e,`P${t} INFESTED: -${l} VIT, +${l} damage`)}}/* R1 (Norman, 2026-10-21, supersedes the old blanket self-kill draw): an INFESTED sacrifice to VIT 0 no longer ends the game here and no longer aborts the attack. The boosted attack resolves in full through resolveDamage (O), whose end-of-resolution elimination check (me) eliminates this champion like any other VIT-0 death, and whose end check (Ie) then decides the game: foe alone standing = foe wins (Infested loss), no one standing = mutual-elimination draw, others still standing = the game plays on. */if(P(e,t,"race/race-38")){if(a.onHitNecroticCounters=(a.onHitNecroticCounters||0)+1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} VAMPIRE: +1 necrotic counter`)}if(C(e,t,"accessories/a14")){if(a.onHitNecroticCounters=(a.onHitNecroticCounters||0)+1,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} accessory: +1 necrotic counter`)}return!0}function nt(e,t,a){if(!a.isSpell)return;let n=e.players[t];if(C(e,t,"body/body-b02")||C(e,t,"body/body-b10")){if(a.necroticCounters+=2,!a.kinds.includes("necrotic"))a.kinds.push("necrotic");p(e,`P${t} body: +2 necrotic (spell attack)`)}if(C(e,t,"body/body-b08")||C(e,t,"body/body-b15")){let i=n.decisions.chooseElement(n,[...Te],"body elemental rider",e);if(a.vitalityDamage+=2,a.elementalVit=(a.elementalVit||0)+2,i==="poison"&&(a.poisonVit=(a.poisonVit||0)+2),!a.kinds.includes(i))a.kinds.push(i);p(e,`P${t} body: +2 ${i} (spell attack)`)}if(C(e,t,"body/body-b20")){if(a.traitDamage.push({trait:"CON",amount:1,cfRider:1,cfPermanent:1},{trait:"RES",amount:1,cfRider:1,cfPermanent:1}),!a.kinds.includes("radiant"))a.kinds.push("radiant");p(e,`P${t} body: target CON-1 RES-1 (radiant spell attack)`)}}function it(e,t,a,n,i){let s=e.players[t],l=s.champion,u=e.players[a],o=Be();for(let d of i){let r=_(l).find((y)=>y.uid===d);if(!r)continue;if(Fe(r.data.id,o))n.onHitCardIds.push(r.data.id);else p(e,`weapon trait ${cfCardLabel(r.data.id)} UNIMPLEMENTED, skipped`)}let c=0;if(o.flags.includes("bleed")&&u.champion.traits.TP>0)o.vitalityBonus+=5,p(e,"BLEED +5 (opponent has TP)");if(o.flags.includes("heavyHitter")&&s.decisions.heavyHitter(s,e))o.vitalityBonus+=10,c+=1,p(e,`P${t} HEAVY HITTER +10 (extra action)`);n.vitalityDamage+=o.vitalityBonus;for(let d of o.traitDamageOr){let m;if(d.fixed!==void 0){let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r];m=d.fixed;n.traitDamage.push({trait:y,amount:m,...(d.kind?{kind:d.kind}:{}),cfRider:1})}else{let vs=d.atk.map((av)=>f(e,t,av));if(vs.every((x)=>x<=0)){if(d.kind){let ki=o.kinds.indexOf(d.kind);if(ki>=0)o.kinds.splice(ki,1)}continue}let r=R(s.decisions.orChoice(s,d.def,"trait damage target",e),d.def.length),y=d.def[r],v=R(s.decisions.orChoice(s,d.atk,"trait damage amount",e),d.atk.length);m=vs[v];if(m<=0){if(d.kind){let ki=o.kinds.indexOf(d.kind);if(ki>=0)o.kinds.splice(ki,1)}continue}if(d.atk[v]==="INS")n.insUsed=!0;n.traitDamage.push({trait:y,amount:m,...(d.kind?{kind:d.kind}:{}),cfRider:1})}}for(let d of o.traitDamageFlat)n.traitDamage.push({...d,cfRider:1});if(o.kinds.length)p(e,`P${t} weapon trait kinds: ${[...new Set(o.kinds)].join(", ")}`);return n.kinds.push(...o.kinds),n.necroticCounters+=o.necroticCounters,n.forceDiscard+=o.defenderDiscard,n.psychicMill+=o.psychicMill,c}function rj(e,r){e.lastReject={reason:r,seq:(e.rejectSeq=(e.rejectSeq||0)+1)}}function st(e,t,a,n,i,igR=!1){let s=e.players[t],l=s.champion,u=K(l).find((T)=>T.uid===n)??j(l).find((T)=>T.uid===n)??null;if(!u)return rj(e,"That weapon is no longer equipped."),null;let o=X(u.data.id);if(!o)return p(e,`P${t} weapon ${cfCardLabel(u.data.id)} has no encoded profile`),rj(e,`${E(u)} cannot be used to attack — it has no attack profile.`),null;let c=q(e,t,a);if(!igR&&(c>o.reach||c<1))return rj(e,c<1?`${E(u)} cannot hit a foe standing on your own space.`:`${E(u)} reaches ${o.reach} space${o.reach===1?"":"s"} — the foe is ${c} spaces away. Move closer first.`),null;if(igR&&c<1)return rj(e,`${E(u)} cannot hit a foe standing on your own space.`),null;/* Norman 2026-10-21: NO 0-trait gate on weapon attacks — a weapon attack is always legal with a weapon equipped; STR/DEX at 0 add 0 and the weapon's base damage still hits (physical and spell modes alike). */let d=z(t,a,`${E(u)}`);d.weaponId=u.data.id,d.isSpell=o.isSpell,d.isPhysical=!o.isSpell,d.isMelee=o.kind==="melee"||(o.kind!=="ranged"&&o.reach<=1),d.isRanged=o.kind==="ranged"||(o.kind!=="melee"&&o.reach>1);let oo=o.options;if(o.meleeOptions&&(igR||c<=(o.meleeReach??1)))oo=o.options.concat(o.meleeOptions);let r=oo.map((T)=>T.join("+")),y=R(s.decisions.orChoice(s,r,"weapon damage:"+u.uid,e),r.length),m=oo[y];if(o.meleeOptions){if(o.meleeOptions.includes(m))d.isMelee=!0,d.isRanged=!1;else d.isMelee=!1,d.isRanged=!0}if(d.vitalityDamage=o.base+m.reduce((T,G)=>T+(G.charAt(0)==="-"?-f(e,t,G.slice(1)):f(e,t,G)),0),d.kinds.push("vitality"),m.includes("INS"))d.insUsed=!0;if(m.includes("ARC"))d.arcUsed=!0;let v=it(e,t,a,d,i);if(u.data.id==="weapon/weapon-02"){let T=s.decisions.blunderbussDiscard(s,e);if(T!==null&&T>=0&&T<s.hand.length){let[G]=s.hand.splice(T,1);s.discard.push(G),d.vitalityDamage+=f(e,t,"STR"),p(e,`P${t} BLUNDERBUSS discards ${E(G)}: +${f(e,t,"STR")} damage`)}}if(w(l,"lightAura")&&d.kinds.includes("radiant")){for(let T of d.traitDamage)T.amount+=2;p(e,"LIGHT: radiant +2")}if(w(l,"elemDmg2")&&d.kinds.some((T)=>T==="fire"||T==="cold"||T==="lightning"||T==="poison")){/* FAM3b SUMMON ELEMENTAL: "ELEMENTAL DAMAGE +2" applies to the elemental attack's damage — its health (VIT) damage as well as its trait damage (chosen reading, flagged in the fix report; the printed text does not split the two). The health +2 is stamped elementalVit like every other elemental health rider (ASHENBORN fire, body elemental rider, DRAGONSCALE bonus), so portion-immunity (RUSTKIN) treats it as elemental damage consistently. */d.vitalityDamage+=2,d.elementalVit=(d.elementalVit||0)+2;for(let T of d.traitDamage)T.amount+=2;p(e,"SUMMON ELEMENTAL: elemental +2")}if(w(l,"spiderPoison")){let T=R(s.decisions.orChoice(s,["DEX","STR"],"spider poison",e),2);d.traitDamage.push({trait:T===0?"DEX":"STR",amount:2,kind:"poison",cfRider:1}),d.kinds.push("poison")}let k=Oe(e,t,d.isMelee,d.isRanged,d.defender);if(d.vitalityDamage+=k.vitBonus,k.traitBonus>0)for(let T of d.traitDamage)T.amount+=k.traitBonus;if(d.isMelee&&!u.data.id.startsWith("natural/")&&P(e,t,"race/race-15"))d.vitalityDamage+=5,p(e,`P${t} FORGEBORN: +5 melee weapon damage`);if(!xe(e,t,d))return null;nt(e,t,d);for(let T of l.passives){if(T.flags.includes("blindOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-01");if(T.flags.includes("radiantStrikeOnHit"))d.onHitCardIds.push("divine-actions/divine-actions-09");if(T.flags.includes("larvaHeal"))d.onHitCardIds.push("summoning-actions/summoning-07")}for(let T of[l.equipment.gloves]){if(T&&(l.dispelledUids??[]).includes(T.uid))continue;if(T&&T.data.id==="gloves/gloves-05")d.onHitCardIds.push(T.data.id);if(T&&T.data.id==="gloves/gloves-11")d.onHitCardIds.push(T.data.id)}for(let T of l.copiedPassives??[])if((T==="gloves/gloves-05"||T==="gloves/gloves-11")&&!d.onHitCardIds.includes(T))d.onHitCardIds.push(T);return{ev:d,extraActions:v}}function tt(e){let t=e.data.actionType??"";return t==="Physical Action"||t==="Ranged Action"}function ge(e){return/-actions?$/.test(e.data.deck)}function re(e,t,a,n=0){let i=e.players[t],s=i.hand.find((r)=>r.uid===a);if(!s)return!1;if(cfRequiresRangedWeapon(s.data.id)&&!cfHasRangedWeapon(i.champion))return rj(e,"Needs a ranged weapon"),p(e,`P${t} ${E(s)} cannot be played — needs a ranged weapon`),!1;if(s.data.id==="divine-actions/divine-actions-06"){let hg=cfHasteGate(e,t);if(hg)return rj(e,hg),p(e,`P${t} ${E(s)} cannot be played — ${hg}`),!1}let l=s.data.id,u=cfFoe(e,t),o=e.players[u];/* NO-RECAST GUARD (code audit, 2026-10-22): a card whose passive entry is already active on the caster's own board cannot be played again. RUNECARVED's top-of-deck disposition otherwise lets a summon or passive card cycle hand -> deck -> hand while its passive lives on, stacking a second entry and re-granting its play effects (summons re-granted TP) every turn. An action ruled illegal never consumes the action point (the refusal returns !1 like the other re() refusals). Exclusions: an ENEMY CLOUD entry on this board (cloudDebuff without cloudSource) is not the caster's registration, and a held FUNGAL/SPORE copy (copiedPassives) is not the card's own entry — neither ever blocks a play. COPIES (Norman, 2026-10-22): distinct physical copies of the same card ARE playable and their passives stack, so the guard now keys on the played instance's uid (registrations carry srcUid from g()): only the SAME instance — e.g. one RUNECARVED cycles back into hand — is refused while its own passive lives. Entries without srcUid (SPORE/FUNGAL copy machinery stamps its own; anything legacy) never block. */if(i.champion.passives.some((ps)=>ps.cardId===l&&ps.srcUid!=null&&ps.srcUid===s.uid&&!((ps.flags||[]).includes("cloudDebuff")&&!(ps.flags||[]).includes("cloudSource"))&&!(i.champion.copiedPassives||[]).includes(l)))return rj(e,"Already active"),p(e,`P${t} ${E(s)} is already active \u2014 it cannot be played again while its passive is on the field`),!1;if(e.roundCount===0&&cfAffectsOpponent(l))return cfR1Reject(e),p(e,`P${t} ${E(s)} barred in Round 1 (no contact)`),!1;if(e.cardExtraActions=0,n<2&&s.data.actionType!=="Physical Action"&&s.data.actionType!=="Ranged Action"){for(let oi of cfOpps(e,t)){let oo=e.players[oi],rr=Gt(oo,"mystical-actions/mystical-actions-03");if(!rr)continue;let o2=oo;if(o2.decisions.wantCounterspell(o2,e)){let y=o2.decisions.counterSpell(o2,e),m=y?o2.hand.find((v)=>v.data.id===y&&ge(v)&&v.data.actionType!=="Physical Action"&&v.data.actionType!=="Ranged Action"):void 0;if(m){if(e.roundCount===0&&cfAffectsOpponent(m.data.id)){cfR1Reject(e),p(e,`P${oi} COUNTERSPELL chain of ${E(m)} barred in Round 1 (no contact) — nothing is played, COUNTERSPELL stays in hand`)}else{let tg=t,chainOk=!0;if(cfChainTargetIds.has(m.data.id)){let ct2=o2.decisions.chainTarget(o2,e,m.data.id);if(ct2===null||ct2===void 0){chainOk=!1;p(e,`P${oi} COUNTERSPELL chain of ${E(m)} cancelled at the target step — nothing is played, COUNTERSPELL and ${E(m)} stay in hand`)}else if(typeof ct2==="number"&&ct2!==oi&&e.players[ct2]&&!e.players[ct2].champion.eliminated)tg=ct2}if(chainOk){ve(o2,rr.uid),o2.discard.push(rr),p(e,`P${oi} COUNTERSPELL chains ${E(m)}`);let sv=e.effectTarget;e.effectTarget=tg;re(e,oi,m.uid,n+1);e.effectTarget=sv}}}break}}}let c=(r=!1)=>{if(ve(i,a),s.data.deck==="summoning-actions"&&C(e,t,"body/body-b21")&&cfFirstTurn(e,t,"body/body-b21"))M(e,t,"body/body-b21","CON",2,"body (summoning played)");if(s.data.deck==="summoning-actions"&&C(e,t,"head/head-11"))M(e,t,"head/head-11","SPI",3,"head (summoning action played)");if(ge(s)&&!tt(s)&&C(e,t,"head/head-06"))M(e,t,"head/head-06","SPI",1,"head (non-physical action played)");if(i.champion.runecarvedUid!=null&&s.uid===i.champion.runecarvedUid)i.deck.unshift(s),p(e,`P${t} RUNECARVED: ${E(s)} returns to the top of the deck`);else if(s.data.deck==="summoning-actions"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&l==="physical-actions/16"){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field`)}else if(!r&&i.champion.passives.some((ps)=>ps.cardId===l)){(i.inPlay??(i.inPlay=[])).push(s),p(e,`P${t} ${E(s)} stays on the field (passive)`)}else qt(e,t,s,r);return p(e,`P${t} plays ${E(s)}`),!0};switch(l){case"physical-actions/01":return g(e,t,l,"AIM",{},["aimDmg"],s.uid),c();case"physical-actions/02":{/* BLOCK (Norman, 2026-10-23): flat CON +10, duration 1 = the temp mod dies when turnCount advances, i.e. end of the CURRENT turn, incl. defensive-quick plays on the foe's turn. No RES, no scaling — the old STR+CON amount read its own still-active temp mods and compounded. */return ae(e,t,"CON",10,1,"BLOCK"),c(!0)}case"physical-actions/05":{let y=q(e,t,u)>1||N(e,t,["Melee","Ranged"],"CRITICAL HIT")===1,m=Z(e,t,u,y),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;let k=N(e,t,[...de],"CRITICAL HIT trait"),T=f(e,t,de[k]);if(de[k]==="INS")v.insUsed=!0;return v.vitalityDamage+=T,v.label="CRITICAL HIT",v.fromActionCard=!0,p(e,`P${t} CRITICAL HIT: +${T} damage (${de[k]})`),O(e,v),c()}case"physical-actions/06":return ae(e,t,"SPE",f(e,t,"SPE"),3,"DASH"),c();case"physical-actions/07":{/* FAM4 (Norman, 2026-10-21): a foe with only a natural weapon (or no weapon) is a LEGAL target — the attack resolves in full and only the on-hit strip no-ops (the __disarm handler already logs that case). The old up-front gate fizzled the whole card. */let y=q(e,t,u)>1,m=Z(e,t,u),v=m?m.ev:ie(e,t,u,y);if(!v)return!1;return v.label="DISARM",v.fromActionCard=!0,v.onHitCardIds.push("__disarm"),O(e,v),c()}case"physical-actions/08":{let r=2*f(e,t,"DEX");return ae(e,t,"RES",r,2,"DODGE"),ae(e,t,"CON",r,2,"DODGE"),c()}case"physical-actions/09":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=i.decisions.chooseTrait(i,r,"FOCUS",e);return g(e,t,l,`FOCUS (${y})`,{[y]:f(e,t,"SPI")},[],s.uid),c()}case"physical-actions/10":return i.champion.guardShield=f(e,t,"RES")+2*f(e,t,"STR"),p(e,`P${t} GUARD shield ${i.champion.guardShield}`),c();case"physical-actions/11":return H(e,t,f(e,t,"CON"),"HEALING POTION"),H(e,t,f(e,t,"CON"),"HEALING POTION"),c();case"physical-actions/12":{if(q(e,t,u)>1)return rj(e,"PUSH needs you adjacent to the foe."),!1;let r=o.champion.position<i.champion.position?-3:3,d=Math.max(0,Math.min(cfBoardSize(e)-1,o.champion.position+r));if(d===i.champion.position)d=i.champion.position-(r>0?1:-1);{let o0=o.champion.position;while(d!==o0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=o0>d?1:-1}return o.champion.position=d,p(e,`P${t} PUSH: foe to ${o.champion.position}`),cfTrapAll(e),c()}case"physical-actions/13":{if(q(e,t,u)>1)return rj(e,"RESTRAIN needs you adjacent to the foe."),!1;return o.champion.flags.cannotMoveUntilTurn=e.turnCount+(e.cfTurnPlayer===t?2:1),p(e,`P${t} RESTRAIN: P${u} cannot move until P${t}'s next turn`),c()}case"physical-actions/14":return p(e,`P${t} RIPOSTE can only trigger as a reaction`),!1;case"physical-actions/15":{let r=o.champion.position<i.champion.position?1:-1,d=Math.max(0,Math.min(cfBoardSize(e)-1,o.champion.position+r*3));if(d===i.champion.position)d=i.champion.position-r;{let o0=o.champion.position;while(d!==o0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=o0>d?1:-1}return o.champion.position=d,p(e,`P${t} STEALTH: foe to ${o.champion.position}`),cfTrapAll(e),c()}case"physical-actions/16":{let r=i.hand.filter((k)=>k.uid!==a&&ge(k));if(r.length===0)return p(e,`P${t} TRAP: no action card in hand to tuck`),!1;let y=i.decisions.chooseCardIndexes(i,r,1,"TRAP",e),m=R(y[0]??0,r.length),v=r[m];return i.hand=i.hand.filter((k)=>k.uid!==v.uid),i.champion.trap=v,p(e,`P${t} TRAP set with ${E(v)} facedown`),c()}case"ranged-actions/ranged-actions-01":{let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.defConZero=!0,r.ev.label="DIRTY TACTICS",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-03":{/* FAM4: same ruling as DISARM — natural-weapon / weaponless foe is a legal target; only the on-hit discard no-ops. */let r=Z(e,t,u,!0);if(!r)return!1;return r.ev.label="DISABLE",r.ev.fromActionCard=!0,r.ev.onHitCardIds.push("__disable"),O(e,r.ev),c(!0)}case"ranged-actions/ranged-actions-05":{let r=R(i.decisions.orChoice(i,["SPE","DEX"],"NET target",e),2),y=R(i.decisions.orChoice(i,["ACC","DEX"],"NET amount",e),2),m=z(t,u,"NET");return m.fromActionCard=!0,m.isRanged=!0,m.traitDamage.push({trait:r===0?"SPE":"DEX",amount:f(e,t,y===0?"ACC":"DEX")}),O(e,m),c()}case"ranged-actions/ranged-actions-07":return g(e,t,l,"SNIPER'S MARK",{},["sniperMark"],s.uid),c();case"ranged-actions/ranged-actions-09":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["STR","DEX","CON","RES"],"TRICK SHOT",e),4),m=["STR","DEX","CON","RES"];return r.ev.traitDamage.push({trait:m[y],amount:f(e,t,"ACC"),cfRider:1}),r.ev.label="TRICK SHOT",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"ranged-actions/ranged-actions-11":{let r=Z(e,t,u,!0);if(!r)return!1;let y=R(i.decisions.orChoice(i,["DEX+SPE","STR+SPE"],"VOLLEY",e),2);return r.ev.vitalityDamage+=y===0?f(e,t,"DEX")+f(e,t,"SPE"):f(e,t,"STR")+f(e,t,"SPE"),r.ev.label="VOLLEY",r.ev.fromActionCard=!0,O(e,r.ev),c()}case"divine-actions/divine-actions-01":return g(e,t,l,"BLIND",{},["blindOnHit"],s.uid),c();case"divine-actions/divine-actions-02":{let r=cureCands(e,t);if(r.length===0&&(i.champion.necrotic||0)<=0)return rj(e,"CURE needs an enemy passive affecting you, or necrotic damage to clear."),!1;if(r.length>0){let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];if(m.kind==="restrain"){delete i.champion.flags.cannotMoveUntilTurn,p(e,`P${t} CURE lifts RESTRAIN \u2014 the enemy move-block on P${t} ends`)}else resolveDispel(e,m),p(e,`P${t} CURE discards foe passive ${m.label}`)}return cfClearNecrotic(i.champion),p(e,`P${t} CURE clears necrotic`),c()}case"divine-actions/divine-actions-03":{let r=dispelCands(e,t);if(r.length===0)return!1;let y=i.decisions.choosePassiveToDiscard(i,r,e),m=r.find((v)=>v.cardId===y)??r[0];let oc=resolveDispel(e,m);return p(e,oc==="discarded"?`P${t} DISPEL MAGIC dispels ${m.label} — the action card is discarded, its passive is gone`:`P${t} DISPEL MAGIC nullifies ${m.label} — the card stays on the field, its passive is off`),c()}case"divine-actions/divine-actions-04":{/* FIX FAMILY 4 — F2 (battery Finding 4): DIVINATION gets the same guard MENTAL ECHO and TRAINED MIND already have — against an empty foe hand the play refuses unconsumed (card stays in hand, no action point spent, real reason recorded via rj + log). */if(o.hand.length===0)return rj(e,"DIVINATION needs a card in your opponent's hand."),p(e,`P${t} DIVINATION cannot be played \u2014 no card in the opponent's hand`),!1;let r=i.decisions.chooseCardIndexes(i,o.hand,1,"DIVINATION",e),y=R(r[0]??0,o.hand.length),[m]=o.hand.splice(y,1);return o.discard.push(m),p(e,`P${t} DIVINATION discards foe's ${E(m)}`),c()}case"divine-actions/divine-actions-05":{let r=f(e,t,"SPI"),fc=R(i.decisions.orChoice(i,["RES","CON"],"FORCEFIELD",e),2);return g(e,t,l,"FORCEFIELD",{[fc===0?"RES":"CON"]:r},[],s.uid),c()}case"divine-actions/divine-actions-06":{(e.cfBonusBy??={})[t]=((e.cfBonusBy||{})[t]||0)+2;return p(e,`P${t} HASTE: +2 actions this turn`),c(!0)}case"divine-actions/divine-actions-07":return H(e,t,f(e,t,"SPI"),"HEAL"),H(e,t,f(e,t,"SPI"),"HEAL"),cfClearNecrotic(i.champion),p(e,`P${t} HEAL clears necrotic`),c();case"divine-actions/divine-actions-08":return g(e,t,l,"LIGHT",{PER:3},["lightAura"],s.uid),c();case"divine-actions/divine-actions-09":return g(e,t,l,"RADIANT STRIKE",{},["radiantStrikeOnHit"],s.uid),c();case"divine-actions/divine-actions-10":return cfClearNecrotic(i.champion),g(e,t,l,"REGENERATION",{},["regenSpi"],s.uid),c();case"divine-actions/divine-actions-11":return g(e,t,l,"RES ELEM",{},["resistElemental"],s.uid),c(!0);case"divine-actions/divine-actions-12":return g(e,t,l,"RES MYST",{},["resistMystical"],s.uid),c(!0);case"divine-actions/divine-actions-13":return g(e,t,l,"RES PHYS",{},["resistPhysical"],s.uid),c(!0);default:break}let d=Ut(e,t,a,s,c);if(d!==null)return d;return p(e,`P${t} ${E(s)} has no encoded play handler`),!1}function Z(e,t,a,n=!1,igR=!1){let i=e.players[t],s=q(e,t,a),l=_(i.champion).map((d)=>d.uid),u=null,o=-1;for(let d of[...K(i.champion),...j(i.champion)]){let r=X(d.data.id);if(!r)continue;if(!igR&&(s<1||s>r.reach))continue;if(igR&&s<1)continue;if(r.base>o)u=d,o=r.base}if(u){let d=st(e,t,a,u.uid,l,igR);if(d){if(n)d.ev.isRanged=!0;return d}if(e.phase==="done")return null}let c=ie(e,t,a,n||s>1);return c?{ev:c,extraActions:0}:null}function N(e,t,a,n){let i=e.players[t];return R(i.decisions.orChoice(i,a,n,e),a.length)}function Ut(e,t,a,n,i){let s=e.players[t],l=cfFoe(e,t),u=e.players[l],o=n.data.id,tpGrantAmt=0,c=(r)=>{tpGrantAmt=r;s.champion.traits.TP+=r,p(e,`P${t} +${r} TP (${E(n)})`)},d=(r,y,m)=>{g(e,t,o,r,y,[...m,"summonForm"],a,tpGrantAmt)},cfStampOwn=()=>{let es=s.champion.passives;for(let k=es.length-1;k>=0;k--){if(es[k].cardId===o&&es[k].srcUid==null){es[k].srcUid=a;if(tpGrantAmt>0)es[k].tpGrant=tpGrantAmt;break}}};switch(o){case"summoning-actions/summoning-01":return c(5+f(e,t,N(e,t,["INS","SPI"],"EAGLE")===0?"INS":"SPI")),d("EAGLE FORM",{DEX:2},[]),i();case"summoning-actions/summoning-02":return c(15+f(e,t,N(e,t,["INS","SPI"],"LIZARD")===0?"INS":"SPI")),d("LIZARD FORM",{PER:2,RES:2},[]),i();case"summoning-actions/summoning-03":{let r=N(e,t,["CON+INS","CON+SPI"],"MONSTER");return c(25+f(e,t,"CON")+f(e,t,r===0?"INS":"SPI")),d("MONSTER FORM",{RES:2,STR:2},[]),i()}case"summoning-actions/summoning-04":{c(5+f(e,t,N(e,t,["CON","SPI"],"DEVIL")===0?"CON":"SPI"));let r=s.decisions.chooseTrait(s,L.filter((q2)=>q2!=="CUN"),"SUMMON DEVIL",e);return Se(e,t,10,{skipTP:!0}),d("SUMMON DEVIL",{[r]:5},[]),i()}case"summoning-actions/summoning-05":return c(5+f(e,t,N(e,t,["INS","SPI"],"DRYAD")===0?"INS":"SPI")),d("SUMMON DRYAD",{},["dryadSpi"]),i();case"summoning-actions/summoning-06":return c(5+f(e,t,"ARC")),d("SUMMON ELEMENTAL",{},["elemDmg2"]),i();case"summoning-actions/summoning-07":return c(5+f(e,t,N(e,t,["CON","SPI"],"LARVA")===0?"CON":"SPI")),d("SUMMON GIANT LARVA",{},["larvaHeal"]),i();case"summoning-actions/summoning-08":return c(5+f(e,t,N(e,t,["CON","INS"],"TOAD")===0?"CON":"INS")),d("SUMMON GIANT TOAD",{},["toadAttack"]),i();case"summoning-actions/summoning-09":return c(5+f(e,t,"ARC")),d("SUMMON IMP",{},["impAttack"]),i();case"summoning-actions/summoning-10":return c(5+f(e,t,N(e,t,["INS","SPI"],"RAVEN")===0?"INS":"SPI")),d("SUMMON RAVEN",{PER:2},[]),i();case"summoning-actions/summoning-11":return c(10+f(e,t,N(e,t,["INS","SPI"],"SPIDER")===0?"INS":"SPI")),d("SUMMON SPIDER",{},["spiderPoison"]),i();case"summoning-actions/summoning-13":return c(5+2*f(e,t,"CON")),d("SUMMON WRAITH",{},["wraithTP"]),i();case"summoning-actions/summoning-14":return c(5+f(e,t,N(e,t,["INS","SPI"],"WOLF")===0?"INS":"SPI")),d("WOLF FORM",{SPE:3,CUN:1},[]),i();case"summoning-actions/summoning-12":return c(5+f(e,t,N(e,t,["CON","SPI"],"SPORE")===0?"CON":"SPI")),we(e,t),cfStampOwn(),i();case"summoning-actions/summoning-15":return c(5+f(e,t,"CON")),g(e,t,o,"ASTRAL HOUND",{PER:2},["astralHound"],a,tpGrantAmt),i();case"psionic-action/psionic-action-01":return s.champion.traits.INT+=1,s.champion.traits.ARC+=1,p(e,`P${t} AGE: INT+1 ARC+1`),i();case"psionic-action/psionic-action-02":return s.champion.traits.PER+=2,p(e,`P${t} CLEAR MIND: PER+2`),i();case"psionic-action/psionic-action-13":{let r=N(e,t,["RES","CON"],"PSYCHIC BARRIER"),y=N(e,t,["ARC","INT"],"PSYCHIC BARRIER amount"),m=f(e,t,y===0?"ARC":"INT");return s.champion.traits[r===0?"RES":"CON"]+=m,p(e,`P${t} PSYCHIC BARRIER: ${r===0?"RES":"CON"} +${m}`),i()}case"psionic-action/psionic-action-03":case"psionic-action/psionic-action-11":{let r=o.endsWith("-03")?s:u,y=r.discard.filter(ge);if(y.length===0)return rj(e,o.endsWith("-03")?"MENTAL ECHO needs an action card in your discard pile.":"TRAINED MIND needs an action card in your opponent's discard pile."),p(e,`P${t} ${o.endsWith("-03")?"MENTAL ECHO":"TRAINED MIND"} cannot be played \u2014 no action card in the ${o.endsWith("-03")?"":"opponent's "}discard pile`),!1;let m=s.decisions.chooseCardIndexes(s,y,1,"MENTAL ECHO",e),v=R(m[0]??0,y.length),k=y[v];r.discard=r.discard.filter((T)=>T.uid!==k.uid),p(e,`P${t} reuses ${E(k)} from ${o.endsWith("-03")?"own":"foe's"} discard`),s.hand.push(k),re(e,t,k.uid);for(let T of[s.hand,s.discard,s.removed]){let G=T.findIndex((V)=>V.uid===k.uid);if(G>=0)T.splice(G,1)}return s.removed.push(k),i()}case"psionic-action/psionic-action-04":return g(e,t,o,"MIND WARD",{},["wardStats"],a),i();case"psionic-action/psionic-action-05":return s.deck=W(e.rng,[...s.deck,...s.removed]),s.removed=[],p(e,`P${t} NEVER FORGOTTEN: removed cards shuffled into deck`),i();case"psionic-action/psionic-action-06":return he(e,t,2),p(e,`P${t} PREPARE: draws 2`),i();case"psionic-action/psionic-action-07":return p(e,`P${t} PSYCHIC MIRAGE can only trigger as a reaction`),!1;case"psionic-action/psionic-action-08":{/* FAM3b SLOW TIME: "in any order" — the player orders the moved cards through repeated normal card picks (the SCRY/TRAP chooseCardIndexes decision): the pile is presented top-first, each pick becomes the next card on top of the deck, the last remaining card needs no pick. A stub/bot answer of index 0 every time reproduces the old silent order exactly. */let pile=[...s.discard].reverse(),ordered=[];while(pile.length>1){let pk=s.decisions.chooseCardIndexes(s,[...pile],1,"SLOW TIME \u2014 pick the next card for the top of your deck",e),ix=R(pk&&pk[0]!==void 0?pk[0]:0,pile.length);ordered.push(pile.splice(ix,1)[0])}if(pile.length)ordered.push(pile[0]);return s.deck=[...ordered,...s.deck],s.discard=[],he(e,t,2),p(e,`P${t} SLOW TIME: discard to top (your order), draws 2`),i()}case"psionic-action/psionic-action-09":{let avail=LT.filter((v)=>cfSelfCostPayable(e,t,v)>0),r=avail.reduce((m,v)=>m+cfSelfCostPayable(e,t,v),0),amtRaw=s.decisions.chooseAmount(s,r,"STRAIN",e);/* FIX FAMILY 4 — F10 (battery Finding 14): a null/undefined picker answer is a CANCEL, not an answer — abort the whole play unconsumed (card stays, no action point, no damage either way), per the standing cancel rule. */if(amtRaw===null||amtRaw===void 0)return rj(e,"STRAIN cancelled \u2014 no amount was chosen."),p(e,`P${t} STRAIN cancelled at the amount step \u2014 nothing is played, STRAIN stays in hand`),!1;let y=Math.max(0,Math.min(r,amtRaw));if(y>0){let m=s.decisions.chooseTrait(s,[...avail],`STRAIN — take ${y} damage on which of YOUR traits?`,e);if(m===null||m===void 0)return rj(e,"STRAIN cancelled \u2014 no trait was chosen."),p(e,`P${t} STRAIN cancelled at the trait step \u2014 nothing is played, STRAIN stays in hand`),!1;if(!avail.includes(m))m=avail[0];let paid=x(e,t,m,y,!1);if(paid>0){let v=["STR","DEX","CON","RES"],k=N(e,t,[...v],`STRAIN — reduce which OPPONENT trait by ${paid}?`),T=z(t,l,"STRAIN");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:paid}),O(e,T)}else p(e,`P${t} STRAIN: ${m} cannot pay — no effect`)}else p(e,`P${t} STRAIN: X=0, no effect`);return i()}case"psionic-action/psionic-action-10":{let r=Z(e,t,l,!0,!0);if(!r)return!1;return r.ev.isRanged=!0,r.ev.isMelee=!1,r.ev.psychicMill+=1,r.ev.kinds.push("psychic"),r.ev.label="TELEKINESIS",r.ev.fromActionCard=!0,O(e,r.ev),i()}case"psionic-action/psionic-action-12":{let avail=LT.filter((v)=>cfSelfCostPayable(e,t,v)>0),r=avail.reduce((m,v)=>m+cfSelfCostPayable(e,t,v),0),amtRaw=s.decisions.chooseAmount(s,r,"TRANCE",e);/* FIX FAMILY 4 — F10: same null-cancel rule as STRAIN above. */if(amtRaw===null||amtRaw===void 0)return rj(e,"TRANCE cancelled \u2014 no amount was chosen."),p(e,`P${t} TRANCE cancelled at the amount step \u2014 nothing is played, TRANCE stays in hand`),!1;let y=Math.max(0,Math.min(r,amtRaw));if(y>0){let m=s.decisions.chooseTrait(s,[...avail],`TRANCE — take ${y} damage on which of YOUR traits?`,e);if(m===null||m===void 0)return rj(e,"TRANCE cancelled \u2014 no trait was chosen."),p(e,`P${t} TRANCE cancelled at the trait step \u2014 nothing is played, TRANCE stays in hand`),!1;if(!avail.includes(m))m=avail[0];let paid=x(e,t,m,y,!1);if(paid>0){let v=["INT","SPI","CUN","ACC","INS"],k=N(e,t,[...v],`TRANCE — reduce which OPPONENT trait by ${paid}?`),T=z(t,l,"TRANCE");T.fromActionCard=!0,T.isPhysical=!1,T.traitDamage.push({trait:v[k],amount:paid}),O(e,T)}else p(e,`P${t} TRANCE: ${m} cannot pay — no effect`)}else p(e,`P${t} TRANCE: X=0, no effect`);return i()}case"mystical-actions/mystical-actions-01":return s.champion.traits.RES+=2,s.champion.traits.CON+=2,p(e,`P${t} BLUR: RES+2 CON+2`),i();case"mystical-actions/mystical-actions-02":/* FIX FAMILY 4 — F8 (battery Finding 12): the caster's own entry also carries "cloudSource" so elimination cleanup can tell a caster's Cloud from a mere target's copy; readers key on "cloudDebuff" only, so play/dispel/expiry behavior is unchanged. */return g(e,t,o,"CLOUD",{},["cloudDebuff","cloudSource"],a),g(e,l,o,"CLOUD",{},["cloudDebuff"],a),i();case"mystical-actions/mystical-actions-03":return p(e,`P${t} COUNTERSPELL can only trigger as a reaction`),!1;case"mystical-actions/mystical-actions-04":{let r=N(e,t,["elemental","melee","ranged","necrotic","radiant","psychic"],"DAMAGE WARD"),y=["elemental","melee","ranged","necrotic","radiant","psychic"];return g(e,t,o,`DAMAGE WARD (${y[r]})`,{},[`damageWard:${y[r]}`],a),i()}case"mystical-actions/mystical-actions-05":{let r=s.decisions.placeChampion(s,e.players.filter((q2,qi)=>qi!==t&&!q2.champion.eliminated).map((q2)=>q2.champion.position),e);if(r>=0&&r<cfBoardSize(e)&&r!==u.champion.position&&!e.players.some((q2,qi)=>qi!==t&&!q2.champion.eliminated&&q2.champion.position===r))s.champion.position=r,p(e,`P${t} FLIGHT to ${r}`),cfTrapAll(e);return i()}case"mystical-actions/mystical-actions-06":return s.champion.traits.INT+=1,p(e,`P${t} MENTAL MAP: INT+1`),i();case"mystical-actions/mystical-actions-07":{s.champion.traits.TP+=20;let r=N(e,t,["RES","CON"],"MIST FORM");return g(e,t,o,"MIST FORM",{[r===0?"RES":"CON"]:f(e,t,"ARC")},[],a,20),i()}case"mystical-actions/mystical-actions-08":{let r=["VIT","TP","SPE","RES","CON","INT","STR","DEX","ACC","PER","SPI","ARC","INS"],y=s.decisions.chooseTrait(s,[...r],"POLYMORPH — move points FROM which trait?",e),m=s.decisions.chooseTrait(s,[...r].filter((T)=>T!==y),"POLYMORPH — move points TO which trait?",e),v=f(e,t,N(e,t,["ARC","INT"],"POLYMORPH — move up to: ARC or INT?")===0?"ARC":"INT"),k=Math.max(0,Math.min(v,f(e,t,y))),moved=k>0?x(e,t,y,k,!1):0;return s.champion.traits[m]+=moved,p(e,`P${t} POLYMORPH: ${moved} ${y} -> ${m}`),i()}/* POLYMORPH boundary (Norman, 2026-10-21): the move clamps at the source trait's current value — draining a trait exactly to 0 is legal, never below 0 — and the card RESOLVES at the boundary: a 0 move (source already 0, or an ARC/INT cap of 0) is a legal play moving 0, not a failure. The receiving trait gains only the amount actually moved (x's applied return). */case"mystical-actions/mystical-actions-09":{let r=f(e,t,"ARC"),y=u.champion.position<s.champion.position?-1:1,dir=N(e,t,["Push","Pull"],"PUSH AND PULL")===1?-y:y,d=Math.max(0,Math.min(cfBoardSize(e)-1,u.champion.position+dir*r));if(d===s.champion.position)d=s.champion.position-dir;{let u0=u.champion.position;while(d!==u0&&e.players.some((q2)=>!q2.champion.eliminated&&q2.champion.position===d))d+=u0>d?1:-1}return u.champion.position=d,p(e,`P${t} PUSH AND PULL (${dir===y?"push":"pull"}): foe to ${u.champion.position}`),cfTrapAll(e),i()}case"mystical-actions/mystical-actions-10":{if(s.deck.length===0)return i();let r=s.decisions.chooseCardIndexes(s,s.deck,1,"SCRY",e),y=R(r[0]??0,s.deck.length),[m]=s.deck.splice(y,1);return s.hand.push(m),p(e,`P${t} SCRY finds ${E(m)}`),i()}case"mystical-actions/mystical-actions-11":{let r=N(e,t,["ARC+PER","INS+PER"],"SPELL ATTACK"),y=z(t,l,"SPELL ATTACK");if(y.isRanged=!0,y.isSpell=!0,y.isPhysical=!1,y.fromActionCard=!0,y.kinds.push("vitality"),r===0)y.arcUsed=!0;else y.insUsed=!0;if(y.vitalityDamage=r===0?f(e,t,"ARC")+f(e,t,"PER"):f(e,t,"INS")+f(e,t,"PER"),K(s.champion).some((v)=>v.data.id==="weapon/weapon-10")){let v=_(s.champion).map((T)=>T.uid),k=it(e,t,l,y,v);if(k>0)e.cardExtraActions=(e.cardExtraActions??0)+k;p(e,`P${t} MAGIC STAFF channels weapon traits into SPELL ATTACK`)}let m=Oe(e,t,!1,!0,y.defender);if(y.vitalityDamage+=m.vitBonus,!xe(e,t,y))return i();/* FIX FAMILY 3 — F6 (Norman, 2026-10-21): gloves/gloves-05 ("On Hit: Inflict STR -1 // DEX -1") names no weapon restriction, and the weapon builder (st) and the unarmed builder (ie, Family-7) both pick its rider up into onHitCardIds — but a SPELL ATTACK packet is built by hand here and never passed through either builder, so the gloves silently never fired on a connecting spell (while VAMPIRE's on-hit rider, applied in xe, did). The spell builder now picks the rider up exactly like the unarmed builder does — equipped gloves slot or a live copy, dispelled gloves skipped. The on-hit gate in resolveDamage still applies: a fully negated spell (0 to VIT and TP) fires nothing. */{let gl=s.champion.equipment.gloves;if(gl&&gl.data.id==="gloves/gloves-05"&&!(s.champion.dispelledUids??[]).includes(gl.uid))y.onHitCardIds.push(gl.data.id);for(let cp2 of s.champion.copiedPassives??[])if(cp2==="gloves/gloves-05"&&!y.onHitCardIds.includes(cp2))y.onHitCardIds.push(cp2)}return nt(e,t,y),O(e,y),i()}case"mystical-actions/mystical-actions-14":{let r=N(e,t,["STR","INS"],"STONE FORM"),y=f(e,t,"INT");return x(e,t,"INT",y,!1),g(e,t,o,"STONE FORM",{RES:5,[r===0?"STR":"INS"]:y},[],a),i()}case"mystical-actions/mystical-actions-15":{let r=f(e,t,N(e,t,["ARC","SPI"],"STUDY")===0?"ARC":"SPI");return s.champion.traits.INT+=r,p(e,`P${t} STUDY: INT +${r}`),i()}default:return null}}/* TRAP lifecycle (Norman, 2026-10-19, supersedes the same-night
    "stays on the field per print" choice): TRAP is one-shot. When it
    activates and the tucked card has resolved and been discarded,
    TRAP itself leaves the field for its owner's discard (via the
@@ -3596,7 +3596,7 @@ function faceOverlayHtml(summary) {
   // grow and center the block like the approved exemplars. ONLY a
   // line break is added — every word, formula character, and live
   // "(value)" is unchanged.
-  const FACE_FIX_SPLIT = { 'body/body-b18': 1, 'psionic-action/psionic-action-04': 1, 'psionic-action/psionic-action-07': 1, 'gloves/gloves-08': 1 };
+  const FACE_FIX_SPLIT = { 'body/body-b18': 1, 'psionic-action/psionic-action-04': 1, 'psionic-action/psionic-action-07': 1, 'gloves/gloves-08': 1, 'summoning-actions/summoning-03': 1 };
 /* SPLIT_ALL: like SPLIT but breaks at EVERY '//' seam. TRANCE's four-way
    formula chain (INT//SPI//CUN//ACC//INS) still needs ~3 size steps after a
    single break, and any step-down skips the centering branch — so all of its
@@ -3942,7 +3942,22 @@ function cardEl(summary, opts = {}) {
   // entirely (the element is not rendered, so the tile closes up with
   // no orphaned gap) — used by the Phase 3 trait draft, where the card
   // face itself carries the description (Norman, 2026-10-19).
-  d.innerHTML = `<div class="facewrap"><img loading="lazy" src="${esc(summary.art)}" alt="${esc(summary.name)}">${faceOverlayHtml(summary)}</div>${costBadge}${opts.hideName || opts.hideCaption ? '' : `<div class="cname">${esc(summary.name)}</div>${kindBadge}`}`;
+  // Norman, 2026-10-23 (item 35): "Get rid of the names under the
+  // cards, it's already on the card." Wherever the face itself prints
+  // the card's name, the under-card caption just repeats it — so the
+  // caption now renders ONLY when the face does not carry the name:
+  // the showName test from faceOverlayHtml, plus trait cards — their
+  // face carries the card's text as the face body, so a caption would
+  // repeat it. Equipment faces print no
+  // name, so their slot captions ("BODY item", "WEAPON item"...)
+  // remain — they are the tile's only label, not a repeat. The
+  // MELEE/RANGED kind badge keeps its own condition, unchanged.
+  const facePrintsName = summary.deck === 'trait-cards'
+    || (!summary.syntheticName && !!summary.name
+      && summary.name !== (summary.effectText || '').trim());
+  const captionHtml = opts.hideName || opts.hideCaption || facePrintsName ? '' : `<div class="cname">${esc(summary.name)}</div>`;
+  const badgeHtml = opts.hideName || opts.hideCaption ? '' : kindBadge;
+  d.innerHTML = `<div class="facewrap"><img loading="lazy" src="${esc(summary.art)}" alt="${esc(summary.name)}">${faceOverlayHtml(summary)}</div>${costBadge}${captionHtml}${badgeHtml}`;
   if (opts.onTap) {
     // Direct-toggle cards (choosing races, keeping traits after the
     // draft): a tap keeps or deselects the card in place — kept cards
@@ -4925,7 +4940,12 @@ function mpApplyDropoutReplace(seat, difficulty) {
   if (!mp || typeof seat !== 'number') return;
   if (!mp.dropoutResolved) mp.dropoutResolved = new Set();
   if (mp.dropoutResolved.has(seat)) return; // first press wins — repeats are no-ops
+  // MP-3 (2026-10-23): layer 2 fires only for a seat this client
+  // actually knows is away — a stray or replayed press must never
+  // turn a present player's seat over to a bot.
+  if (!mp.awaySeats || !mp.awaySeats.has(seat)) return;
   mp.dropoutResolved.add(seat);
+  (mp.dropoutKinds || (mp.dropoutKinds = {}))[seat] = { type: 'replace', difficulty: ['easy', 'medium', 'hard'].includes(difficulty) ? difficulty : 'medium' };
   const diff = ['easy', 'medium', 'hard'].includes(difficulty) ? difficulty : 'medium';
   if (mp.seatMap && mp.seatMap[seat]) {
     mp.seatMap[seat] = { ...mp.seatMap[seat], kind: 'bot', difficulty: diff, tookOver: true };
@@ -4958,7 +4978,11 @@ function mpApplyDropoutSurrender(seat) {
   if (!mp || typeof seat !== 'number') return;
   if (!mp.dropoutResolved) mp.dropoutResolved = new Set();
   if (mp.dropoutResolved.has(seat)) return; // first press wins
+  // MP-3 (2026-10-23): same boundary as REPLACE — only a seat this
+  // client knows is away can be surrendered out from under its owner.
+  if (!mp.awaySeats || !mp.awaySeats.has(seat)) return;
   mp.dropoutResolved.add(seat);
+  (mp.dropoutKinds || (mp.dropoutKinds = {}))[seat] = { type: 'surrender' };
   if (!mp.spectatorSeats) mp.spectatorSeats = new Set();
   mp.spectatorSeats.add(seat);
   if (mp.awaySeats) mp.awaySeats.delete(seat);
@@ -6281,11 +6305,30 @@ async function mpCatchUpAnswer(req) {
     if (q.length) {
       const e = q.shift();
       mp.seq++;
+      // MP-2: remember the draft picks the log holds — the pairing
+      // state (draftEarly/draftPairStage) is re-derived from these
+      // counts at the catch-up -> live seam, never trusted to the
+      // blind reset beginMpGame applied.
+      if (e.hook === 'draftPick') {
+        (mp.draftPicksSeen || (mp.draftPicksSeen = {}))[req.playerIdx] = ((mp.draftPicksSeen || {})[req.playerIdx] || 0) + 1;
+        if (req.playerIdx === mp.myIdx) mp.lastOwnDraftPick = e.answer;
+      }
       const drained = cu.done && Object.values(cu.bySeat).every((x) => !x.length);
-      if (drained) { mp.catchUp = null; mpRenderBanner(); mpPersistSession(); }
+      if (drained) { mp.catchUp = null; mpCatchUpDrained(); }
       return e.answer;
     }
-    if (cu.done) { mp.catchUp = null; mpRenderBanner(); return CATCHUP_LIVE; }
+    if (cu.done) {
+      // The log is fully here and THIS seat has nothing queued: this
+      // ask is live. Other seats may still hold queued answers — a
+      // paired-draft pick the foe sent early, before the pick it
+      // answers existed — so catch-up ends only when EVERY queue is
+      // empty; ending it here would discard those answers unseen,
+      // and the seat's next live decision would then be misread as
+      // the answer to the ask they were logged for.
+      mpSeedPairingFromLog();
+      if (Object.values(cu.bySeat).every((x) => !x.length)) { mp.catchUp = null; mpCatchUpDrained(); }
+      return CATCHUP_LIVE;
+    }
     await new Promise((res) => cu.waiters.push(res));
   }
 }
@@ -6369,6 +6412,9 @@ async function ask(req) {
     const a = await mpCatchUpAnswer(req);
     if (a !== CATCHUP_LIVE) return a;
     fromCatchUp = true;
+    // MP-2 (2026-10-23): draft pairing state is re-derived from the
+    // log when the catch-up ends — see mpSeedPairingFromLog, invoked
+    // from both catch-up endings inside mpCatchUpAnswer.
   }
   if (fromCatchUp && mp.spectatorSeats && mp.spectatorSeats.has(req.playerIdx)
     && !(mp.spectatorClosed && mp.spectatorClosed.has(req.playerIdx))) {
@@ -6639,6 +6685,62 @@ function mpWaitingHint(req) {
   return text;
 }
 
+/* Item 37 (Norman, 2026-10-23): market prices are PER-VIEWER. The
+   head/head-10 discount ("Actions cost 1 less, min 1") used to ride the
+   BUYER's request into every render: on the owner's turn the lowered
+   prices showed on everyone's screen, and on an opponent's turn they
+   reverted to full price even on the owner's own screen. The rule now:
+   every screen shows the values as they apply to the player looking at
+   it — the owner always sees his own discount on his screen; an
+   opponent's screen never shows it. The request's cost/head10Active
+   stay the buyer's truth for logic; only rendering re-keys. Charging
+   is engine-side, buyer-keyed, and untouched. */
+function viewerOwnsHead10() {
+  try {
+    const p = human();
+    const head = p && p.champion && p.champion.equipment && p.champion.equipment.head;
+    return !!(head && head.data && head.data.id === 'head/head-10');
+  } catch (e) { return false; }
+}
+/* One pricing function shared by both market renders (uiMarket and
+   renderPlanningMarket) so they can never drift apart again. */
+function marketViewerPricing(isActionView) {
+  const discount = !!isActionView && viewerOwnsHead10();
+  return {
+    discount,
+    badge(c) {
+      if (!discount || !c || c.value == null) return '';
+      const dc = Math.max(1, c.value - 1);
+      return dc < c.value ? `<s>${c.value}</s> ${dc} SP` : '';
+    },
+  };
+}
+/* Item 40 (Norman, 2026-10-23): "when it's their turn it doesn't grey
+   out the slots that I've already filled and I want it to. On my
+   screen I mean." The planning view computes nothing against the
+   VIEWER's board today; this mirrors describe()'s own-turn slot rule
+   (same reason strings) against the local player's champion. */
+function viewerSlotBlockedWhy(summary) {
+  try {
+    const p = human();
+    if (!p || !p.champion) return '';
+    const eq = p.champion.equipment;
+    const k = (summary.slot || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (k === 'head') return eq.head ? 'Head slot full' : '';
+    if (k === 'body') {
+      if (p.champion.flags && p.champion.flags.cannotWearBody) return "Can't wear body armor";
+      return eq.body ? 'Body slot full' : '';
+    }
+    if (k === 'gloves') return eq.gloves ? 'Gloves slot full' : '';
+    if (k === 'boots') return eq.boots ? 'Boots slot full' : '';
+    if (k === 'accessories' || k === 'accessory') return eq.accessories ? 'Accessory slot full' : '';
+    if (k === 'weapon' || k === 'rangedweapon' || k === 'weapontrait' || k === 'weapontraits') {
+      return E.flexHasFree(p.champion) ? '' : 'Weapon/trait slots full (3 max)';
+    }
+  } catch (e) { /* fall through */ }
+  return '';
+}
+
 /** Read-only market while the opponent buys: the same face-up cards stay
     on screen so this player can plan their own buy. Taps only open the
     card detail window — nothing can be bought off-turn. Both players'
@@ -6698,7 +6800,13 @@ function renderPlanningMarket(remoteReq) {
   const topbarEl = $('topbar');
   if (topbarEl) sp.style.top = topbarEl.offsetHeight + 'px';
   mid.appendChild(sp);
-  if (view.head10Active) {
+  // Item 37: the discount note + price badges key off the VIEWER's
+  // head-10, never the buyer's (view.head10Active stays untouched on
+  // the request — it is the buyer's truth, not this screen's prices).
+  const isActionView = view.title === 'Buy action cards';
+  const isEquipView = view.title === 'Buy equipment';
+  const pricing = marketViewerPricing(isActionView);
+  if (pricing.discount) {
     const dn = document.createElement('div');
     dn.className = 'discount-note';
     dn.textContent = '✦ HEAD-10 · Actions cost 1 less (min 1)';
@@ -6714,11 +6822,22 @@ function renderPlanningMarket(remoteReq) {
     const grid = document.createElement('div');
     grid.className = 'card-grid';
     col.cards.forEach((c) => {
-      grid.appendChild(cardEl(c, {
+      // Item 40: on the equipment view, grey the cards whose slot the
+      // VIEWER has already filled — on his screen, on any turn.
+      const blockedWhy = isEquipView ? viewerSlotBlockedWhy(c) : '';
+      const el = cardEl(c, {
         hideName: !!c.syntheticName,
         hideKind: view.title === 'Buy equipment' || displayPhase() === 'equipBuy',
-        costBadge: view.head10Active && c.cost != null && c.value != null && c.cost < c.value ? `<s>${c.value}</s> ${c.cost} SP` : '',
-      }));
+        cls: blockedWhy ? 'unaffordable' : '',
+        costBadge: pricing.badge(c),
+      });
+      if (blockedWhy) {
+        const r = document.createElement('div');
+        r.className = 'buy-why';
+        r.textContent = blockedWhy;
+        el.appendChild(r);
+      }
+      grid.appendChild(el);
     });
     if (!col.cards.length) grid.appendChild(emptyDeckMarker());
     wrap.appendChild(grid);
@@ -7623,7 +7742,11 @@ function uiMarket(req, done, mid) {
   const topbar = $('topbar');
   if (topbar) sp.style.top = topbar.offsetHeight + 'px';
   mid.appendChild(sp);
-  if (req.head10Active) {
+  // Item 37: the note keys off the same viewer pricing as the badges
+  // (here viewer == buyer, so this matches req.head10Active; sharing
+  // the one function keeps the two renders from drifting apart).
+  const pricing = marketViewerPricing(req.title === 'Buy action cards');
+  if (pricing.discount) {
     const dn = document.createElement('div');
     dn.className = 'discount-note';
     dn.textContent = '✦ HEAD-10 · Actions cost 1 less (min 1)';
@@ -7653,7 +7776,7 @@ function uiMarket(req, done, mid) {
         hideName: !!c.syntheticName,
         hideKind: req.title === 'Buy equipment', // item 8: no MELEE/RANGED badge in the equipment market (it is printed on the card)
         cls: c.buyable ? '' : 'unaffordable',
-        costBadge: req.head10Active && c.cost != null && c.value != null && c.cost < c.value ? `<s>${c.value}</s> ${c.cost} SP` : '',
+        costBadge: pricing.badge(c),
         actionLabel: c.buyable ? `Buy (${c.cost ?? c.value} SP)` : c.why,
         actionDisabled: !c.buyable,
         disabledWhy: c.why,
@@ -8817,17 +8940,35 @@ function buildBuildRecords(g, gameId, endedAtIso, partialStatus) {
     // locally).
     let controller = 'ai';
     let difficulty = null;
-    try {
-      if (cfIsHumanSeat(pi)) controller = 'human';
-      // A seat the table surrendered while its player was dropped
-      // ('out' on the seat map) was built by that human — record it
-      // as human, not as a bot.
-      if (S.mp && S.mp.seatMap && S.mp.seatMap[pi] && S.mp.seatMap[pi].kind === 'out') controller = 'human';
-    } catch (e) { controller = pi === myIdx() ? 'human' : 'ai'; }
-    if (controller === 'ai') {
-      if (S.mp && S.mp.seatMap && S.mp.seatMap[pi] && S.mp.seatMap[pi].difficulty) difficulty = S.mp.seatMap[pi].difficulty;
-      else if (diffsLocal[pi]) difficulty = diffsLocal[pi];
-      else difficulty = 'medium';
+    // MP-3 (2026-10-23): in an online match, the record derives from
+    // the kinds captured AT MATCH START (startKinds), not the live
+    // seat map — a reconnect churn that relabeled a human seat 'bot'
+    // mid-match used to stamp the whole match 'ai/medium' downstream
+    // (the game-2 fossil: two finishes, both seats recorded as bots
+    // that never played). A REAL layer-2 press overrides the start
+    // kind: REPLACE means a bot genuinely finished the seat's game
+    // (recorded with the pressed difficulty), SURRENDER means the
+    // human's own build stands (recorded human).
+    const sk = (S.mp && S.mp.startKinds) ? S.mp.startKinds[pi] : null;
+    if (sk) {
+      if (sk.kind === 'bot') { controller = 'ai'; difficulty = sk.difficulty || 'medium'; }
+      else controller = 'human';
+      const dk = S.mp.dropoutKinds && S.mp.dropoutKinds[pi];
+      if (dk && dk.type === 'replace') { controller = 'ai'; difficulty = dk.difficulty || 'medium'; }
+      else if (dk && dk.type === 'surrender') { controller = 'human'; difficulty = null; }
+    } else {
+      try {
+        if (cfIsHumanSeat(pi)) controller = 'human';
+        // A seat the table surrendered while its player was dropped
+        // ('out' on the seat map) was built by that human — record it
+        // as human, not as a bot.
+        if (S.mp && S.mp.seatMap && S.mp.seatMap[pi] && S.mp.seatMap[pi].kind === 'out') controller = 'human';
+      } catch (e) { controller = pi === myIdx() ? 'human' : 'ai'; }
+      if (controller === 'ai') {
+        if (S.mp && S.mp.seatMap && S.mp.seatMap[pi] && S.mp.seatMap[pi].difficulty) difficulty = S.mp.seatMap[pi].difficulty;
+        else if (diffsLocal[pi]) difficulty = diffsLocal[pi];
+        else difficulty = 'medium';
+      }
     }
     const finalTraits = {};
     LIVE_TRAITS.forEach((t) => { try { finalTraits[t] = E.effT(g, pi, t); } catch (e) { finalTraits[t] = (ch.traits && ch.traits[t]) ?? null; } });
@@ -8932,7 +9073,9 @@ function autoLogBattleHistoryOnce() {
           const gameId = S.logGameId || ('cf-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10));
           let builds = [];
           try { builds = buildBuildRecords(g2, gameId, new Date().toISOString()); } catch (e) { builds = []; }
-          const envelope = { text, gameId, builds, status: 'finished' };
+          // MP-4: the finisher's seat rides the finish envelope so a
+          // split match's two finishes attribute to their senders.
+          const envelope = { text, gameId, builds, status: 'finished', seat: (S.mp && typeof S.mp.myIdx === 'number') ? S.mp.myIdx : 0 };
           try { await flushPendingBattleLogs(); } catch (e) { /* ignore */ }
           const ok = await postBattleLogEnvelope(envelope);
           if (!ok) {
@@ -9002,6 +9145,7 @@ function writePartialMarker(progress) {
     localStorage.setItem(PARTIAL_LOG_KEY, JSON.stringify({
       gameId: S.logGameId,
       startedAt: S.logGameStartedAt || null,
+      seat: (S.mp && typeof S.mp.myIdx === 'number') ? S.mp.myIdx : 0,
       progress: progress || null,
       updatedAt: new Date().toISOString(),
     }));
@@ -9049,7 +9193,10 @@ function buildPartialEnvelope(status) {
   const banner = '*** UNFINISHED GAME — ' + String(status).toUpperCase() + ' ***\n'
     + 'Phase reached: ' + progress.phase + ' · Round ' + progress.round + ' · Turn ' + progress.turn + '\n\n';
   text = banner + text;
-  const envelope = { text, gameId: S.logGameId, builds, status, partial: true, progress };
+  // MP-4 (2026-10-23): the sender's seat rides every partial — with one
+  // gameId per match, partials from different phones need attribution
+  // (seat 0 for offline games, which have no online seat).
+  const envelope = { text, gameId: S.logGameId, builds, status, partial: true, progress, seat: (S.mp && typeof S.mp.myIdx === 'number') ? S.mp.myIdx : 0 };
   if (JSON.stringify(envelope).length > PARTIAL_BEACON_MAX) {
     const keep = Math.max(2000, PARTIAL_BEACON_MAX - (JSON.stringify({ ...envelope, text: '' }).length) - 160);
     envelope.text = banner
@@ -9136,7 +9283,7 @@ function reportAbandonedMarkedGame() {
       + 'This game ended with no finish and no close-out send (the app or tab died).\n'
       + 'Game started: ' + (marker.startedAt || 'unknown') + '\n'
       + 'Last recorded progress — Phase: ' + (p.phase || 'unknown') + ' · Round ' + (p.round || '?') + ' · Turn ' + (p.turn || '?') + '\n';
-    const envelope = { text, gameId: marker.gameId, builds: [], status: 'abandoned', partial: true, progress: marker.progress || null, fromMarker: true };
+    const envelope = { text, gameId: marker.gameId, builds: [], status: 'abandoned', partial: true, progress: marker.progress || null, fromMarker: true, seat: typeof marker.seat === 'number' ? marker.seat : null };
     (async () => {
       const ok = await postBattleLogEnvelope(envelope);
       if (!ok) queueBattleLog(envelope);
@@ -9148,10 +9295,21 @@ function reportAbandonedMarkedGame() {
    'abandoned', beacon path); backgrounding the app mid-game leaves a
    fresh checkpoint, because on a phone that is often the last moment
    before the OS kills the tab. Registered once, here, alongside the
-   auto-log machinery they extend. */
+   auto-log machinery they extend.
+   MP-1 (2026-10-23): a pagehide whose page is headed for the
+   back/forward cache (event.persisted) is NOT a close — the player
+   is switching apps and coming back, and filing a final 'abandoned'
+   partial for it both spams the log and (worse) seals this phone's
+   report for a game that is still running. Persisted hides send only
+   a checkpoint (never final); a true unload still reports abandoned,
+   and if the OS discards the cached page without returning, the next
+   launch's marker sweep still files the abandoned report. */
 try {
-  window.addEventListener('pagehide', () => {
-    try { sendPartialLog('abandoned', { beacon: true }); } catch (e) { /* ignore */ }
+  window.addEventListener('pagehide', (ev) => {
+    try {
+      if (ev && ev.persisted) sendPartialLog('checkpoint', { beacon: true });
+      else sendPartialLog('abandoned', { beacon: true });
+    } catch (e) { /* ignore */ }
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') { try { partialCheckpoint(); } catch (e) { /* ignore */ } }
@@ -11015,6 +11173,11 @@ function persistBoundary(nextFlowStep, combat) {
   // also lands here) is a progress checkpoint for the partial play
   // report, so an unfinished game still leaves a trail.
   try { partialCheckpoint(); } catch (e) { /* auto-log only */ }
+  // MP-2 state verification (2026-10-23): every phase boundary (and
+  // combat round) is also a hash checkpoint — broadcast this copy's
+  // state hash so a split is caught at the boundary, not discovered
+  // at the victory screen.
+  try { if (S.mp) mpSendStateHash(); } catch (e) { /* verification only */ }
 }
 
 /* A failed game start (engine throw, unreadable save) used to surface
@@ -11183,6 +11346,13 @@ async function startGame(seed, resumePayload) {
     S.logGameId = resumePayload.logGameId;
     S.logGameStartedAt = typeof resumePayload.logGameStartedAt === 'string' ? resumePayload.logGameStartedAt : null;
     S.buildStartStats = Array.isArray(resumePayload.buildStartStats) ? resumePayload.buildStartStats : null;
+  } else if (S.mp && typeof S.mp.gameId === 'string' && S.mp.gameId) {
+    // MP-4 (2026-10-23): an online match adopts the relay-minted id —
+    // one gameId per match on every phone, so the match's partials
+    // supersede under one stem and its finish deletes exactly them.
+    S.logGameId = S.mp.gameId;
+    S.logGameStartedAt = new Date().toISOString();
+    S.buildStartStats = null;
   } else {
     S.logGameId = 'cf-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
     S.logGameStartedAt = new Date().toISOString();
@@ -11231,10 +11401,16 @@ async function startGame(seed, resumePayload) {
       // 2-player room reproduces the classic session exactly.
       const n = S.mp.tableSize || 2;
       const seatMap = S.mp.seatMap || mpNormalizeSeats(null, n);
+      // MP-3 (2026-10-23): per-seat kind/difficulty prefer the
+      // match-start snapshot (startKinds) over the live seat map, so a
+      // mid-match rebuild wires the same bot seats the match began
+      // with. startKinds is absent on the save-resume path — the live
+      // map serves there, as before.
+      const startKinds = S.mp.startKinds || null;
       const mpDiffs = [];
       const botSeats = [];
       for (let i = 0; i < n; i++) {
-        const s = seatMap[i];
+        const s = (startKinds && startKinds[i]) ? { ...(seatMap[i] || {}), kind: startKinds[i].kind, difficulty: startKinds[i].difficulty } : seatMap[i];
         mpDiffs.push(s && s.kind === 'bot' ? (s.difficulty || 'medium') : null);
         if (s && s.kind === 'bot') {
           S.seatDiffLabels[i] = DIFF_LABEL[mpDiffs[i]] || mpDiffs[i];
@@ -12665,6 +12841,136 @@ function mpWireSocket(ws) {
   ws.onerror = () => { /* onclose follows and reports */ };
 }
 
+/* ---------------- MP-2 state verification (2026-10-23) --------------
+   The relay's decision log is the room's truth: seed + log fully
+   determine the game. Every client hashes its state at each phase
+   boundary (history text minus the volatile Exported line, plus
+   per-seat traits / SP / pile sizes) and broadcasts it; peers store
+   the hashes per phase+round. A mismatch means the copies split: the
+   detecting client rebuilds ITSELF from the log once per phase; if
+   the rebuilt state still disagrees, it stops loud rather than
+   playing a diverged copy. Divergence either heals from the log or
+   ends the game on that phone — silently playing on is impossible. */
+function mpStateHash() {
+  try {
+    const g = game();
+    if (!g) return null;
+    let text = '';
+    try { text = battleHistoryExportText() || ''; } catch (e) { text = ''; }
+    text = text.split('\n').filter((l) => !l.startsWith('Exported:')).join('\n');
+    const parts = (g.players || []).map((p) => {
+      const ch = p.champion || {};
+      const tr = ch.traits || {};
+      return [tr.VIT, tr.TP, tr.SPE, tr.CUN, tr.RES, tr.CON, tr.INT, tr.STR, tr.DEX, tr.ACC, tr.PER, tr.SPI, tr.ARC, tr.INS,
+        p.skillPoints, p.spentSP, (p.hand || []).length, (p.deck || []).length, (p.discard || []).length,
+        ch.position, ch.eliminated ? 1 : 0].join(',');
+    });
+    return cfHashStr(text + '|' + parts.join('|')).toString(16);
+  } catch (e) { return null; }
+}
+function mpSendStateHash() {
+  const mp = S.mp;
+  if (!mp || mp.dead || !mp.begun) return;
+  const g = game();
+  if (!g) return;
+  let phase = g.phase;
+  try { phase = displayPhase(); } catch (e) { /* raw phase */ }
+  const round = (g.roundCount || 0) + 1;
+  const key = phase + '@' + round;
+  const hash = mpStateHash();
+  if (!hash) return;
+  (mp.myHashes || (mp.myHashes = {}))[key] = hash;
+  try {
+    if (mp.ws && mp.ws.readyState === 1) {
+      mp.ws.send(JSON.stringify({ t: 'stateHash', phase, round, hash }));
+    }
+  } catch (e) { /* the next boundary re-send covers a lost send */ }
+  mpCheckHashes(key);
+}
+function mpCheckHashes(key) {
+  const mp = S.mp;
+  if (!mp || mp.dead) return;
+  const mine = mp.myHashes && mp.myHashes[key];
+  if (!mine) return;
+  const peers = mp.peerHashes && mp.peerHashes[key];
+  if (!peers) return;
+  for (const seat of Object.keys(peers)) {
+    if (peers[seat] && peers[seat] !== mine) { mpOnHashMismatch(key); return; }
+  }
+}
+function mpOnHashMismatch(key) {
+  const mp = S.mp;
+  if (!mp || mp.dead) return;
+  mp.hashRebuilds = mp.hashRebuilds || {};
+  if (!mp.hashRebuilds[key]) {
+    // Rebuild ONCE from the room's truth: the relay's full log.
+    mp.hashRebuilds[key] = true;
+    mp.rebuildOnResync = true;
+    try { mp.ws.send(JSON.stringify({ t: 'resync', room: mp.room, fromSeq: 0 })); }
+    catch (e) { mp.rebuildOnResync = false; }
+    return;
+  }
+  // Already rebuilt from the log once and the states still disagree:
+  // fail loud. Never play a diverged copy.
+  mp.dead = true;
+  if (mp.reconnectTimer) { clearTimeout(mp.reconnectTimer); mp.reconnectTimer = null; }
+  if (mp.rejoinTimer) { clearTimeout(mp.rejoinTimer); mp.rejoinTimer = null; }
+  S.partialEndStatus = 'disconnected';
+  mpClearSession();
+  openModal(`
+    <h2>Couldn't resync</h2>
+    <p class="hint">This phone's copy of the game no longer matches the room, even after rebuilding it from the room's record — so this game can't continue on this phone. The other players' game is untouched.</p>
+    <div class="opt-list"><button class="primary" id="mp-hash-title">Back to title</button></div>`);
+  const b = $('mp-hash-title');
+  if (b) b.onclick = () => { closeModal(); backToTitle(); };
+}
+/* A catch-up just ran dry: re-render, persist, and ask every peer to
+   re-send its current phase hash so this (re)built copy verifies
+   itself against the room before play moves on. */
+/* MP-2 (2026-10-23): draft pairing state is RE-DERIVED FROM THE LOG,
+   never trusted to the blind reset beginMpGame applied. The game-2
+   split: a rebuild landing MID-PAIR (the log holds my pick for the
+   pair, not the foe's) left draftPairStage at 0, so mpDraftAsk
+   early-prompted me for the foe's slot — I "picked" a second time
+   for a pair I had already answered, and the engines applied
+   different picks from there. If the log holds more of MY draft
+   picks than the foe's, my pick for the pair now being completed is
+   settled — it is in the log — so the pair stage starts at 1: the
+   foe's slot just waits for the foe, and my next pick (a fresh pair)
+   prompts normally. draftEarly is deliberately NOT staged: my logged
+   pick was already applied by the replay itself, and serving it
+   again at the next pair would double it. Runs once per rebuild,
+   from both catch-up endings (last answer handed out, or the log
+   running dry at a live ask). */
+function mpSeedPairingFromLog() {
+  const mp = S.mp;
+  if (!mp || mp.pairingSeeded) return;
+  mp.pairingSeeded = true;
+  if ((mp.tableSize || 2) === 2) {
+    // Count every draft pick the log holds per seat: the ones the
+    // replay already handed out (draftPicksSeen) plus the ones still
+    // queued — the guest-side interleave reaches the seam before any
+    // hand-out, when the whole count is in the queues.
+    const held = (seat) => {
+      let n = (mp.draftPicksSeen || {})[seat] || 0;
+      const q = (mp.catchUp && mp.catchUp.bySeat && mp.catchUp.bySeat[seat]) || [];
+      for (const e of q) if (e.hook === 'draftPick') n++;
+      return n;
+    };
+    if (held(mp.myIdx) > held(1 - mp.myIdx)) mp.draftPairStage = 1;
+  }
+}
+
+function mpCatchUpDrained() {
+  const mp = S.mp;
+  mpSeedPairingFromLog();
+  mpRenderBanner();
+  mpPersistSession();
+  try {
+    if (mp.ws && mp.ws.readyState === 1) mp.ws.send(JSON.stringify({ t: 'hashPlease' }));
+  } catch (e) { /* ignore */ }
+}
+
 function mpOnMessage(m) {
   if (!MP || MP.dead) return;
   if (m.t === 'created') {
@@ -12698,6 +13004,11 @@ function mpOnMessage(m) {
   } else if (m.t === 'start') {
     // A duplicate start arrives when the joiner reconnects mid-game (the
     // relay re-deals a seed); the running game must not restart.
+    // MP-4 (2026-10-23): the relay mints ONE gameId per match and it
+    // rides this message — adopt it so every phone reports the match
+    // under the same stem. (An older relay sends none; startGame then
+    // falls back to a locally minted id, as before.)
+    if (typeof m.gameId === 'string' && m.gameId) MP.gameId = m.gameId;
     if (Array.isArray(m.seats)) {
       MP.tableSize = m.size || m.seats.length;
       MP.seatMap = mpNormalizeSeats(m.seats, MP.tableSize);
@@ -12722,6 +13033,7 @@ function mpOnMessage(m) {
     MP.connected = true;
     MP.reconnectDelay = 3000;
     if (typeof m.playerIdx === 'number') MP.myIdx = m.playerIdx;
+    if (typeof m.gameId === 'string' && m.gameId) MP.gameId = m.gameId;
     // The relay's current seat map and table-surrendered seats ride
     // along (Stage 3 relay): a rejoiner — above all a stored-session
     // rejoin from a killed tab — rebuilds the true table state instead
@@ -12854,12 +13166,29 @@ function mpOnMessage(m) {
       mpRenderBanner();
       mpOpponentLeft('host');
     }
+  } else if (m.t === 'stateHash') {
+    // A peer's phase-boundary state hash (MP-2): store it per
+    // phase+round and compare against mine — a mismatch rebuilds
+    // this client from the log once, then stops it loud.
+    if (typeof m.seat === 'number' && typeof m.hash === 'string' && m.hash) {
+      const key = String(m.phase || '') + '@' + (typeof m.round === 'number' ? m.round : '?');
+      const byKey = (MP.peerHashes || (MP.peerHashes = {}))[key] || (MP.peerHashes[key] = {});
+      byKey[m.seat] = m.hash;
+      mpCheckHashes(key);
+    }
+  } else if (m.t === 'hashPlease') {
+    // A (re)built peer asks the room for its current hashes: answer
+    // with mine for the phase this phone is in now.
+    mpSendStateHash();
   } else if (m.t === 'resync') {
     if (MP.resyncTimer) { clearTimeout(MP.resyncTimer); MP.resyncTimer = null; }
     if (MP.rejoinTimer) { clearTimeout(MP.rejoinTimer); MP.rejoinTimer = null; }
     MP.connLost = false;
     const list = m.decisions || [];
     if (MP.catchUp) {
+      // An in-flight catch-up IS a rebuild from the same log — a
+      // pending hash-mismatch rebuild request is satisfied by it.
+      MP.rebuildOnResync = false;
       // Stored-session rejoin: split the full log into per-seat queues;
       // mpCatchUpAnswer feeds them to the fresh engine in engine order.
       list.forEach((d) => {
@@ -12877,8 +13206,13 @@ function mpOnMessage(m) {
       MP.catchUp.done = true;
       const w = MP.catchUp.waiters.splice(0);
       w.forEach((r) => r());
-    } else if (MP.begun && (list.filter((d) => d.playerIdx === MP.myIdx).length > (MP.ownSent || 0)
+    } else if (MP.begun && (MP.rebuildOnResync
+      || list.filter((d) => d.playerIdx === MP.myIdx).length > (MP.ownSent || 0)
       || (MP.seatMap && MP.seatMap[MP.myIdx] && (MP.seatMap[MP.myIdx].kind === 'out' || MP.seatMap[MP.myIdx].kind === 'bot')))) {
+      // MP-2 (2026-10-23): a state-hash mismatch also lands here —
+      // rebuildOnResync was set by mpOnHashMismatch, which asked for
+      // this full log precisely so the rebuild below can run.
+      MP.rebuildOnResync = false;
       // RECLAIM REBUILD (Norman, 2026-10-20): this resync's log holds
       // decisions for MY seat that I never sent — a replacement bot
       // played for me while I was away, and the live-skip path below
@@ -13081,6 +13415,25 @@ function beginMpGame(seed) {
   MP.outbox.length = 0;
   MP.draftEarly = null;
   MP.draftPairStage = 0;
+  // MP-2: pairing re-derivation state — the log's draft picks are
+  // counted during catch-up and the pairing re-derived when the
+  // catch-up ends (see mpCatchUpDrained). Hash-verification state
+  // hashRebuilds) is deliberately NOT reset here: it must survive a
+  // mid-match rebuild so a phase can only ever rebuild once.
+  MP.pairingSeeded = false;
+  MP.draftPicksSeen = {};
+  MP.lastOwnDraftPick = undefined;
+  // MP-3 (2026-10-23): capture each seat's kind AS THE MATCH STARTS.
+  // Later seat-map churn (re-deals, dropout resolutions) can rewrite
+  // MP.seatMap mid-match; the build records and bot-seat wiring must
+  // describe the match as it began, so they read this snapshot.
+  // Captured once per match — a mid-match rebuild keeps the original.
+  if (!MP.startKinds) {
+    MP.startKinds = Array.from({ length: MP.tableSize || 2 }, (_, i) => {
+      const s = MP.seatMap && MP.seatMap[i];
+      return s ? { kind: s.kind, difficulty: s.difficulty || null } : { kind: 'human', difficulty: null };
+    });
+  }
   MP.connLost = false;
   MP.oppAway = false;
   mpRenderBanner();
@@ -13186,6 +13539,7 @@ function mpPersistSession() {
     if (MP && MP.begun && !MP.dead && MP.room && typeof MP.myIdx === 'number' && MP.myIdx >= 0 && MP.myIdx < n) {
       localStorage.setItem(MP_STORE_KEY, JSON.stringify({
         room: MP.room, playerIdx: MP.myIdx, seq: MP.seq,
+        savedAt: Date.now(), gameId: MP.gameId || null,
         remoteReceived: MP.remoteReceived || 0, seed: MP.seed,
         // Stage 3 additions: enough to rebuild the same table on rejoin.
         tableSize: n, seatMap: MP.seatMap || null, receivedBy: MP.receivedBy || {}, ownSent: MP.ownSent || 0,
@@ -13294,6 +13648,21 @@ function mpRefreshRejoinButton() {
       b.onclick = () => mpRejoinStored();
     }
   });
+
+/* MP-2 (2026-10-23): rejoining a stored game is AUTOMATIC on launch
+   when the stored session is still fresh — the Rejoin button stays as
+   the fallback when the automatic attempt fails, not the primary
+   path. Sessions stored by older builds carry no savedAt stamp and
+   are never auto-joined (button only). */
+const MP_AUTO_REJOIN_MS = 30 * 60 * 1000;
+function mpMaybeAutoRejoin() {
+  if (S.mp || mpConnecting) return;
+  const stored = mpLoadSession();
+  if (!stored) return;
+  if (typeof stored.savedAt !== 'number') return;
+  if (Date.now() - stored.savedAt > MP_AUTO_REJOIN_MS) return;
+  mpRejoinStored();
+}
 }
 
 async function mpRejoinStored() {
@@ -13319,6 +13688,7 @@ async function mpRejoinStored() {
   if (Array.isArray(stored.seatMap)) session.seatMap = mpNormalizeSeats(stored.seatMap, session.tableSize);
   if (stored.receivedBy) session.receivedBy = stored.receivedBy;
   if (typeof stored.ownSent === 'number') session.ownSent = stored.ownSent;
+  if (stored.gameId) session.gameId = stored.gameId;
   session.storedRejoin = true;
   session.catchUp = { bySeat: {}, done: false, waiters: [] };
   session.rejoinTimer = setTimeout(() => {
@@ -13350,9 +13720,15 @@ async function mpRejoinStored() {
 
 function mpNormalizeSeats(seats, size) {
   const n = Math.max(2, Math.min(5, size || (Array.isArray(seats) ? seats.length : 2)));
+  // MP-3 (2026-10-23): an incoming list SHORTER than the seat map we
+  // already hold (a re-deal that predates the lobby fill, a partial
+  // resync) must never downgrade seats we already know — the missing
+  // entries carry over instead of resetting to 'open', which is what
+  // used to relabel live human seats downstream.
+  const prev = (S.mp && Array.isArray(S.mp.seatMap)) ? S.mp.seatMap : null;
   const out = [];
   for (let i = 0; i < n; i++) {
-    const s = (Array.isArray(seats) && seats[i]) || {};
+    const s = (Array.isArray(seats) && seats[i]) || (prev && i < prev.length ? prev[i] : null) || {};
     out.push({
       kind: s.kind === 'bot' ? 'bot' : s.kind === 'out' ? 'out' : s.kind === 'human' ? 'human' : 'open',
       name: typeof s.name === 'string' ? s.name : '',
@@ -13814,10 +14190,16 @@ try { flushPendingBattleLogs(); } catch (e) { /* fire-and-forget */ }
 // means that game died unsent — file its 'abandoned' report now.
 try { reportAbandonedMarkedGame(); } catch (e) { /* fire-and-forget */ }
 mpRefreshRejoinButton();
+try { mpMaybeAutoRejoin(); } catch (e) { /* fire-and-forget */ }
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) { mpKickReconnect(); mpRefreshRejoinButton(); }
   else mpPersistSession(); // snapshot before the OS can freeze/kill the tab
 });
+/* MP-1 (2026-10-23): every return signal reconnects — pageshow fires
+   when a BFCache-frozen page is restored and focus when the player
+   simply tabs back; visibilitychange alone missed both paths. */
+window.addEventListener('pageshow', () => { mpKickReconnect(); mpRefreshRejoinButton(); });
+window.addEventListener('focus', () => { mpKickReconnect(); mpRefreshRejoinButton(); });
 window.addEventListener('online', () => { mpKickReconnect(); mpRefreshRejoinButton(); try { flushPendingBattleLogs(); } catch (e) { /* fire-and-forget */ } });
 window.addEventListener('popstate', onBackButton);
 
