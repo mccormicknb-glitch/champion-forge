@@ -3153,6 +3153,7 @@ const S = {
   oppSurrendered: false,    // the opponent surrendered while one of my decisions was open
   surrenderNote: '',        // game-over subtitle when a surrender ended the game
   mpSurrendered: false,     // I surrendered in MP: drop the socket only after the result renders
+  partialEndStatus: null,   // why this game is ending early ('host-ended' | 'disconnected'), set by the MP end handlers and consumed by backToTitle for the partial play report; null = a plain quit
   oppDrew: false,           // the opponent's client reported an Eternal Equilibrium draw while my decision was open
   mpDrawSent: false,        // I already relayed the Eternal Equilibrium draw to the opponent
   backGuardArmed: false,    // browser/hardware back interception is live for this game
@@ -8684,7 +8685,7 @@ function buildLogBookkeeping(g) {
    [{id,name,tier,count}], finishing {result, winnerSeat, drawReason,
    surrenderedBy, eliminated, eliminatedTurn, eliminationRound,
    finalVIT, finalTP, turnsSurvived, roundsPlayed}. */
-function buildBuildRecords(g, gameId, endedAtIso) {
+function buildBuildRecords(g, gameId, endedAtIso, partialStatus) {
   const book = buildLogBookkeeping(g);
   const diffsLocal = (() => { try { return seatDifficultiesForGame(); } catch (e) { return []; } })();
   return g.players.map((p, pi) => {
@@ -8742,6 +8743,7 @@ function buildBuildRecords(g, gameId, endedAtIso) {
     if (typeof g.winner === 'number' && g.winner === pi) result = 'winner';
     else if (typeof g.surrenderedBy === 'number' && g.surrenderedBy === pi) result = 'surrendered';
     else if (ch.eliminated) result = 'eliminated';
+    else if (partialStatus) result = 'unfinished';
     else if (g.winner === null || g.winner === undefined) result = 'draw';
     else result = 'lost';
     return {
@@ -8772,6 +8774,7 @@ function buildBuildRecords(g, gameId, endedAtIso) {
       heroBonuses,
       finishing: {
         result,
+        gameStatus: partialStatus || 'finished',
         winnerSeat: typeof g.winner === 'number' ? g.winner : null,
         drawReason: g.drawReason || null,
         surrenderedBy: typeof g.surrenderedBy === 'number' ? g.surrenderedBy : null,
@@ -8809,19 +8812,231 @@ function autoLogBattleHistoryOnce() {
           const gameId = S.logGameId || ('cf-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10));
           let builds = [];
           try { builds = buildBuildRecords(g2, gameId, new Date().toISOString()); } catch (e) { builds = []; }
-          const envelope = { text, gameId, builds };
+          const envelope = { text, gameId, builds, status: 'finished' };
           try { await flushPendingBattleLogs(); } catch (e) { /* ignore */ }
           const ok = await postBattleLogEnvelope(envelope);
           if (!ok) {
             const queued = queueBattleLog(envelope);
             if (!queued) return; // nowhere durable to keep it — do not mark it sent
           }
+          // The finished report is durably away (sent or queued): this
+          // game no longer needs its quit-tracking marker.
+          try { clearPartialMarker(); } catch (e) { /* ignore */ }
           if (fp) markBattleLogSent(fp);
         } catch (e) { /* never surface an auto-log failure to the player */ }
       })();
     }, 0);
   } catch (e) { /* never let logging touch the game */ }
 }
+
+/* ------------------------------------------------------- partial play reports
+   Quit tracking (Norman, 2026-10-22): games that never finish used to
+   be invisible — no report at all. Now every game leaves a trail:
+   - CHECKPOINTS: a compact partial envelope at every phase boundary
+     (persistBoundary fires at phase changes and at each combat round;
+     round checkpoints are throttled to one per 30s) plus one when the
+     app is backgrounded. Sent through the normal queue/flush path.
+   - FINAL PARTIALS: when the game ends WITHOUT a finish — the player
+     leaves to the title (status 'quit'), the tab/app closes
+     ('abandoned', via a sendBeacon on pagehide with the durable
+     queue as backstop), the room dies under them ('disconnected'),
+     or the host ends the room ('host-ended') — a final partial goes
+     out with the builds so far and the history so far.
+   - THE MARKER: localStorage 'cf-active-game' names the live game
+     and its last progress. The finished report and every final
+     partial clear it. If it is still there at the NEXT app launch,
+     the previous game died with no send at all (hard kill, crash,
+     battery) and an 'abandoned' report is filed from the marker.
+   Envelope shape: { text, gameId, builds, status, partial: true,
+   progress: { phase, flowStep, round, turn, players } } — the same
+   gameId the finished report uses, so review keys on gameId +
+   status and the finished report supersedes the partials (the
+   relay also deletes a game's partials when its finish lands).
+   A surrender is NOT a partial: it ends the game (phase 'done'),
+   and the finished report above carries it, result 'surrendered'.
+   Fire-and-forget throughout: nothing here may delay, block, or
+   surface an error to the player. */
+const PARTIAL_LOG_KEY = 'cf-active-game';
+const PARTIAL_BEACON_MAX = 60000; // stay inside sendBeacon's safe zone
+let partialLogLastKey = '';
+let partialLogLastSentAt = 0;
+let partialLogClosedId = ''; // gameId whose FINAL partial already went out
+
+function partialProgress() {
+  const g = game();
+  if (!g) return null;
+  let phase = g.phase;
+  try { phase = displayPhase(); } catch (e) { /* keep raw phase */ }
+  return {
+    phase,
+    flowStep: S.flowStep || null,
+    round: (g.roundCount || 0) + 1,
+    turn: g.turnCount || 0,
+    players: g.players ? g.players.length : 0,
+  };
+}
+
+function writePartialMarker(progress) {
+  try {
+    if (!S.logGameId) return;
+    localStorage.setItem(PARTIAL_LOG_KEY, JSON.stringify({
+      gameId: S.logGameId,
+      startedAt: S.logGameStartedAt || null,
+      progress: progress || null,
+      updatedAt: new Date().toISOString(),
+    }));
+  } catch (e) { /* storage unavailable — checkpoints still flow */ }
+}
+function clearPartialMarker() {
+  try { localStorage.removeItem(PARTIAL_LOG_KEY); } catch (e) { /* ignore */ }
+}
+function readPartialMarker() {
+  try {
+    const raw = localStorage.getItem(PARTIAL_LOG_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    return o && typeof o.gameId === 'string' && o.gameId ? o : null;
+  } catch (e) { return null; }
+}
+
+/* Called by startGame the moment a game's identity is minted or
+   restored: a new game resets the quit-tracking state and plants its
+   marker, so from its first minute it can be reported on. */
+function partialBeginGame() {
+  partialLogLastKey = '';
+  partialLogLastSentAt = 0;
+  partialLogClosedId = '';
+  writePartialMarker({ phase: 'raceDraft', flowStep: 'phase1', round: 1, turn: 0, players: 0 });
+}
+
+/* Compose the partial envelope from the LIVE game. The history text
+   is the same export the player can download (it already reads
+   "Result: In progress" for an unfinished game), bannered so a human
+   reader sees at a glance that this game never finished and how far
+   it got. If the envelope outgrows the beacon budget, the builds and
+   progress stay whole and the history keeps its most recent portion,
+   with the trim noted — the tail is where the quitting happened. */
+function buildPartialEnvelope(status) {
+  const g = game();
+  if (!g || g.phase === 'done') return null;
+  if (!S.logGameId) return null;
+  const progress = partialProgress();
+  if (!progress) return null;
+  let builds = [];
+  try { builds = buildBuildRecords(g, S.logGameId, new Date().toISOString(), status); } catch (e) { builds = []; }
+  let text = '';
+  try { text = battleHistoryExportText(); } catch (e) { text = ''; }
+  const banner = '*** UNFINISHED GAME — ' + String(status).toUpperCase() + ' ***\n'
+    + 'Phase reached: ' + progress.phase + ' · Round ' + progress.round + ' · Turn ' + progress.turn + '\n\n';
+  text = banner + text;
+  const envelope = { text, gameId: S.logGameId, builds, status, partial: true, progress };
+  if (JSON.stringify(envelope).length > PARTIAL_BEACON_MAX) {
+    const keep = Math.max(2000, PARTIAL_BEACON_MAX - (JSON.stringify({ ...envelope, text: '' }).length) - 160);
+    envelope.text = banner
+      + '[... earlier history trimmed to fit the close-out send; the full build records ride below ...]\n'
+      + text.slice(text.length - keep);
+    envelope.truncated = true;
+  }
+  return envelope;
+}
+
+/* The unload path: sendBeacon with a text/plain blob (a CORS-safelisted
+   type, so no preflight can eat the send while the page dies). True
+   only when the browser accepted the beacon; the caller falls back to
+   the durable localStorage queue, flushed at next launch. */
+function beaconPartialLog(envelope) {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+      const blob = new Blob([JSON.stringify(envelope)], { type: 'text/plain' });
+      return !!navigator.sendBeacon(battleLogUrl(), blob);
+    }
+  } catch (e) { /* fall through */ }
+  return false;
+}
+
+async function sendPartialLog(status, opts) {
+  const useBeacon = !!(opts && opts.beacon);
+  try {
+    const g = game();
+    if (!g || g.phase === 'done') return false;
+    if (!S.logGameId) return false;
+    if (partialLogClosedId === S.logGameId) return false;
+    // The envelope is built synchronously, before any await: callers
+    // like backToTitle tear the game down right after calling, and
+    // the capture must not race that teardown.
+    const envelope = buildPartialEnvelope(status);
+    if (!envelope) return false;
+    writePartialMarker(envelope.progress);
+    if (useBeacon) {
+      if (!beaconPartialLog(envelope)) queueBattleLog(envelope);
+      if (status !== 'checkpoint') { partialLogClosedId = S.logGameId; clearPartialMarker(); }
+      return true;
+    }
+    const ok = await postBattleLogEnvelope(envelope);
+    if (!ok) queueBattleLog(envelope);
+    if (status !== 'checkpoint') { partialLogClosedId = S.logGameId; clearPartialMarker(); }
+    return true;
+  } catch (e) { return false; }
+}
+
+/* Progress checkpoints: called from persistBoundary (every phase
+   change and every combat round) and when the app is backgrounded.
+   Deduped on (gameId, phase, round); combat rounds throttled so a
+   fast round can't spam the relay. */
+function partialCheckpoint() {
+  try {
+    const g = game();
+    if (!g || g.phase === 'done') return;
+    if (!S.logGameId || partialLogClosedId === S.logGameId) return;
+    const p = partialProgress();
+    if (!p) return;
+    writePartialMarker(p);
+    const key = S.logGameId + '|' + p.phase + '|' + p.round;
+    if (key === partialLogLastKey) return;
+    const now = Date.now();
+    if (p.phase === 'combat' && partialLogLastKey.indexOf(S.logGameId + '|combat|') === 0 && now - partialLogLastSentAt < 30000) return;
+    partialLogLastKey = key;
+    partialLogLastSentAt = now;
+    sendPartialLog('checkpoint');
+  } catch (e) { /* never let logging touch the game */ }
+}
+
+/* App launch: a marker still standing means the previous session's
+   game ended with no finish, no quit, and no close-out send — file
+   its 'abandoned' report from the marker (identity + last progress;
+   the build state died with the tab, and the checkpoints already
+   sent carry whatever trail exists). */
+function reportAbandonedMarkedGame() {
+  try {
+    const marker = readPartialMarker();
+    if (!marker) return;
+    clearPartialMarker();
+    const p = marker.progress || {};
+    const text = '*** UNFINISHED GAME — ABANDONED ***\n'
+      + 'This game ended with no finish and no close-out send (the app or tab died).\n'
+      + 'Game started: ' + (marker.startedAt || 'unknown') + '\n'
+      + 'Last recorded progress — Phase: ' + (p.phase || 'unknown') + ' · Round ' + (p.round || '?') + ' · Turn ' + (p.turn || '?') + '\n';
+    const envelope = { text, gameId: marker.gameId, builds: [], status: 'abandoned', partial: true, progress: marker.progress || null, fromMarker: true };
+    (async () => {
+      const ok = await postBattleLogEnvelope(envelope);
+      if (!ok) queueBattleLog(envelope);
+    })();
+  } catch (e) { /* fire-and-forget */ }
+}
+
+/* Close-out wiring: pagehide is the tab/app-close signal (status
+   'abandoned', beacon path); backgrounding the app mid-game leaves a
+   fresh checkpoint, because on a phone that is often the last moment
+   before the OS kills the tab. Registered once, here, alongside the
+   auto-log machinery they extend. */
+try {
+  window.addEventListener('pagehide', () => {
+    try { sendPartialLog('abandoned', { beacon: true }); } catch (e) { /* ignore */ }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') { try { partialCheckpoint(); } catch (e) { /* ignore */ } }
+  });
+} catch (e) { /* no window (tests) — the in-game paths still work */ }
 
 // ------------------------------------------------------------ battle tracker
 /* Visible acknowledgement of what the battle is doing right now (Norman
@@ -10640,6 +10855,10 @@ function persistBoundary(nextFlowStep, combat) {
   S.flowStep = nextFlowStep;
   const snap = snapshotGame(game());
   persistWith(nextFlowStep, snap, [], combat || null);
+  // Quit tracking: a phase boundary (and each combat round, which
+  // also lands here) is a progress checkpoint for the partial play
+  // report, so an unfinished game still leaves a trail.
+  try { partialCheckpoint(); } catch (e) { /* auto-log only */ }
 }
 
 /* A failed game start (engine throw, unreadable save) used to surface
@@ -10813,6 +11032,9 @@ async function startGame(seed, resumePayload) {
     S.logGameStartedAt = new Date().toISOString();
     S.buildStartStats = null;
   }
+  // Quit tracking: plant this game's marker (fresh or resumed) so an
+  // unfinished ending can be reported from its first minute.
+  try { partialBeginGame(); } catch (e) { /* auto-log only */ }
   if (resumePayload) {
     S.difficulty = resumePayload.difficulty || 'medium';
     if (!S.mp) {
@@ -12730,6 +12952,15 @@ function onBackButton() {
 }
 
 function backToTitle() {
+  // Quit tracking: leaving mid-game files the final partial report
+  // FIRST (its envelope is captured synchronously inside
+  // sendPartialLog, before the teardown below nulls the session).
+  // A finished game (phase 'done' — including every surrender) is
+  // skipped: its finished report already carries it.
+  try {
+    if (game() && game().phase !== 'done') sendPartialLog(S.partialEndStatus || 'quit');
+  } catch (e) { /* auto-log only */ }
+  S.partialEndStatus = null;
   S.backGuardArmed = false;
   cfResetScroll();
   leaveMp();
@@ -12749,6 +12980,9 @@ function backToTitle() {
 
 function mpOpponentLeft(kind) {
   const host = kind === 'host';
+  // Quit tracking: this game is ending unfinished — the partial its
+  // player files on the way back to title says why.
+  S.partialEndStatus = host ? 'host-ended' : 'disconnected';
   openModal(`
     <h2>${host ? 'The host left' : 'Opponent disconnected'}</h2>
     <p class="hint">${host
@@ -13397,6 +13631,9 @@ $('title-art').src = artForId('box-top');
 renderSavePanel();
 // Flush any battle logs queued while offline / unreachable (app launch).
 try { flushPendingBattleLogs(); } catch (e) { /* fire-and-forget */ }
+// Quit tracking: a live-game marker left over from a previous session
+// means that game died unsent — file its 'abandoned' report now.
+try { reportAbandonedMarkedGame(); } catch (e) { /* fire-and-forget */ }
 mpRefreshRejoinButton();
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) { mpKickReconnect(); mpRefreshRejoinButton(); }
