@@ -11697,16 +11697,38 @@ function renderSavePanel() {
   const panel = document.getElementById('save-panel');
   if (!panel || !HOST) return;
   const saves = HOST.initialSaves || [];
-  if (!saves.length) { panel.innerHTML = ''; return; }
-  panel.innerHTML = '<div class="bsection" style="text-align:left;">Saved games</div>' +
-    saves.map((s) =>
-      '<div class="saverow">' +
-        '<div class="saveinfo"><div class="savename">' + esc(s.name) + '</div>' +
-        '<div class="savemeta">' + esc(s.turnLabel || s.phase || '') + ' · ' + esc(fmtSaveTime(s.updatedAt)) + '</div></div>' +
-        '<button class="primary" data-resume="' + s.id + '">Resume</button>' +
-        '<button data-del="' + s.id + '" aria-label="Delete this save">✕</button>' +
-      '</div>').join('') +
-    '<div class="hint">Your game saves to the server after every move — leave and come back any time, it picks up right where you stopped.</div>';
+  const mpSaves = mpSavedGameList();
+  if (!saves.length && !mpSaves.length) { panel.innerHTML = ''; return; }
+  let html = '';
+  if (saves.length) {
+    html += '<div class="bsection" style="text-align:left;">Saved games</div>' +
+      saves.map((s) =>
+        '<div class="saverow">' +
+          '<div class="saveinfo"><div class="savename">' + esc(s.name) + '</div>' +
+          '<div class="savemeta">' + esc(s.turnLabel || s.phase || '') + ' · ' + esc(fmtSaveTime(s.updatedAt)) + '</div></div>' +
+          '<button class="primary" data-resume="' + s.id + '">Resume</button>' +
+          '<button data-del="' + s.id + '" aria-label="Delete this save">✕</button>' +
+        '</div>').join('') +
+      '<div class="hint">Your game saves to the server after every move — leave and come back any time, it picks up right where you stopped.</div>';
+  }
+  if (mpSaves.length) {
+    // Save & Quit (2026-10-23): multiplayer games saved for later.
+    // Re-host opens a fresh room from the record; Join takes your
+    // original seat in a room your friend re-hosted.
+    html += '<div class="bsection" style="text-align:left;">Saved multiplayer games</div>' +
+      mpSaves.map((r) => {
+        const key = mpSavedGameKeyOf(r);
+        return '<div class="saverow">' +
+          '<div class="saveinfo"><div class="savename">' + esc(r.label || 'Multiplayer game') + '</div>' +
+          '<div class="savemeta">' + esc(r.meta || '') + (r.meta ? ' · ' : '') + esc(fmtSaveTime(new Date(r.savedAt || 0).toISOString())) + '</div></div>' +
+          '<button class="primary" data-mprehost="' + esc(key) + '">Re-host</button>' +
+          '<button data-mpjoin="' + esc(key) + '">Join</button>' +
+          '<button data-mpdel="' + esc(key) + '" aria-label="Delete this saved game">✕</button>' +
+        '</div>';
+      }).join('') +
+      '<div class="hint">Saved with Save &amp; Quit. Re-host starts a new room from the save — your friend joins with the new code and the game picks up right where you left it.</div>';
+  }
+  panel.innerHTML = html;
   panel.querySelectorAll('button[data-resume]').forEach((b) => {
     b.onclick = async () => {
       const id = +b.getAttribute('data-resume');
@@ -11723,6 +11745,24 @@ function renderSavePanel() {
       const id = +b.getAttribute('data-del');
       await HOST.removeSave(id);
       HOST.initialSaves = HOST.initialSaves.filter((s) => s.id !== id);
+      renderSavePanel();
+    };
+  });
+  panel.querySelectorAll('button[data-mprehost]').forEach((b) => {
+    b.onclick = () => {
+      const rec = mpSavedGameList().find((r) => mpSavedGameKeyOf(r) === b.getAttribute('data-mprehost'));
+      if (rec) mpResumeHost(rec).catch(() => { /* the status line reports failures */ });
+    };
+  });
+  panel.querySelectorAll('button[data-mpjoin]').forEach((b) => {
+    b.onclick = () => {
+      const rec = mpSavedGameList().find((r) => mpSavedGameKeyOf(r) === b.getAttribute('data-mpjoin'));
+      if (rec) mpJoinSavedGame(rec);
+    };
+  });
+  panel.querySelectorAll('button[data-mpdel]').forEach((b) => {
+    b.onclick = () => {
+      mpSavedGameRemove(b.getAttribute('data-mpdel'));
       renderSavePanel();
     };
   });
@@ -12385,6 +12425,7 @@ function showGameOver() {
     try { if (MP && MP.ws) MP.ws.send(JSON.stringify({ t: 'draw' })); } catch (e) { /* already down */ }
   }
   if (S.mp) mpClearSession(); // multiplayer game ended normally — no rejoin to offer
+  if (S.mp) { try { mpClearSavedGameRecord(); } catch (e) { /* cleanup must never fail the screen */ } } // Save & Quit: a finished match's resume record goes too
   try { S.flowStep = 'done'; persistWith('done', snapshotGame(g), [], null); } catch (e) { /* ignore */ }
   $('screen-game').classList.add('hidden');
   $('gameover').classList.remove('hidden');
@@ -12699,11 +12740,21 @@ function mpConnectInitial(mode, code, opts) {
         let first;
         if (mode === 'create') {
           first = { t: 'create' };
-          if (opts && typeof opts.size === 'number' && opts.size > 2) first.size = opts.size;
-          if (opts && opts.name) first.name = opts.name;
+          if (opts && opts.resume) {
+            // Save & Quit re-host: the resume payload replaces the
+            // classic fields (it carries size + seats + seed + log).
+            first.resume = opts.resume;
+          } else {
+            if (opts && typeof opts.size === 'number' && opts.size > 2) first.size = opts.size;
+            if (opts && opts.name) first.name = opts.name;
+          }
         } else {
           first = { t: 'join', room: code };
           if (opts && opts.name) first.name = opts.name;
+          // Save & Quit join from a saved entry: ask for my original
+          // seat (additive — a classic room ignores it, a resume room
+          // seats me where my saved decisions belong).
+          if (opts && typeof opts.seat === 'number') first.seat = opts.seat;
         }
         try { ws.send(JSON.stringify(first)); }
         catch (e) { fail(e); }
@@ -12738,11 +12789,15 @@ function mpNewSession(ws, mode) {
     spectatorSeats: new Set(),  // seats the table surrendered while dropped: a rejoin is spectator-only, never a reclaim
     spectatorClosed: new Set(), // spectator seats whose pending decision was already closed as a pass (live: at the table decision; rejoined: at the catch-up drain)
     ownSent: 0,            // decisions I have sent for MY seat (reclaim detection: a resync log holding MORE of my seat's decisions than I sent means a replacement bot acted for me while I was away)
+    logArchive: [],        // Save & Quit (2026-10-23): this client's copy of the full decision log, appended at the three decision entry points below and replaced wholesale from any full-log resync — the relay's log is canonical, so a save first re-captures it (mpCaptureLogForSave)
+    saveCapture: null,     // one-shot resolver armed by mpCaptureLogForSave, fired by the next resync response
+    resumeRecord: null,    // the Save & Quit record this session is resuming (set by mpResumeHost / mpJoinSavedGame), for finish-clearing + name fallback
     fcfs: null,            // open FCFS quick window {key, stage, claimedBy, myCommit} or null
     fcfsStage: 0,          // FCFS attack-stage counter (see mpFcfsTrack)
     sendDecision(hook, answer) {
       this.seq++;
       this.ownSent++;
+      this.logArchive.push({ playerIdx: this.myIdx, hook, answer });
       const msg = { t: 'decision', hook, answer };
       // A decision made while the socket is down is queued and flushed on
       // rejoin — the other phone is waiting on it to keep its engine going.
@@ -12763,6 +12818,7 @@ function mpNewSession(ws, mode) {
     sendDecisionForSeat(seat, hook, answer) {
       if (seat === this.myIdx) { this.sendDecision(hook, answer); return; }
       this.seq++;
+      this.logArchive.push({ playerIdx: seat, hook, answer });
       const msg = { t: 'decision', hook, answer, seat };
       if (this.ws && this.ws.readyState === 1) {
         try { this.ws.send(JSON.stringify(msg)); }
@@ -12814,6 +12870,7 @@ function mpNewSession(ws, mode) {
       if (m.playerIdx !== undefined && m.playerIdx === this.myIdx
         && !(this.spectatorSeats && this.spectatorSeats.has(this.myIdx))) return;
       const seat = typeof m.playerIdx === 'number' ? m.playerIdx : (1 - this.myIdx);
+      this.logArchive.push({ playerIdx: seat, hook: m.hook, answer: m.answer });
       this.receivedBy[seat] = (this.receivedBy[seat] || 0) + 1;
       if (seat === 1 - this.myIdx) this.remoteReceived++;
       const w = this.waitersBy[seat] || [];
@@ -12976,7 +13033,9 @@ function mpOnMessage(m) {
   if (m.t === 'created') {
     if (MP.pendingOk) MP.pendingOk(); // initial connect attempt succeeded
     MP.room = m.room;
-    MP.myIdx = 0;
+    // A classic relay answers playerIdx 0; a Save & Quit resume room
+    // seats its creator at their ORIGINAL seat — take the relay's word.
+    MP.myIdx = typeof m.playerIdx === 'number' ? m.playerIdx : 0;
     if (typeof m.size === 'number') MP.tableSize = m.size;
     if (Array.isArray(m.seats)) MP.seatMap = mpNormalizeSeats(m.seats, MP.tableSize);
     $('mp-roomcode').textContent = m.room;
@@ -13015,7 +13074,26 @@ function mpOnMessage(m) {
     }
     if (typeof m.playerIdx === 'number') MP.myIdx = m.playerIdx; // a shrink-to-filled start reassigns seats; the relay reports mine
     if (!MP.begun) {
-      if (MP.storedRejoin && !MP.resyncRequested) {
+      if (m.resumed) {
+        // Save & Quit resume (2026-10-23): this room's decision log was
+        // preloaded from the saver's record — rebuild exactly like a
+        // stored-session rejoin: fresh engine from the shared seed,
+        // full-log catch-up replay, boundary hashes verify the copies.
+        MP.catchUp = { bySeat: {}, done: false, waiters: [] };
+        MP.resyncRequested = true;
+        // Champion names: a resumed game never re-prompts (catch-up),
+        // so the names the game started with ride the record into the
+        // seat map, where startGame seeds S.championNames from.
+        if (MP.resumeRecord && Array.isArray(MP.resumeRecord.championNames)) {
+          const n = MP.tableSize || 2;
+          if (!Array.isArray(MP.seatMap)) MP.seatMap = mpNormalizeSeats(MP.resumeRecord.seatMap, n);
+          MP.resumeRecord.championNames.forEach((nm, i) => {
+            if (typeof nm === 'string' && nm.trim() && MP.seatMap[i]) MP.seatMap[i] = { ...MP.seatMap[i], name: nm.trim() };
+          });
+        }
+        beginMpGame(m.seed);
+        try { MP.ws.send(JSON.stringify({ t: 'resync', room: MP.room, fromSeq: 0 })); } catch (e) { /* close handler retries */ }
+      } else if (MP.storedRejoin && !MP.resyncRequested) {
         // Stored-session rejoin: the relay re-dealt our game — begin from
         // the stored seed and pull the full decision log for catch-up.
         MP.resyncRequested = true;
@@ -13185,7 +13263,18 @@ function mpOnMessage(m) {
     if (MP.rejoinTimer) { clearTimeout(MP.rejoinTimer); MP.rejoinTimer = null; }
     MP.connLost = false;
     const list = m.decisions || [];
+    // Save & Quit: a capture armed by mpCaptureLogForSave takes the
+    // relay's canonical log as the archive (normal processing below
+    // still runs — a full log is exactly what reconnect does).
+    if (MP.saveCapture) {
+      MP.logArchive = list.map((d) => ({ playerIdx: d.playerIdx, hook: d.hook, answer: d.answer }));
+      const cb = MP.saveCapture;
+      MP.saveCapture = null;
+      try { cb(); } catch (e) { /* ignore */ }
+    }
     if (MP.catchUp) {
+      // A catch-up rebuild consumes the FULL log: it IS the archive.
+      MP.logArchive = list.map((d) => ({ playerIdx: d.playerIdx, hook: d.hook, answer: d.answer }));
       // An in-flight catch-up IS a rebuild from the same log — a
       // pending hash-mismatch rebuild request is satisfied by it.
       MP.rebuildOnResync = false;
@@ -13234,6 +13323,8 @@ function mpOnMessage(m) {
       // my seat on this client after this point.
       MP.catchUp = { bySeat: {}, done: false, waiters: [] };
       const cu = MP.catchUp;
+      // A rebuild consumes the FULL log: it IS the archive.
+      MP.logArchive = list.map((d) => ({ playerIdx: d.playerIdx, hook: d.hook, answer: d.answer }));
       beginMpGame(MP.seed); // resets the per-seat counters — the log is re-counted below, after the reset
       list.forEach((d) => {
         const q = cu.bySeat[d.playerIdx] || (cu.bySeat[d.playerIdx] = []);
@@ -13259,6 +13350,14 @@ function mpOnMessage(m) {
     }
     mpRenderBanner();
     mpPersistSession();
+  } else if (m.t === 'saveQuit') {
+    // Save & Quit (2026-10-23): a friend saved the game to resume
+    // later. Mirror the save on this phone too (both sides hold the
+    // log, so either can re-host), then show the notice. If I am
+    // already on my own way out, my own save covers it — stay silent.
+    if (MP.begun && !MP.dead && !S.mpSaveQuitting) {
+      mpOnPeerSaveQuit().catch(() => { /* the notice is a courtesy; the local archive still holds the game */ });
+    }
   } else if (m.t === 'surrender') {
     // Multiway (Stage 3): a surrender eliminates just that seat — the
     // elimination applies at the next step boundary, the same logical
@@ -13562,6 +13661,255 @@ function mpLoadSession() {
 
 function mpClearSession() {
   try { localStorage.removeItem(MP_STORE_KEY); } catch (e) { /* ignore */ }
+}
+
+/* ---------------- Save & Quit (Norman, 2026-10-23) ----------------
+   A Save & Quit button beside Surrender: one tap saves the game and
+   returns to the TITLE screen — no closing and reopening the page.
+   Solo games already autosave to the server store at every decision,
+   so the solo button just flushes the latest save. A multiplayer
+   game is saved as a RESUME RECORD on this phone: the shared seed +
+   the full decision log (the lockstep state — the same seed + log
+   the MP-2 resync rebuilds from). The friend's phone mirrors the
+   record when the courtesy signal lands, so EITHER phone can later
+   re-host: it opens a fresh room preloaded with seed + log, the
+   other joins with the new code, both rebuild by replay, and play
+   continues from the exact point. Records live in localStorage
+   'cf-mp-saved-games', keyed by gameId (one per match), and clear
+   when the match finishes. */
+const MP_SAVED_KEY = 'cf-mp-saved-games';
+
+function mpSavedGameKeyOf(r) { return (r && (r.gameId || r.room)) || null; }
+
+function mpSavedGameList() {
+  try {
+    const raw = localStorage.getItem(MP_SAVED_KEY);
+    if (!raw) return [];
+    const list = JSON.parse(raw);
+    if (!Array.isArray(list)) return [];
+    return list.filter((r) => r && typeof r.seed === 'number' && Array.isArray(r.decisions) && typeof r.myIdx === 'number');
+  } catch (e) { return []; }
+}
+
+function mpSavedGameStore(record) {
+  if (!record) return;
+  const key = mpSavedGameKeyOf(record);
+  if (!key) return;
+  const list = mpSavedGameList().filter((r) => mpSavedGameKeyOf(r) !== key);
+  list.unshift(record);
+  try { localStorage.setItem(MP_SAVED_KEY, JSON.stringify(list.slice(0, 10))); }
+  catch (e) { /* storage unavailable — the short-term rejoin mirror still holds this session */ }
+}
+
+function mpSavedGameRemove(key) {
+  const list = mpSavedGameList().filter((r) => mpSavedGameKeyOf(r) !== key);
+  try { localStorage.setItem(MP_SAVED_KEY, JSON.stringify(list)); } catch (e) { /* ignore */ }
+}
+
+/* The match is over (showGameOver): its resume record goes too —
+   a finished game is not a game anyone is coming back to. */
+function mpClearSavedGameRecord() {
+  const mp = S.mp;
+  if (!mp) return;
+  const keys = [mp.gameId, mp.room,
+    mp.resumeRecord && mp.resumeRecord.gameId, mp.resumeRecord && mp.resumeRecord.room,
+    S.logGameId].filter(Boolean);
+  if (!keys.length) return;
+  const list = mpSavedGameList().filter((r) => !keys.includes(mpSavedGameKeyOf(r)));
+  try { localStorage.setItem(MP_SAVED_KEY, JSON.stringify(list)); } catch (e) { /* ignore */ }
+  try { renderSavePanel(); } catch (e) { /* ignore */ }
+}
+
+function mpSaveQuitLabel() {
+  const n = (S.mp && S.mp.tableSize) || 2;
+  const names = [];
+  for (let i = 0; i < n; i++) { try { names.push(seatName(i)); } catch (e) { names.push('Player ' + (i + 1)); } }
+  return names.join(' vs ');
+}
+
+function mpSaveQuitMeta() {
+  let phase = '';
+  try { phase = PHASE_LABEL[displayPhase()] || ''; } catch (e) { /* keep empty */ }
+  let turn = '';
+  try {
+    const g = game();
+    if (g && displayPhase() === 'combat') turn = 'Turn ' + g.turnCount + ' · Round ' + ((g.roundCount || 0) + 1);
+  } catch (e) { /* keep phase only */ }
+  return [phase, turn].filter(Boolean).join(' · ');
+}
+
+function mpBuildSaveRecord() {
+  const mp = S.mp;
+  if (!mp || typeof mp.seed !== 'number') return null;
+  return {
+    room: mp.room || null,
+    gameId: mp.gameId || null,
+    seed: mp.seed,
+    myIdx: mp.myIdx,
+    tableSize: mp.tableSize || 2,
+    seatMap: mp.seatMap ? JSON.parse(JSON.stringify(mp.seatMap)) : null,
+    championNames: Array.isArray(S.championNames) ? S.championNames.slice() : null,
+    decisions: (mp.logArchive || []).map((d) => ({ playerIdx: d.playerIdx, hook: d.hook, answer: d.answer })),
+    label: mpSaveQuitLabel(),
+    meta: mpSaveQuitMeta(),
+    savedAt: Date.now(),
+  };
+}
+
+/* Ask the relay for its canonical log before saving: the archive
+   this client accumulated is normally identical, but a decision the
+   relay logged in the last moments of a flaky connection might only
+   exist there. Resolves true when the canonical log landed, false on
+   timeout / no socket (the local archive is used either way). */
+function mpCaptureLogForSave() {
+  return new Promise((resolve) => {
+    const mp = S.mp;
+    if (!mp || !mp.ws || mp.ws.readyState !== 1 || !mp.room) { resolve(false); return; }
+    let settled = false;
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      if (mp.saveCapture === fire) mp.saveCapture = null;
+      resolve(ok);
+    };
+    const fire = () => finish(true);
+    mp.saveCapture = fire;
+    try { mp.ws.send(JSON.stringify({ t: 'resync', room: mp.room, fromSeq: 0 })); }
+    catch (e) { finish(false); return; }
+    setTimeout(() => finish(false), 2500);
+  });
+}
+
+/* The Save & Quit button itself. Availability mirrors Surrender's:
+   any point of a game in progress, every phase. One tap — saving a
+   game needs no confirmation (nothing is lost by it). */
+async function cfSaveAndQuit() {
+  const g = game();
+  if (!S.sess || !g || g.phase === 'done') return;
+  if (S.mp) {
+    const mp = S.mp;
+    if (!mp || !mp.begun || mp.dead) return;
+    S.mpSaveQuitting = true;
+    S.partialEndStatus = 'saved';
+    // Courtesy signal FIRST, while this phone is still at the table:
+    // the friend's phone mirrors the save and shows the notice.
+    try { if (mp.ws && mp.ws.readyState === 1) mp.ws.send(JSON.stringify({ t: 'saveQuit' })); } catch (e) { /* ignore */ }
+    await mpCaptureLogForSave();
+    try { mpSavedGameStore(mpBuildSaveRecord()); } catch (e) { /* storage must never block leaving */ }
+    backToTitle();
+    S.mpSaveQuitting = false;
+    return;
+  }
+  // Solo: flush the latest autosave (step-start snapshot + decision
+  // log) to the server store, then title — the saved-games list there
+  // resumes it exactly. A decision still on screen is NOT in the log:
+  // it is simply asked again on resume.
+  S.partialEndStatus = 'saved';
+  try { persistPending(); cfFlushPersist(); } catch (e) { /* the previous autosave still holds the game */ }
+  backToTitle();
+}
+
+/* The friend's Save & Quit landed: mirror the save on this phone,
+   then show the notice. */
+async function mpOnPeerSaveQuit() {
+  await mpCaptureLogForSave();
+  try { mpSavedGameStore(mpBuildSaveRecord()); } catch (e) { /* the notice still shows */ }
+  if (!S.mp || !S.sess) return; // I left meanwhile — nothing to show
+  openModal(`
+    <h2>Saved &amp; quit</h2>
+    <p class="hint">Opponent saved &amp; quit — this game is saved. You can leave too; when they're back, either of you can re-host it from the title screen's saved-games list, and the other joins with the new room code.</p>
+    <div class="opt-list">
+      <button class="primary" id="sq-peer-title">Back to title</button>
+      <button id="sq-peer-stay">Stay here</button>
+    </div>`);
+  $('sq-peer-title').onclick = () => { closeModal(); backToTitle(); };
+  $('sq-peer-stay').onclick = () => closeModal();
+}
+
+/* Re-host a saved multiplayer game: open a fresh room preloaded with
+   the record's seed + decision log and wait for the friend. The room
+   gets a NEW code (the old room is gone) — it is shown big on the
+   wait screen, as usual. Either saver's phone can do this. */
+async function mpResumeHost(record) {
+  if (mpConnecting || S.mp) return;
+  mpConnecting = true;
+  mpSetStatus('Setting up your saved game…');
+  const size = record.tableSize || 2;
+  const seats = Array.isArray(record.seatMap) && record.seatMap.length === size
+    ? record.seatMap
+    : Array.from({ length: size }, (_, i) => ({
+      kind: 'human',
+      name: (Array.isArray(record.championNames) && record.championNames[i]) || '',
+      difficulty: null,
+    }));
+  try {
+    await mpConnectInitial('create', null, {
+      resume: {
+        seed: record.seed,
+        gameId: record.gameId || undefined,
+        size,
+        mySeat: record.myIdx,
+        seats,
+        decisions: Array.isArray(record.decisions) ? record.decisions : [],
+      },
+    });
+    if (MP) {
+      MP.resumeRecord = record;
+      MP.tableSize = size;
+      if (Array.isArray(record.seatMap)) MP.seatMap = mpNormalizeSeats(record.seatMap, size);
+      const rc = $('mp-roomcode'); if (rc) rc.textContent = MP.room || '';
+      const wt = $('mp-wait-text');
+      if (wt) wt.textContent = 'Saved game — share this NEW code with your friend. When they join with it, the game picks up right where you saved.';
+    }
+    if (size > 2) { try { renderMpLobby(); } catch (e) { /* the lobby broadcast re-renders */ } mpShow('mp-lobby'); }
+    else mpShow('mp-wait');
+  } catch (e) {
+    if (e && e.mpServerError) return; // relay answered; its message is already shown
+    mpSetStatus('⚠️ Could not reach the relay server.\nIf you opened this link from a text or Messenger, tap the ⋮ menu and choose "Open in Chrome," then try again. On the same Wi-Fi as your friend helps too.');
+  } finally {
+    mpConnecting = false;
+  }
+}
+
+/* Join a re-hosted saved game from my own saved entry: the code is
+   new, but my seat in it is the one my record says. */
+function mpJoinSavedGame(record) {
+  openModal(`
+    <h2>Join the saved game</h2>
+    <p class="hint">Your friend re-hosted the saved game and got a NEW room code. Enter it here — you take your original seat and the game picks up right where you saved.</p>
+    <label class="hint" for="mp-resume-code-input" style="display:block;text-align:left;">Room code</label>
+    <input id="mp-resume-code-input" type="text" autocomplete="off" maxlength="4" placeholder="CODE" aria-label="Room code for the resumed game" style="width:100%;min-height:44px;margin:2px 0 10px;padding:6px 10px;border-radius:10px;border:1px solid var(--arcane-dim);background:rgba(7,5,16,0.8);color:var(--text);text-transform:uppercase;">
+    <div class="opt-list"><button class="primary" id="mp-resume-join">Join game</button><button id="mp-resume-cancel">Cancel</button></div>`);
+  const input = $('mp-resume-code-input');
+  const btn = $('mp-resume-join');
+  if (!btn) return;
+  if (input) {
+    try { input.focus(); } catch (e) { /* ignore */ }
+    input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); btn.click(); } });
+  }
+  $('mp-resume-cancel').onclick = () => closeModal();
+  btn.onclick = () => {
+    const code = ((input && input.value) || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length !== 4) { if (input) try { input.focus(); } catch (e) { /* ignore */ } return; }
+    closeModal();
+    mpJoinSavedGameGo(record, code).catch(() => { /* the status line reports failures */ });
+  };
+}
+
+async function mpJoinSavedGameGo(record, code) {
+  if (mpConnecting || S.mp) return;
+  mpConnecting = true;
+  mpSetStatus('Joining the saved game…');
+  try {
+    await mpConnectInitial('join', code, { seat: record.myIdx, name: '' });
+    if (MP) MP.resumeRecord = record;
+    mpShow('mp-wait');
+  } catch (e) {
+    if (e && e.mpServerError) return; // relay answered; its message is already shown
+    mpSetStatus('⚠️ Could not reach the relay server.\nIf you opened this link from a text or Messenger, tap the ⋮ menu and choose "Open in Chrome," then try again. On the same Wi-Fi as your friend helps too.');
+  } finally {
+    mpConnecting = false;
+  }
 }
 
 function mpRenderBanner() {
@@ -14168,6 +14516,7 @@ $('btn-totitle').onclick = () => backToTitle();
 $('modal-wrap').onclick = (e) => { if (modalBackdropClose && e.target === $('modal-wrap')) closeModal(); };
 $('btn-history').onclick = () => { if (S.sess) openHistory(); };
 $('btn-surrender').onclick = () => confirmSurrender();
+$('btn-savequit').onclick = () => { cfSaveAndQuit().catch(() => { try { backToTitle(); } catch (e) { /* ignore */ } }); };
 $('btn-aid').onclick = () => openAid();
 $('btn-aid-title').onclick = () => openAid();
 $('btn-howto-title').onclick = () => openHowToPlay();
@@ -14390,7 +14739,7 @@ h2 {
   font-family: var(--serif); font-size: 12px; color: var(--gold); font-weight: 700;
   letter-spacing: 0.08em; text-shadow: 0 0 10px rgba(232, 182, 76, 0.5);
 }
-#btn-aid, #btn-history, #btn-surrender { min-height: 40px; font-size: 13px; padding: 6px 10px; }
+#btn-aid, #btn-history, #btn-surrender, #btn-savequit { min-height: 40px; font-size: 13px; padding: 6px 10px; }
 
 /* ---------------- champions: gold-trimmed war panels ----------------
    FIT (Norman, 2026-10-20): every seat shares the band width — cards
@@ -16104,6 +16453,7 @@ const GAME_HTML = `
         <button id="btn-aid" aria-label="Open player aid"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.2C10.1 4.7 7.6 4.2 5 4.2v13.6c2.6 0 5.1.5 7 2 1.9-1.5 4.4-2 7-2V4.2c-2.6 0-5.1.5-7 2z"/><path d="M12 6.2v13.6"/></svg>Aid</button>
         <button id="btn-history" aria-label="Open battle history"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 4.6v5.6h5.6"/><path d="M4.6 10.2a8.4 8.4 0 1 1-1.2 5.1"/><path d="M12.4 7.8v4.4l3 1.9"/></svg>History</button>
         <button id="btn-surrender" aria-label="Surrender this game"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 21.5v-19"/><path d="M5.5 3.8h12.6l-2.7 3.9 2.7 3.9H5.5"/></svg>Surrender</button>
+        <button id="btn-savequit" aria-label="Save this game and return to the title screen"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5h11.5L20 7v13.5H5z"/><path d="M8 3.5v4.5h7.5V3.5"/><path d="M8.5 20.5v-6h7v6"/></svg>Save &amp; Quit</button>
       </div>
     </div>
     <div id="phasestrip" aria-label="Game phases"></div>
